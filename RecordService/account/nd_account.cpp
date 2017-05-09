@@ -23,7 +23,7 @@ NdAccount::~NdAccount()
 
 }
 
-void NdAccount::userLogin(QString account, QString password)
+void NdAccount::userSignIn(QString account, QString password)
 {
     _user.user_id = account;
 
@@ -39,7 +39,7 @@ void NdAccount::userLogin(QString account, QString password)
     this->doRequest(NdAccount::POST ,NdAccount::Login, Jdocument.toJson());
 }
 
-void NdAccount::userLogout()
+void NdAccount::userSignOut()
 {
     this->doRequest(NdAccount::DELETE, NdAccount::Logout, QByteArray());
 }
@@ -184,7 +184,7 @@ void NdAccount::parseResult(bool error, int command, const QJsonDocument& jsonDo
             reason = content.value("message").toString();
         }
 
-        emit loginResult(_user.user_id, !error, reason);
+        emit signInResult(_user.user_id, !error, reason);
 
         break;
     case Logout:
@@ -198,7 +198,7 @@ void NdAccount::parseResult(bool error, int command, const QJsonDocument& jsonDo
             reason = content.value("message").toString();
         }
 
-        emit logoutResult(_user.user_id, !error, reason);
+        emit signOutResult(_user.user_id, !error, reason);
         _user.user_id.clear();
         break;
     case UserInfo:

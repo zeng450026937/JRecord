@@ -5,7 +5,8 @@
 #include "websocket.h"
 
 class QWebSocket;
-class MessageParser;
+class MessageQueue;
+class MessageProcessor;
 
 class WebSocketPrivate : public QObject
 {
@@ -17,9 +18,9 @@ public:
     explicit WebSocketPrivate(WebSocket* q_p, QObject *parent = Q_NULLPTR);
     ~WebSocketPrivate();
 
-    QString url_;
-    WebSocket::Status status_;
-    QWebSocket* socket_;
+    QString url;
+    WebSocket::Status status;
+    QWebSocket* socket;
 
 private Q_SLOTS:
     void onConnected();
@@ -29,7 +30,8 @@ private Q_SLOTS:
 
 private:
     WebSocket* const q_ptr;
-    MessageParser* message_parser_;
+    MessageQueue* queue_;
+    MessageProcessor* processor_;
 };
 
 #endif // WEBSOCKET_P_H

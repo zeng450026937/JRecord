@@ -11,34 +11,34 @@ WebSocket::WebSocket(QObject *parent) :
 
 QString WebSocket::url() const
 {
-    return d_func()->url_;
+    return d_func()->url;
 }
 void WebSocket::setUrl(QString url)
 {
     Q_D(WebSocket);
-    if(url != d->url_){
-        d->url_ = url;
-        Q_EMIT urlChanged(d->url_);
+    if(url != d->url){
+        d->url = url;
+        Q_EMIT urlChanged(d->url);
     }
 }
 void WebSocket::setStatus(Status status)
 {
     Q_D(WebSocket);
-    if(status != d->status_){
-        d->status_ = status;
-        Q_EMIT statusChanged(d->status_);
+    if(status != d->status){
+        d->status = status;
+        Q_EMIT statusChanged(d->status);
     }
 }
 
 void WebSocket::socketConnect()
 {
     Q_D(WebSocket);
-    d->socket_->open(d->url_);
+    d->socket->open(d->url);
     this->setStatus(Connecting);
 }
 void WebSocket::socketDisconnect()
 {
     Q_D(WebSocket);
-    d->socket_->close();
+    d->socket->close();
     this->setStatus(Closing);
 }

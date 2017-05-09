@@ -8,25 +8,25 @@ Account::Account(QObject *parent):
     client_ = new NdAccount(this);
 
     connect(client_, SIGNAL(loginResult(QString,bool,QString)),
-            this, SLOT(onLogined(QString,bool,QString)));
+            this, SLOT(onSignIned(QString,bool,QString)));
     connect(client_, SIGNAL(logoutResult(QString,bool,QString)),
-            this, SLOT(onLogouted(QString,bool,QString)));
+            this, SLOT(onSignOuted(QString,bool,QString)));
 }
 
 Account::~Account()
 {
     if(status_ == Login)
-        client_->userLogout();
+        client_->userSignOut();
 }
 
-void Account::logIn()
+void Account::signIn()
 {
-    client_->userLogin(username_, password_);
+    client_->userSignIn(username_, password_);
     this->setStatus(Logining);
 }
-void Account::logOut()
+void Account::signOut()
 {
-    client_->userLogout();
+    client_->userSignOut();
     this->setStatus(Logouting);
 }
 
@@ -74,7 +74,7 @@ void Account::setErrorString(QString errorString)
     }
 }
 
-void Account::onLogined(QString account, bool ok, QString reason)
+void Account::onSignIned(QString account, bool ok, QString reason)
 {
     if(account != username_)
         return;
@@ -88,7 +88,7 @@ void Account::onLogined(QString account, bool ok, QString reason)
 
     this->setErrorString(reason);
 }
-void Account::onLogouted(QString account, bool ok, QString reason)
+void Account::onSignOuted(QString account, bool ok, QString reason)
 {
     if(account != username_)
         return;

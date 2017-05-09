@@ -28,7 +28,7 @@ ApplicationWindow {
         Button {
             id: loginButton
             text: qsTr("Login")
-            onClicked: account.logIn()
+            onClicked: account.signIn()
         }
 
         Text {

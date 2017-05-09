@@ -1,25 +1,42 @@
 #include "websocket_p.h"
 #include <QWebSocket>
-#include "message_parser.h"
+#include "message_queue.h"
+#include "message_processor.h"
 
 WebSocketPrivate::WebSocketPrivate(WebSocket* q_p, QObject *parent):
     QObject(parent),
     q_ptr(q_p),
-    socket_(new QWebSocket),
-    message_parser_(new MessageParser)
+    socket(new QWebSocket),
+    queue_(new MessageQueue)
 {
-    //Q_Q(WebSocket);
     qRegisterMetaType<QByteArray>();
-    connect(socket_,SIGNAL(connected()),this,SLOT(onConnected()));
-    connect(socket_,SIGNAL(disconnected()),this,SLOT(onDisconnected()));
-    connect(socket_,SIGNAL(textMessageReceived(QString)),this,SLOT(onTextMessageReceived(QString)));
-    connect(socket_,SIGNAL(binaryMessageReceived(QByteArray)),this,SLOT(onBinaryMessageReceived(QByteArray&)));
+
+    connect(socket,SIGNAL(connected()),this,SLOT(onConnected()));
+    connect(socket,SIGNAL(disconnected()),this,SLOT(onDisconnected()));
+    connect(socket,SIGNAL(textMessageReceived(QString)),this,SLOT(onTextMessageReceived(QString)));
+    connect(socket,SIGNAL(binaryMessageReceived(QByteArray)),this,SLOT(onBinaryMessageReceived(QByteArray&)));
+
+    processor_ = new MessageProcessor(queue_);
+    processor_->start();
 }
 
 WebSocketPrivate::~WebSocketPrivate()
 {
-    delete socket_;
-    delete message_parser_;
+    if(status == WebSocket::Open)
+        socket->close();
+
+    delete socket;
+
+    queue_->setAbort(true);
+    queue_->flush();
+
+    processor_->quit();
+    processor_->wait(3000);
+    processor_->terminate();
+
+    delete processor_;
+
+    delete queue_;
 }
 
 void WebSocketPrivate::onConnected()
@@ -34,9 +51,11 @@ void WebSocketPrivate::onDisconnected()
 }
 void WebSocketPrivate::onTextMessageReceived(QString message)
 {
-    message_parser_->parseMessage(message);
+    QSharedPointer<MessagePacket> msg(new TextMessage(message));
+    queue_->push(msg);
 }
 void WebSocketPrivate::onBinaryMessageReceived(QByteArray &message)
 {
-    message_parser_->parseBinary(message);
+    QSharedPointer<MessagePacket> msg(new BinaryMessage(message));
+    queue_->push(msg);
 }

@@ -13,9 +13,9 @@ SOURCES += \
     account/nd_account.cpp \
     websocket/websocket.cpp \
     websocket/websocket_p.cpp \
-    websocket/message_parser.cpp \
-    websocket/binary_message.cpp \
-    websocket/text_message.cpp
+    websocket/message_processor.cpp \
+    websocket/message_queue.cpp \
+    websocket/message_packet.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -23,9 +23,9 @@ HEADERS += \
     account/nd_account.h \
     websocket/websocket.h \
     websocket/websocket_p.h \
-    websocket/message_parser.h \
-    websocket/binary_message.h \
-    websocket/text_message.h
+    websocket/message_processor.h \
+    websocket/message_queue.h \
+    websocket/message_packet.h
 
 DISTFILES = qmldir
 

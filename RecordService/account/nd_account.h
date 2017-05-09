@@ -12,12 +12,12 @@ public:
     ~NdAccount();
 
 signals:
-    void loginResult(QString account, bool ok, QString reason);
-    void logoutResult(QString account, bool ok, QString reason);
+    void signInResult(QString account, bool ok, QString reason);
+    void signOutResult(QString account, bool ok, QString reason);
 
 public slots:
-    void userLogin(QString account, QString password);
-    void userLogout();
+    void userSignIn(QString account, QString password);
+    void userSignOut();
 
 private slots:
     void requestFinished(QNetworkReply* reply);

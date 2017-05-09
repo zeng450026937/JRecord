@@ -27,8 +27,8 @@ public:
     };
     Q_ENUM(Status)
 
-    Q_INVOKABLE void logIn();
-    Q_INVOKABLE void logOut();
+    Q_INVOKABLE void signIn();
+    Q_INVOKABLE void signOut();
 
     QString username() const;
     QString password() const;
@@ -45,8 +45,8 @@ Q_SIGNALS:
     void statusChanged(Status status);
 
 private Q_SLOTS:
-    void onLogined(QString account, bool ok, QString reason);
-    void onLogouted(QString account, bool ok, QString reason);
+    void onSignIned(QString account, bool ok, QString reason);
+    void onSignOuted(QString account, bool ok, QString reason);
 
 private:
     void setStatus(Status status);
