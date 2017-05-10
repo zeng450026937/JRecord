@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
+        <file>scenes/LoginWindow.qml</file>
+        <file>scenes/FlatSurfaceShader/canvas-basic.html</file>
+        <file>scenes/FlatSurfaceShader/FlatSurfaceShader.qml</file>
+        <file>scenes/FlatSurfaceShader/fss.js</file>
     </qresource>
 </RCC>
