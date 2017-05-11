@@ -33,7 +33,7 @@
  * Defines the Flat Surface Shader namespace for all the awesomeness to exist upon.
  * @author Matthew Wagerfield
  */
-FSS = {
+var FSS = {
   FRONT  : 0,
   BACK   : 1,
   DOUBLE : 2,
@@ -61,6 +61,7 @@ FSS.Utils = {
  * @author Paul Irish
  * @see https://gist.github.com/paulirish/1579671
  */
+/*
 (function() {
 
   var lastTime = 0;
@@ -90,6 +91,7 @@ FSS.Utils = {
   }
 
 }());
+*/
 
 /**
  * @object Math Augmentation
@@ -464,10 +466,10 @@ FSS.Triangle = function(a, b, c) {
   this.centroid = FSS.Vector3.create();
   this.normal = FSS.Vector3.create();
   this.color = new FSS.Color();
-  this.polygon = document.createElementNS(FSS.SVGNS, 'polygon');
-  this.polygon.setAttributeNS(null, 'stroke-linejoin', 'round');
-  this.polygon.setAttributeNS(null, 'stroke-miterlimit', '1');
-  this.polygon.setAttributeNS(null, 'stroke-width', '1');
+//  this.polygon = document.createElementNS(FSS.SVGNS, 'polygon');
+//  this.polygon.setAttributeNS(null, 'stroke-linejoin', 'round');
+//  this.polygon.setAttributeNS(null, 'stroke-miterlimit', '1');
+//  this.polygon.setAttributeNS(null, 'stroke-width', '1');
   this.computeCentroid();
   this.computeNormal();
 };
@@ -550,8 +552,8 @@ FSS.Plane = function(width, height, segments, slices) {
       v1 = vertices[x+0][y+1];
       v2 = vertices[x+1][y+0];
       v3 = vertices[x+1][y+1];
-      t0 = new FSS.Triangle(v0, v1, v2);
-      t1 = new FSS.Triangle(v2, v1, v3);
+      var t0 = new FSS.Triangle(v0, v1, v2);
+      var t1 = new FSS.Triangle(v2, v1, v3);
       this.triangles.push(t0, t1);
     }
   }
@@ -692,10 +694,11 @@ FSS.Renderer.prototype = {
  * @class Canvas Renderer
  * @author Matthew Wagerfield
  */
-FSS.CanvasRenderer = function() {
+FSS.CanvasRenderer = function(element) {
   FSS.Renderer.call(this);
-  this.element = document.createElement('canvas');
-  this.element.style.display = 'block';
+  this.element = element;
+  //this.element = document.createElement('canvas');
+  //this.element.style.display = 'block';
   this.context = this.element.getContext('2d');
   this.setSize(this.element.width, this.element.height);
 };
@@ -1224,3 +1227,277 @@ FSS.SVGRenderer.prototype.formatStyle = function(color) {
   style += 'stroke:'+color+';';
   return style;
 };
+
+FSS.Surface = function(element) {
+    //------------------------------
+    // Mesh Properties
+    //------------------------------
+    this.MESH = {
+      width: 1.2,
+      height: 1.2,
+      depth: 8,
+      segments: 6,
+      slices: 3,
+      xRange: 0.4,
+      yRange: 0.1,
+      zRange: 1.0,
+      ambient: '#555555',
+      diffuse: '#FFFFFF',
+      speed: 0.0005
+    };
+
+    //------------------------------
+    // Light Properties
+    //------------------------------
+    this.LIGHT = {
+      count: 1,
+      xyScalar: 1,
+      zOffset: 100,
+      ambient: '#03527D',
+      diffuse: '#3778B1',
+      speed: 0.001,
+      gravity: 400,
+      dampening: 0.95,
+      minLimit: 1,
+      maxLimit: 1,
+      minDistance: 20,
+      maxDistance: 100,
+      autopilot: true,
+      draw: false,
+      bounds: FSS.Vector3.create(),
+      step: FSS.Vector3.create(
+        Math.randomInRange(0.2, 1.0),
+        Math.randomInRange(0.2, 1.0),
+        Math.randomInRange(0.2, 1.0)
+      )
+    };
+
+    //------------------------------
+    // Render Properties
+    //------------------------------
+    this.WEBGL = 'webgl';
+    this.CANVAS = 'canvas';
+    this.SVG = 'svg';
+    this.RENDER = {
+      renderer: this.CANVAS
+    };
+
+    //------------------------------
+    // Global Properties
+    //------------------------------
+    this.element = element;
+    this.now = undefined;
+    this.start = Date.now();
+    this.center = FSS.Vector3.create();
+    this.attractor = FSS.Vector3.create();
+    this.renderer = undefined;
+    this.scene = undefined;
+    this.mesh = undefined;
+    this.geometry = undefined;
+    this.material = undefined;
+    this.webglRenderer = undefined;
+    this.canvasRenderer = undefined;
+    this.svgRenderer = undefined;
+
+    //------------------------------
+    // Methods
+    //------------------------------
+    this.createRenderer = function() {
+      this.webglRenderer = null;
+      this.canvasRenderer = new FSS.CanvasRenderer(this.element);
+      this.svgRenderer = null;
+      this.setRenderer(this.RENDER.renderer);
+    }
+    this.setRenderer = function(index) {
+      switch(index) {
+        case this.WEBGL:
+          this.renderer = this.webglRenderer;
+          break;
+        case this.CANVAS:
+          this.renderer = this.canvasRenderer;
+          break;
+        case this.SVG:
+          this.renderer = this.svgRenderer;
+          break;
+      }
+      this.renderer.setSize(this.element.width, this.element.height);
+    }
+    this.createScene = function() {
+      this.scene = new FSS.Scene();
+    }
+    this.createMesh = function() {
+      this.scene.remove(this.mesh);
+      this.renderer.clear();
+      this.geometry = new FSS.Plane(this.MESH.width * this.renderer.width, this.MESH.height * this.renderer.height, this.MESH.segments, this.MESH.slices);
+      this.material = new FSS.Material(this.MESH.ambient, this.MESH.diffuse);
+      this.mesh = new FSS.Mesh(this.geometry, this.material);
+      this.scene.add(this.mesh);
+
+      // Augment vertices for animation
+      var v, vertex;
+      for (v = this.geometry.vertices.length - 1; v >= 0; v--) {
+        vertex = this.geometry.vertices[v];
+        vertex.anchor = FSS.Vector3.clone(vertex.position);
+        vertex.step = FSS.Vector3.create(
+          Math.randomInRange(0.2, 1.0),
+          Math.randomInRange(0.2, 1.0),
+          Math.randomInRange(0.2, 1.0)
+        );
+        vertex.time = Math.randomInRange(0, Math.PIM2);
+      }
+    }
+    this.createLights = function() {
+      var l, light;
+      for (l = this.scene.lights.length - 1; l >= 0; l--) {
+        light = this.scene.lights[l];
+        this.scene.remove(light);
+      }
+      this.renderer.clear();
+      for (l = 0; l < this.LIGHT.count; l++) {
+        light = new FSS.Light(this.LIGHT.ambient, this.LIGHT.diffuse);
+        light.ambientHex = light.ambient.format();
+        light.diffuseHex = light.diffuse.format();
+        this.scene.add(light);
+
+        // Augment light for animation
+        light.mass = Math.randomInRange(0.5, 1);
+        light.velocity = FSS.Vector3.create();
+        light.acceleration = FSS.Vector3.create();
+        light.force = FSS.Vector3.create();
+        /*
+        // Ring SVG Circle
+        light.ring = document.createElementNS(FSS.SVGNS, 'circle');
+        light.ring.setAttributeNS(null, 'stroke', light.ambientHex);
+        light.ring.setAttributeNS(null, 'stroke-width', '0.5');
+        light.ring.setAttributeNS(null, 'fill', 'none');
+        light.ring.setAttributeNS(null, 'r', '10');
+
+        // Core SVG Circle
+        light.core = document.createElementNS(FSS.SVGNS, 'circle');
+        light.core.setAttributeNS(null, 'fill', light.diffuseHex);
+        light.core.setAttributeNS(null, 'r', '4');
+        */
+      }
+    }
+    this.update = function() {
+      var ox, oy, oz, l, light, v, vertex, offset = this.MESH.depth/2;
+
+      // Update Bounds
+      FSS.Vector3.copy(this.LIGHT.bounds, this.center);
+      FSS.Vector3.multiplyScalar(this.LIGHT.bounds, this.LIGHT.xyScalar);
+
+      // Update Attractor
+      FSS.Vector3.setZ(this.attractor, this.LIGHT.zOffset);
+
+      // Overwrite the Attractor position
+      if (this.LIGHT.autopilot) {
+        ox = Math.sin(this.LIGHT.step[0] * this.now * this.LIGHT.speed);
+        oy = Math.cos(this.LIGHT.step[1] * this.now * this.LIGHT.speed);
+        FSS.Vector3.set(this.attractor,
+          this.LIGHT.bounds[0]*ox,
+          this.LIGHT.bounds[1]*oy,
+          this.LIGHT.zOffset);
+      }
+
+      // Animate Lights
+      for (l = this.scene.lights.length - 1; l >= 0; l--) {
+        light = this.scene.lights[l];
+
+        // Reset the z position of the light
+        FSS.Vector3.setZ(light.position, this.LIGHT.zOffset);
+
+        // Calculate the force Luke!
+        var D = Math.clamp(FSS.Vector3.distanceSquared(light.position, this.attractor), this.LIGHT.minDistance, this.LIGHT.maxDistance);
+        var F = this.LIGHT.gravity * light.mass / D;
+        FSS.Vector3.subtractVectors(light.force, this.attractor, light.position);
+        FSS.Vector3.normalise(light.force);
+        FSS.Vector3.multiplyScalar(light.force, F);
+
+        // Update the light position
+        FSS.Vector3.set(light.acceleration);
+        FSS.Vector3.add(light.acceleration, light.force);
+        FSS.Vector3.add(light.velocity, light.acceleration);
+        FSS.Vector3.multiplyScalar(light.velocity, this.LIGHT.dampening);
+        FSS.Vector3.limit(light.velocity, this.LIGHT.minLimit, this.LIGHT.maxLimit);
+        FSS.Vector3.add(light.position, light.velocity);
+      }
+
+      // Animate Vertices
+      for (v = this.geometry.vertices.length - 1; v >= 0; v--) {
+        vertex = this.geometry.vertices[v];
+        ox = Math.sin(vertex.time + vertex.step[0] * this.now * this.MESH.speed);
+        oy = Math.cos(vertex.time + vertex.step[1] * this.now * this.MESH.speed);
+        oz = Math.sin(vertex.time + vertex.step[2] * this.now * this.MESH.speed);
+        FSS.Vector3.set(vertex.position,
+          this.MESH.xRange*this.geometry.segmentWidth*ox,
+          this.MESH.yRange*this.geometry.sliceHeight*oy,
+          this.MESH.zRange*offset*oz - offset);
+        FSS.Vector3.add(vertex.position, vertex.anchor);
+      }
+
+      // Set the Geometry to dirty
+      this.geometry.dirty = true;
+    }
+
+    this.render = function() {
+      this.renderer.render(this.scene);
+
+      // Draw Lights
+      if (this.LIGHT.draw) {
+        var l, lx, ly, light;
+        for (l = this.scene.lights.length - 1; l >= 0; l--) {
+          light = this.scene.lights[l];
+          lx = light.position[0];
+          ly = light.position[1];
+          switch(this.RENDER.renderer) {
+            case this.CANVAS:
+              this.renderer.context.lineWidth = 0.5;
+              this.renderer.context.beginPath();
+              this.renderer.context.arc(lx, ly, 10, 0, Math.PIM2);
+              this.renderer.context.strokeStyle = light.ambientHex;
+              this.renderer.context.stroke();
+              this.renderer.context.beginPath();
+              this.renderer.context.arc(lx, ly, 4, 0, Math.PIM2);
+              this.renderer.context.fillStyle = light.diffuseHex;
+              this.renderer.context.fill();
+              break;
+            case this.SVG:
+              lx += renderer.halfWidth;
+              ly = renderer.halfHeight - ly;
+              light.core.setAttributeNS(null, 'fill', light.diffuseHex);
+              light.core.setAttributeNS(null, 'cx', lx);
+              light.core.setAttributeNS(null, 'cy', ly);
+              this.renderer.element.appendChild(light.core);
+              light.ring.setAttributeNS(null, 'stroke', light.ambientHex);
+              light.ring.setAttributeNS(null, 'cx', lx);
+              light.ring.setAttributeNS(null, 'cy', ly);
+              this.renderer.element.appendChild(light.ring);
+              break;
+          }
+        }
+      }
+    }
+
+}
+
+FSS.Surface.prototype = {
+    initialise: function() {
+      this.createRenderer();
+      this.createScene();
+      this.createMesh();
+      this.createLights();
+      this.resize(this.element.width, this.element.height);
+    },
+    resize: function(width, height){
+      this.renderer.setSize(width, height);
+      FSS.Vector3.set(this.center, this.renderer.halfWidth, this.renderer.halfHeight);
+      this.createMesh();
+    },
+    animate: function() {
+      this.now = Date.now() - this.start;
+      this.update();
+      this.render();
+    }
+};
+
+

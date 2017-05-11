@@ -12,7 +12,9 @@ ApplicationWindow {
     height: loginWindow.height
     title: qsTr("JRecord")
 
-    LoginWindow{
+    flags: Qt.FramelessWindowHint | Qt.Window
+
+    LoginScene{
         id: loginWindow
     }
 }
