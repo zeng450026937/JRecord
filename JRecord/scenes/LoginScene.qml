@@ -8,6 +8,8 @@ Item {
     width: 430
     height: 330
 
+    property var loginStatus
+
     Page {
         id: page
         anchors.fill: parent
@@ -45,24 +47,60 @@ Item {
             }
         }
 
-        FlatSurface {
-            id: surface
-            anchors.top: parent.top
-            width: parent.width
-            height: 180
-        }
+        ColumnLayout {
+            anchors.fill: parent
+            FlatSurface {
+                id: surface
+                Layout.preferredHeight: parent.height * 5 / 9
+                Layout.fillWidth: true
 
-        Text {
-            id: title
-            anchors.centerIn: surface
-            text: qsTr("JRecord")
-            color: "white"
-            font.bold : true
-            font.pointSize: 25
+                Text {
+                    id: title
+                    anchors.centerIn: parent
+                    text: qsTr("JRecord")
+                    color: "white"
+                    font.bold : true
+                    font.pointSize: 25
+                }
+            }
+
+            Pane{
+                id: loginPane
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                ColumnLayout {
+                    id: columLayout
+                    anchors.fill: parent
+
+                    RowLayout {
+                        Layout.alignment: Qt.AlignCenter
+                        Label {
+                            text: qsTr("Username:")
+                        }
+                        TextField {
+                        }
+                    }
+                    RowLayout {
+                        Layout.alignment: Qt.AlignCenter
+                        Label {
+                            text: qsTr("Password:")
+                        }
+                        TextField {
+                        }
+                    }
+                    Button {
+                        id: loginButton
+                        Layout.alignment: Qt.AlignCenter
+                        onClicked: console.log("request login")
+                    }
+                }
+            }
         }
 
         MouseArea {
             id: mouseArea
+            visible: false
             property int xMouse
             property int yMouse
             property int deltaX
@@ -80,5 +118,7 @@ Item {
                 ApplicationWindow.window.setY(ApplicationWindow.window.y + deltaY)
             }
         }
+
+
     }
 }
