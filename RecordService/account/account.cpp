@@ -1,5 +1,6 @@
 #include "account.h"
 #include "nd_account.h"
+#include <QDebug>
 
 Account::Account(QObject *parent):
     QObject(parent),
@@ -7,9 +8,9 @@ Account::Account(QObject *parent):
 {
     client_ = new NdAccount(this);
 
-    connect(client_, SIGNAL(loginResult(QString,bool,QString)),
+    connect(client_, SIGNAL(signInResult(QString,bool,QString)),
             this, SLOT(onSignIned(QString,bool,QString)));
-    connect(client_, SIGNAL(logoutResult(QString,bool,QString)),
+    connect(client_, SIGNAL(signOutResult(QString,bool,QString)),
             this, SLOT(onSignOuted(QString,bool,QString)));
 }
 
