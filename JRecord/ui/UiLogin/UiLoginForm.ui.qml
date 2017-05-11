@@ -11,57 +11,66 @@ Page {
     property alias username: inputField.username
     property alias password: inputField.password
 
-    header: ToolBar {
-        visible: false
-        width: implicitWidth
-        anchors.right: parent.right
-        Layout.alignment: Qt.AlignRight
-        RowLayout {
-            width: implicitWidth
-            ToolButton{
-                text: qsTr("_")
-                width: implicitWidth
-                focusPolicy: Qt.NoFocus
-            }
-            ToolButton{
-                text: qsTr("x")
-                width: implicitWidth
-                focusPolicy: Qt.NoFocus
-            }
-        }
-    }
-
     ColumnLayout {
         id: columnLayout
         spacing: 0
         anchors.fill: parent
 
-        FlatSurface {
-            id: flatSurface
+        Item {
+            id: name
             Layout.preferredHeight: parent.height * 5 / 9
             Layout.fillWidth: true
 
-            Text {
-                id: logo
-                anchors.centerIn: parent
-                text: qsTr("JRecord")
-                color: "white"
-                font.bold : true
-                font.pointSize: 25
+            FlatSurface {
+                id: flatSurface
+                anchors.fill: parent
+
+                Text {
+                    id: logo
+                    anchors.centerIn: parent
+                    text: qsTr("JRecord")
+                    color: "white"
+                    font.bold : true
+                    font.pointSize: 25
+                }
+            }
+            ToolBar {
+                anchors.top: flatSurface.top
+                anchors.right: flatSurface.right
+                width: implicitWidth
+                height: implicitHeight
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    color: "transparent"
+                }
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    ToolButton{
+                        text: qsTr("_")
+                        activeFocusOnTab: false
+                    }
+                    ToolButton{
+                        text: qsTr("x")
+                        activeFocusOnTab: false
+                    }
+                }
             }
         }
 
         Pane {
             id: pane
+            clip: true
+            padding: 0
             Layout.fillHeight: true
             Layout.fillWidth: true
-            focus: true
 
             InputField {
                 id: inputField
-                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.fill: parent
-                anchors.bottom: parent.bottom
+                focus: true
             }
         }
     }

@@ -4,7 +4,7 @@ import QtQuick.Controls 2.0
 
 FocusScope {
     id: inputField
-    anchors.centerIn: parent
+    anchors.fill: parent
     focus: true
 
     property alias loginButton: loginButton
@@ -14,7 +14,7 @@ FocusScope {
 
     ColumnLayout {
         id: layout
-        anchors.fill: parent
+        anchors.centerIn: parent
         spacing: 0
 
         TextField {
@@ -30,7 +30,8 @@ FocusScope {
         }
         Button {
             id: loginButton
-            width: implicitWidth
+            padding: 0
+            activeFocusOnTab: false
             Layout.alignment: Qt.AlignCenter
             text: qsTr("Sign In")
         }
