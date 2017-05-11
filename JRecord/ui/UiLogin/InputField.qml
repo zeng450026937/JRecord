@@ -6,6 +6,9 @@ FocusScope {
     id: inputField
     anchors.fill: parent
     focus: true
+    Component.onCompleted: {
+        inputField.forceActiveFocus()
+    }
 
     property alias loginButton: loginButton
 
