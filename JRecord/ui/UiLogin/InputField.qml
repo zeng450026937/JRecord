@@ -35,7 +35,9 @@ FocusScope {
             id: loginButton
             padding: 0
             activeFocusOnTab: false
+            focusPolicy: Qt.NoFocus
             Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
             text: qsTr("Sign In")
         }
     }

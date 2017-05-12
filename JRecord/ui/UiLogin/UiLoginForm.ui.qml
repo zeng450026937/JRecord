@@ -7,9 +7,9 @@ Page {
     width: 450
     height: 350
     padding: 0
-    property alias loginButton: inputField.loginButton
-    property alias username: inputField.username
-    property alias password: inputField.password
+    property alias logo: logo
+    property alias inputField: inputField
+    property alias toolBar: toolBar
 
     ColumnLayout {
         id: columnLayout
@@ -17,7 +17,6 @@ Page {
         anchors.fill: parent
 
         Item {
-            id: name
             Layout.preferredHeight: parent.height * 5 / 9
             Layout.fillWidth: true
 
@@ -29,16 +28,20 @@ Page {
                     id: logo
                     anchors.centerIn: parent
                     text: qsTr("JRecord")
+                    font.family: "Verdana"
                     color: "white"
-                    font.bold : true
+                    font.bold: false
                     font.pointSize: 25
+                    clip: true
                 }
             }
             ToolBar {
+                id: toolBar
                 anchors.top: flatSurface.top
                 anchors.right: flatSurface.right
                 width: implicitWidth
                 height: implicitHeight
+                clip: true
 
                 background: Rectangle {
                     anchors.fill: parent
@@ -48,13 +51,17 @@ Page {
                     anchors.fill: parent
                     spacing: 0
 
-                    ToolButton{
+                    ToolButton {
                         text: qsTr("_")
+                        font.bold: true
                         activeFocusOnTab: false
+                        focusPolicy: Qt.NoFocus
                     }
-                    ToolButton{
+                    ToolButton {
                         text: qsTr("x")
+                        font.bold: true
                         activeFocusOnTab: false
+                        focusPolicy: Qt.NoFocus
                     }
                 }
             }

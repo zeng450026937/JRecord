@@ -14,6 +14,7 @@ Item {
             anchors.fill: parent
             renderTarget: Canvas.FramebufferObject
             renderStrategy: Canvas.Threaded
+            clip: true
 
             property bool initialised: false
             property var surface

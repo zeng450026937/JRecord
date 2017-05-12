@@ -80,19 +80,21 @@ void Account::onSignIned(QString account, bool ok, QString reason)
     if(account != username_)
         return;
 
+    this->setErrorString(reason);
+
     if(ok){
         this->setStatus(Login);
     }
     else{
         this->setStatus(Error);
     }
-
-    this->setErrorString(reason);
 }
 void Account::onSignOuted(QString account, bool ok, QString reason)
 {
     if(account != username_)
         return;
+
+    this->setErrorString(reason);
 
     if(ok){
         this->setStatus(Logout);
@@ -100,6 +102,4 @@ void Account::onSignOuted(QString account, bool ok, QString reason)
     else{
         this->setStatus(Error);
     }
-
-    this->setErrorString(reason);
 }
