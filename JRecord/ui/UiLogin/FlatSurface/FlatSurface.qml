@@ -31,6 +31,11 @@ Item {
             onPainted: {
                 requestPaint()
             }
+            onCanvasSizeChanged: {
+                if(initialised){
+                    surface.resize(canvasSize.width, canvasSize.height)
+                }
+            }
 
             Component.onCompleted: {
                 surface = new FlatSurface.FSS.Surface(canvas)

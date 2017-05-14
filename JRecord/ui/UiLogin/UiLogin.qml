@@ -11,6 +11,8 @@ Item {
     height: 350
     clip: true
 
+    signal loginSuccessed()
+
     Item {
         clip: true
         anchors.top: parent.top
@@ -95,17 +97,21 @@ Item {
 
                 TextField {
                     id: usernameField
+                    text: inputField.username
                     placeholderText: qsTr("Enter username")
                     Layout.alignment: Qt.AlignCenter
                     selectByMouse: true
                     focus: true
+                    onAccepted: passwordField.focus = true
                 }
                 TextField {
                     id: passwordField
+                    text: inputField.password
                     placeholderText: qsTr("Enter password")
                     Layout.alignment: Qt.AlignCenter
                     selectByMouse: true
-                    echoMode: TextInput.PasswordEchoOnEdit
+                    echoMode: TextInput.Password
+                    inputMethodHints: Qt.ImhHiddenText
                     onAccepted: loginButton.clicked()
                 }
 
@@ -120,7 +126,8 @@ Item {
 
                     Connections {
                         onClicked: {
-                            client.signIn()
+                            //client.signIn()
+                            loginSuccessed()
                         }
                     }
                 }
@@ -140,6 +147,7 @@ Item {
             }
             if(status == Account.Login){
                 console.log("Login")
+                loginSuccessed()
             }
             if(status == Account.Logouting){
                 console.log("Logouting")
