@@ -5,7 +5,5 @@
         <file>ui/UiLogin/FlatSurface/FlatSurface.qml</file>
         <file>ui/UiLogin/FlatSurface/fss.js</file>
         <file>ui/UiLogin/UiLogin.qml</file>
-        <file>ui/UiLogin/UiLoginForm.ui.qml</file>
-        <file>ui/UiLogin/InputField.qml</file>
     </qresource>
 </RCC>
