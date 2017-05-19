@@ -1,5 +1,6 @@
 #include "nd_account.h"
 
+#include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QSslError>
@@ -9,13 +10,27 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
+#include <QtConcurrent>
+#include <QTimer>
 #include <QDebug>
 
+
 NdAccount::NdAccount(QObject *parent)
-    :QObject(parent)
+    : QObject(parent),
+      manager(new QNetworkAccessManager(this))
 {
-    QObject::connect(&manager, SIGNAL(finished(QNetworkReply*)),
+    QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
                      SLOT(requestFinished(QNetworkReply*)),Qt::QueuedConnection);
+
+    QTimer::singleShot(1000,[](){
+        QtConcurrent::run([](){
+            //QNetworkAccessManager will take long time to excute at first call
+            //make a first call in threaded
+            //see QTBUG-10106
+            QNetworkAccessManager m;
+            m.post(QNetworkRequest(),QByteArray());
+        });
+    });
 }
 
 NdAccount::~NdAccount()
@@ -123,13 +138,13 @@ void NdAccount::doRequest(int method, int command, const QByteArray &data)
 
     switch(method){
     case POST:
-        reply = manager.post(request,data);
+        reply = manager->post(request,data);
         break;
     case GET:
-        reply = manager.get(request);
+        reply = manager->get(request);
         break;
     case DELETE:
-        reply = manager.deleteResource(request);
+        reply = manager->deleteResource(request);
         break;
     }
 

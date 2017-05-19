@@ -18,10 +18,10 @@ public:
     virtual void process() = 0;
 };
 
-class TextMessageData
+class TextMessagePrivate
 {
 public:
-    TextMessageData() {}
+    TextMessagePrivate() {}
 
     QString command;
     QString result;
@@ -29,6 +29,7 @@ public:
 };
 class TextMessage : public MessagePacket
 {
+    Q_DECLARE_PRIVATE(TextMessage)
 public:
     TextMessage(QString msg);
     ~TextMessage();
@@ -37,15 +38,15 @@ public:
 
     static QByteArray makeMessage(QString sender, QString receiver, QString command, QVariantMap data);
 public:
-    TextMessageData* d_ptr;
+    QScopedPointer<TextMessagePrivate> d_ptr;
 private:
     void parse(QString msg);
 };
 
-class BinaryMessageData
+class BinaryMessagePrivate
 {
 public:
-    BinaryMessageData():
+    BinaryMessagePrivate():
         type(0),
         type_size(4),
         sender(""),
@@ -92,7 +93,7 @@ public:
     MessageType type() override { return Binary; }
     void process() override;
 public:
-    BinaryMessageData* d_ptr;
+    QScopedPointer<BinaryMessagePrivate> d_ptr;
 private:
     void parse(QByteArray msg);
 };

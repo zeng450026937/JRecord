@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QQmlExtensionPlugin>
+class QJSEngine;
 
 class RecordServicePlugin : public QQmlExtensionPlugin
 {
@@ -9,4 +10,5 @@ class RecordServicePlugin : public QQmlExtensionPlugin
 
 public:
     void registerTypes(const char *uri);
+
 };

@@ -14,12 +14,6 @@ public:
 protected:
     void run() override;
 
-signals:
-    void commandReceived();
-    void binaryReceived();
-
-public slots:
-
 private:
     MessageQueue* q_;
 };

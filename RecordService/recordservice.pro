@@ -1,6 +1,6 @@
 TEMPLATE = lib
 TARGET = RecordService
-QT += qml quick websockets concurrent
+QT += qml quick websockets concurrent sql
 CONFIG += plugin c++11
 
 TARGET = $$qtLibraryTarget($$TARGET)
@@ -15,7 +15,11 @@ SOURCES += \
     websocket/websocket_p.cpp \
     websocket/message_processor.cpp \
     websocket/message_queue.cpp \
-    websocket/message_packet.cpp
+    websocket/message_packet.cpp \
+    model/fileentrymodel.cpp \
+    model/account_model.cpp \
+    model/device_model.cpp \
+    sql_initialize.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -25,7 +29,11 @@ HEADERS += \
     websocket/websocket_p.h \
     websocket/message_processor.h \
     websocket/message_queue.h \
-    websocket/message_packet.h
+    websocket/message_packet.h \
+    model/fileentrymodel.h \
+    model/account_model.h \
+    model/device_model.h \
+    sql_initialize.h
 
 DISTFILES = qmldir
 

@@ -3,9 +3,9 @@
 #include "message_queue.h"
 #include "message_processor.h"
 
-WebSocketPrivate::WebSocketPrivate(WebSocket* q_p, QObject *parent):
+WebSocketPrivate::WebSocketPrivate(WebSocket* q, QObject *parent):
     QObject(parent),
-    q_ptr(q_p),
+    q_ptr(q),
     socket(new QWebSocket),
     queue_(new MessageQueue)
 {

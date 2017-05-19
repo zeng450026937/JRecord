@@ -2,7 +2,10 @@
 #define ND_ACCOUNT_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
+#include <QMap>
+
+class QNetworkAccessManager;
+class QNetworkReply;
 
 class NdAccount : public QObject
 {
@@ -53,7 +56,7 @@ private:
     QString hmacSha1(QByteArray key, QByteArray baseString);
 
 private:
-    QNetworkAccessManager manager;
+    QNetworkAccessManager* manager;
     QMap<QNetworkReply *, int> currentRequest;
 
     const QString HOST = "https://aqapi.101.com";

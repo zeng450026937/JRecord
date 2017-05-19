@@ -42,6 +42,7 @@ ApplicationWindow {
 
     Connections {
         target: sceneLoader.item
+        ignoreUnknownSignals: true
         onLoginSuccessed: {
             console.log("login successed")
             sceneLoader.state = "HOME"
@@ -49,6 +50,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        sceneLoader.state = "LOGIN"
+        sceneLoader.state = "HOME"
     }
 }

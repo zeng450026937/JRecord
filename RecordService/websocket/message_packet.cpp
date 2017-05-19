@@ -4,13 +4,13 @@
 #include <QDebug>
 
 TextMessage::TextMessage(QString msg):
-    d_ptr(new TextMessageData)
+    d_ptr(new TextMessagePrivate)
 {
     //this->parse(msg);
 }
 TextMessage::~TextMessage()
 {
-    delete d_ptr;
+
 }
 
 void TextMessage::process()
@@ -24,7 +24,7 @@ void TextMessage::parse(QString msg)
     QJsonDocument jsonDocument  = QJsonDocument::fromJson(msg.toUtf8(), &error);
 
     if(error.error == QJsonParseError::NoError){
-        if(jsonDocument .isObject()){
+        if(jsonDocument.isObject()){
             QVariantMap content = jsonDocument.toVariant().toMap();
             d_ptr->result = content.value("RESULT").toString();
             d_ptr->data = content.value("DATA").toMap();
@@ -51,13 +51,13 @@ QByteArray TextMessage::makeMessage(QString sender, QString receiver, QString co
 }
 
 BinaryMessage::BinaryMessage(QByteArray msg):
-    d_ptr(new BinaryMessageData)
+    d_ptr(new BinaryMessagePrivate)
 {
     //this->parse(msg);
 }
 BinaryMessage::~BinaryMessage()
 {
-    delete d_ptr;
+
 }
 
 void BinaryMessage::process()

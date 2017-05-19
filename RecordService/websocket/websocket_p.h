@@ -15,12 +15,16 @@ class WebSocketPrivate : public QObject
     Q_DECLARE_PUBLIC(WebSocket)
 
 public:
-    explicit WebSocketPrivate(WebSocket* q_p, QObject *parent = Q_NULLPTR);
+    explicit WebSocketPrivate(WebSocket* q, QObject *parent = Q_NULLPTR);
     ~WebSocketPrivate();
+
+    WebSocket* const q_ptr;
 
     QString url;
     WebSocket::Status status;
     QWebSocket* socket;
+    MessageQueue* queue_;
+    MessageProcessor* processor_;
 
 private Q_SLOTS:
     void onConnected();
@@ -28,10 +32,6 @@ private Q_SLOTS:
     void onTextMessageReceived(QString message);
     void onBinaryMessageReceived(QByteArray &message);
 
-private:
-    WebSocket* const q_ptr;
-    MessageQueue* queue_;
-    MessageProcessor* processor_;
 };
 
 #endif // WEBSOCKET_P_H

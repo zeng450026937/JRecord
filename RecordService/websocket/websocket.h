@@ -12,6 +12,7 @@ class WebSocket : public QObject
     Q_DECLARE_PRIVATE(WebSocket)
 
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_ENUM(Status)
 
 public:
     explicit WebSocket(QObject *parent = Q_NULLPTR);
@@ -23,7 +24,6 @@ public:
         Closed,
         Error
     };
-    Q_ENUM(Status)
 
     Q_INVOKABLE void socketConnect();
     Q_INVOKABLE void socketDisconnect();
@@ -41,6 +41,7 @@ private:
     void setStatus(Status status);
 
 protected:
+    WebSocket(WebSocketPrivate* d, QObject *parent = Q_NULLPTR);
     QScopedPointer<WebSocketPrivate> d_ptr;
 
 };

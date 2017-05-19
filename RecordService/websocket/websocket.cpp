@@ -9,6 +9,13 @@ WebSocket::WebSocket(QObject *parent) :
 
 }
 
+WebSocket::WebSocket(WebSocketPrivate* d, QObject *parent) :
+    QObject(parent),
+    d_ptr(d)
+{
+
+}
+
 QString WebSocket::url() const
 {
     return d_func()->url;

@@ -11,7 +11,7 @@ Item {
     height: 350
     clip: true
 
-    signal loginSuccessed()
+    signal loginSuccessed
 
     Item {
         clip: true
@@ -24,14 +24,35 @@ Item {
             id: flatSurface
             clip: true
             anchors.fill: parent
+
+            MouseArea {
+                id: mouseArea
+                property int xMouse
+                property int yMouse
+                property int deltaX
+                property int deltaY
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton
+                onPressed: {
+                    xMouse = mouse.x
+                    yMouse = mouse.y
+                }
+                onPositionChanged: {
+                    deltaX = mouse.x-xMouse
+                    deltaY = mouse.y-yMouse
+                    ApplicationWindow.window.setX(ApplicationWindow.window.x + deltaX)
+                    ApplicationWindow.window.setY(ApplicationWindow.window.y + deltaY)
+                }
+            }
+
         }
-        Text {
+        Label {
             id: logo
             anchors.centerIn: parent
             text: qsTr("JRecord")
             font.family: "Verdana"
             color: "white"
-            font.bold: false
+            font.bold: true
             font.pointSize: 25
             clip: true
         }
@@ -53,6 +74,7 @@ Item {
 
                 ToolButton {
                     text: qsTr("_")
+                    clip: true
                     font.bold: true
                     activeFocusOnTab: false
                     focusPolicy: Qt.NoFocus
@@ -60,6 +82,7 @@ Item {
                 }
                 ToolButton {
                     text: qsTr("x")
+                    clip: true
                     font.bold: true
                     activeFocusOnTab: false
                     focusPolicy: Qt.NoFocus
@@ -78,8 +101,8 @@ Item {
         anchors.bottom: parent.bottom
         height: parent.height * 4 / 9
 
-        property string username: usernameField.text
-        property string password: passwordField.text
+        property alias username: usernameField.text
+        property alias password: passwordField.text
 
         property alias loginButton: loginButton
 
@@ -97,6 +120,7 @@ Item {
 
                 TextField {
                     id: usernameField
+                    clip: true
                     text: inputField.username
                     placeholderText: qsTr("Enter username")
                     Layout.alignment: Qt.AlignCenter
@@ -106,6 +130,7 @@ Item {
                 }
                 TextField {
                     id: passwordField
+                    clip: true
                     text: inputField.password
                     placeholderText: qsTr("Enter password")
                     Layout.alignment: Qt.AlignCenter
@@ -117,6 +142,7 @@ Item {
 
                 Button {
                     id: loginButton
+                    clip: true
                     padding: 0
                     activeFocusOnTab: false
                     focusPolicy: Qt.NoFocus
@@ -126,7 +152,7 @@ Item {
 
                     Connections {
                         onClicked: {
-                            //client.signIn()
+                            //Account.signIn()
                             loginSuccessed()
                         }
                     }
@@ -136,11 +162,19 @@ Item {
 
     }
 
+    Binding {
+        target: Account
+        property: "username"
+        value: inputField.username
+    }
+    Binding {
+        target: Account
+        property: "password"
+        value: inputField.password
+    }
 
-    Account {
-        id: client
-        username: inputField.username
-        password: inputField.password
+    Connections {
+        target: Account
         onStatusChanged: {
             if(status == Account.Logining){
                 console.log("Logining")
@@ -156,7 +190,7 @@ Item {
                 console.log("Logout")
             }
             if(status == Account.Error){
-                console.log("Error",client.errorString)
+                console.log("Error")
                 popup.open()
             }
         }
@@ -164,6 +198,7 @@ Item {
 
     Popup {
         id: popup
+        clip: true
         modal: true
         focus: true
         width: parent.width
@@ -178,7 +213,7 @@ Item {
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: client.errorString
+            text: Account.errorString
         }
     }
 }

@@ -6,5 +6,8 @@
         <file>ui/UiLogin/FlatSurface/fss.js</file>
         <file>ui/UiLogin/UiLogin.qml</file>
         <file>ui/UiHome/UiHome.qml</file>
+        <file>ui/UiHome/UiRecord.qml</file>
+        <file>ui/UiHome/UiFile.qml</file>
+        <file>ui/UiHome/UiSetting.qml</file>
     </qresource>
 </RCC>
