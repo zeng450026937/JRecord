@@ -33,7 +33,8 @@ HEADERS += \
     model/fileentrymodel.h \
     model/account_model.h \
     model/device_model.h \
-    sql_initialize.h
+    sql_initialize.h \
+    protocol.h
 
 DISTFILES = qmldir
 
