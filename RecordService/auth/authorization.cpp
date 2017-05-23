@@ -63,7 +63,7 @@ void Authorization::setSocket(MessageSocket *socket)
 {
     Q_D(Authorization);
     if(d->socket)
-        this->disconnect(d->socket);
+        d->socket->disconnect(d);
 
     d->socket = socket;
     connect(d->socket, SIGNAL(connected()),

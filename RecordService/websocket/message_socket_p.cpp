@@ -7,11 +7,13 @@
 
 MessageSocketPrivate::MessageSocketPrivate(MessageSocket *q) :
     q_ptr(q),
-    socket(new QWebSocket),
+    socket(Q_NULLPTR),
     transport(Q_NULLPTR),
     process(Q_NULLPTR),
-    counter(0)
+    ref(0)
 {
+    socket = new QWebSocket(QStringLiteral(""),QWebSocketProtocol::VersionLatest,q_ptr);
+
     qRegisterMetaType<QByteArray>();
 
     QObject::connect(socket, SIGNAL(connected()),

@@ -9,7 +9,7 @@ class ProcessThread;
 class MessageSocketPrivate;
 
 //to avoid process SIGNAL/SLOT in main thread
-//move MessageSocket to other event thread is recommended
+//create/move MessageSocket in/to other event thread is recommended
 class MessageSocket : public QObject
 {
     Q_OBJECT

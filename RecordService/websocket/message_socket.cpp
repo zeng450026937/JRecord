@@ -5,17 +5,7 @@
 #include <QWebSocket>
 #include <QDebug>
 
-static int32_t gMessageSocketInstanceCounter = 0;
-
-MessageSocket* GetMessageSocket(){
-    MessageSocket* self(NULL);
-    self = new MessageSocket();
-    if (self != NULL) {
-        self->AddRef();  // First reference.  Released in MessageSocket::Delete.
-        gMessageSocketInstanceCounter++;
-    }
-    return self;
-}
+static MessageSocket* gMessageSocket = Q_NULLPTR;
 
 MessageSocket::MessageSocket(QObject *parent) :
     QObject(parent),
@@ -51,7 +41,17 @@ void MessageSocket::close()
 
 MessageSocket *MessageSocket::CreateInstance()
 {
-    return GetMessageSocket();
+    if(gMessageSocket == Q_NULLPTR){
+        gMessageSocket = new MessageSocket();
+        if(gMessageSocket)
+            gMessageSocket->AddRef();
+        else
+            qDebug()<<QStringLiteral("create message socket failed.");
+    }
+    else{
+        gMessageSocket->AddRef();
+    }
+    return gMessageSocket;
 }
 
 bool MessageSocket::DeleteInstance(MessageSocket *instance)
@@ -63,7 +63,7 @@ bool MessageSocket::DeleteInstance(MessageSocket *instance)
     instance = NULL;
 
     if(ref != 0) {
-        qDebug()<<"Delete did not release the very last reference.";
+        qDebug()<<QStringLiteral("Delete did not release the very last reference.");
     }
 
     return true;
@@ -105,7 +105,7 @@ void MessageSocket::setTransportThread(TransportThread *transport)
 {
     Q_D(MessageSocket);
     if(d->transport)
-        this->disconnect(d->transport);
+        d->transport->disconnect(d);
     d->transport = transport;
     connect(d->transport, SIGNAL(messageTransported(QString)),
             d, SLOT(sendTextMessage(QString)));
