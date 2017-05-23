@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QUrl>
 
+class QThread;
 class TransportThread;
 class ProcessThread;
 class MessageSocket;
@@ -21,7 +22,7 @@ public:
 
     MessageSocket *q_ptr;
     QWebSocket *socket;
-    QUrl url;
+    QThread *event_thread;//event thread
     MessageSocket::Status status;
     TransportThread *transport;
     ProcessThread *process;

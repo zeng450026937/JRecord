@@ -15,10 +15,9 @@ class MessageSocket : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(MessageSocket)
     Q_DECLARE_PRIVATE(MessageSocket)
-    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
 public:
-    static MessageSocket *CreateInstance();
+    static MessageSocket *CreateInstance(bool multithread);
     static bool DeleteInstance(MessageSocket* instance);
 
     int AddRef();
@@ -33,8 +32,6 @@ public:
     };
     Q_ENUM(Status)
 
-    QUrl url() const;
-
     void setTransportThread(TransportThread *transport);
     TransportThread *transportThread() const;
 
@@ -44,17 +41,14 @@ public:
 Q_SIGNALS:
     void connected();
     void disconnected();
-
-    void urlChanged(QUrl url);
     void statusChanged(Status status);
 
 public Q_SLOTS:
     void open(const QNetworkRequest &authorization);
     void close();
-    void setUrl(const QUrl &url);
 
 protected:
-    explicit MessageSocket(QObject *parent = Q_NULLPTR);
+    explicit MessageSocket(bool multithread = true, QObject *parent = Q_NULLPTR);
     MessageSocket(MessageSocketPrivate *d, QObject *parent = Q_NULLPTR);
     QScopedPointer<MessageSocketPrivate> d_ptr;
 };

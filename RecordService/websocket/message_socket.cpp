@@ -7,11 +7,16 @@
 
 static MessageSocket* gMessageSocket = Q_NULLPTR;
 
-MessageSocket::MessageSocket(QObject *parent) :
+MessageSocket::MessageSocket(bool multithread, QObject *parent) :
     QObject(parent),
     d_ptr(new MessageSocketPrivate(this))
 {
-
+    Q_D(MessageSocket);
+    if(multithread){
+        d->event_thread = new QThread();
+        this->moveToThread(d->event_thread);
+        d->event_thread->start();
+    }
 }
 
 MessageSocket::MessageSocket(MessageSocketPrivate *d, QObject *parent) :
@@ -39,10 +44,10 @@ void MessageSocket::close()
     }
 }
 
-MessageSocket *MessageSocket::CreateInstance()
+MessageSocket *MessageSocket::CreateInstance(bool multithread)
 {
     if(gMessageSocket == Q_NULLPTR){
-        gMessageSocket = new MessageSocket();
+        gMessageSocket = new MessageSocket(multithread);
         if(gMessageSocket)
             gMessageSocket->AddRef();
         else
@@ -85,20 +90,6 @@ int MessageSocket::Release()
     }
 
     return new_ref;
-}
-
-QUrl MessageSocket::url() const
-{
-    return d_func()->url;
-}
-
-void MessageSocket::setUrl(const QUrl &url)
-{
-    Q_D(MessageSocket);
-    if(url != d->url){
-        d->url = url;
-        Q_EMIT urlChanged(d->url);
-    }
 }
 
 void MessageSocket::setTransportThread(TransportThread *transport)

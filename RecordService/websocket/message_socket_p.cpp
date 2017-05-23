@@ -8,6 +8,7 @@
 MessageSocketPrivate::MessageSocketPrivate(MessageSocket *q) :
     q_ptr(q),
     socket(Q_NULLPTR),
+    event_thread(Q_NULLPTR),
     transport(Q_NULLPTR),
     process(Q_NULLPTR),
     ref(0)
