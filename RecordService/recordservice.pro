@@ -11,30 +11,65 @@ SOURCES += \
     recordservice_plugin.cpp \
     account/account.cpp \
     account/nd_account.cpp \
-    websocket/websocket.cpp \
-    websocket/websocket_p.cpp \
-    websocket/message_processor.cpp \
     websocket/message_queue.cpp \
-    websocket/message_packet.cpp \
     model/fileentrymodel.cpp \
     model/account_model.cpp \
     model/device_model.cpp \
-    sql_initialize.cpp
+    sql_initialize.cpp \
+    websocket/message_socket.cpp \
+    websocket/message_socket_p.cpp \
+    conference/conference.cpp \
+    auth/authorization.cpp \
+    auth/authorization_p.cpp \
+    conference/conference_p.cpp \
+    user/userlist.cpp \
+    user/userlist_p.cpp \
+    user/user.cpp \
+    user/user_p.cpp \
+    user/devicedescription.cpp \
+    websocket/textmessage.cpp \
+    websocket/textmessage_p.cpp \
+    websocket/binarymessage.cpp \
+    websocket/binarymessage_p.cpp \
+    websocket/message_thread.cpp \
+    websocket/message_thread_p.cpp \
+    websocket/transport_thread.cpp \
+    websocket/transport_thread_p.cpp \
+    websocket/process_thread.cpp \
+    websocket/process_thread_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
     account/account.h \
     account/nd_account.h \
-    websocket/websocket.h \
-    websocket/websocket_p.h \
-    websocket/message_processor.h \
     websocket/message_queue.h \
     websocket/message_packet.h \
     model/fileentrymodel.h \
     model/account_model.h \
     model/device_model.h \
     sql_initialize.h \
-    protocol.h
+    protocol.h \
+    websocket/message_socket.h \
+    websocket/message_socket_p.h \
+    conference/conference.h \
+    auth/authorization.h \
+    auth/authorization_p.h \
+    conference/conference_p.h \
+    user/userlist.h \
+    user/userlist_p.h \
+    user/user.h \
+    user/user_p.h \
+    user/devicedescription.h \
+    websocket/textmessage.h \
+    websocket/textmessage_p.h \
+    websocket/binarymessage.h \
+    websocket/binarymessage_p.h \
+    websocket/message_thread.h \
+    websocket/message_thread_p.h \
+    websocket/transport_thread.h \
+    websocket/transport_thread_p.h \
+    websocket/process_thread.h \
+    websocket/process_thread_p.h
 
 DISTFILES = qmldir
 
