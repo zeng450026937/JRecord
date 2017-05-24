@@ -28,6 +28,7 @@ public:
 
 Q_SIGNALS:
     void authorizing(const QNetworkRequest &auth);
+    void authorizing(const QUrl &url);
 
 private Q_SLOTS:
     void onConnected();

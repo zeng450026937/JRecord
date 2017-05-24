@@ -5,17 +5,24 @@
 #include <QWebSocket>
 #include <QDebug>
 
-static MessageSocket* gMessageSocket = Q_NULLPTR;
-
 MessageSocket::MessageSocket(bool multithread, QObject *parent) :
     QObject(parent),
     d_ptr(new MessageSocketPrivate(this))
 {
     Q_D(MessageSocket);
     if(multithread){
-        d->event_thread = new QThread();
+        d->event_thread = new QThread(this);
         this->moveToThread(d->event_thread);
         d->event_thread->start();
+    }
+}
+
+MessageSocket::~MessageSocket()
+{
+    Q_D(MessageSocket);
+    if(d->event_thread && d->event_thread->isRunning()){
+        d->event_thread->quit();
+        d->event_thread->wait(3000);
     }
 }
 
@@ -24,6 +31,14 @@ MessageSocket::MessageSocket(MessageSocketPrivate *d, QObject *parent) :
     d_ptr(d)
 {
 
+}
+
+void MessageSocket::open(const QUrl &url)
+{
+    Q_D(MessageSocket);
+    d->socket->open(url);
+    d->status = Connecting;
+    Q_EMIT statusChanged(d->status);
 }
 
 void MessageSocket::open(const QNetworkRequest &authorization)
@@ -42,54 +57,6 @@ void MessageSocket::close()
         d->status = Closing;
         Q_EMIT statusChanged(d->status);
     }
-}
-
-MessageSocket *MessageSocket::CreateInstance(bool multithread)
-{
-    if(gMessageSocket == Q_NULLPTR){
-        gMessageSocket = new MessageSocket(multithread);
-        if(gMessageSocket)
-            gMessageSocket->AddRef();
-        else
-            qDebug()<<QStringLiteral("create message socket failed.");
-    }
-    else{
-        gMessageSocket->AddRef();
-    }
-    return gMessageSocket;
-}
-
-bool MessageSocket::DeleteInstance(MessageSocket *instance)
-{
-    if(instance == NULL)
-        return false;
-
-    int ref = instance->Release();
-    instance = NULL;
-
-    if(ref != 0) {
-        qDebug()<<QStringLiteral("Delete did not release the very last reference.");
-    }
-
-    return true;
-}
-
-int MessageSocket::AddRef()
-{
-    Q_D(MessageSocket);
-    return ++d->ref;
-}
-
-int MessageSocket::Release()
-{
-    Q_D(MessageSocket);
-    int new_ref = --d->ref;
-
-    if (new_ref == 0) {
-        delete this;
-    }
-
-    return new_ref;
 }
 
 void MessageSocket::setTransportThread(TransportThread *transport)

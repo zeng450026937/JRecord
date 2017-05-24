@@ -10,8 +10,7 @@ MessageSocketPrivate::MessageSocketPrivate(MessageSocket *q) :
     socket(Q_NULLPTR),
     event_thread(Q_NULLPTR),
     transport(Q_NULLPTR),
-    process(Q_NULLPTR),
-    ref(0)
+    process(Q_NULLPTR)
 {
     socket = new QWebSocket(QStringLiteral(""),QWebSocketProtocol::VersionLatest,q_ptr);
 
@@ -32,8 +31,6 @@ MessageSocketPrivate::~MessageSocketPrivate()
     if(socket){
         if(socket->isValid())
             socket->close(QWebSocketProtocol::CloseCodeNormal, QStringLiteral("client closed"));
-
-        delete socket;
     }
 }
 

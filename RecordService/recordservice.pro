@@ -36,7 +36,9 @@ SOURCES += \
     websocket/transport_thread.cpp \
     websocket/transport_thread_p.cpp \
     websocket/process_thread.cpp \
-    websocket/process_thread_p.cpp
+    websocket/process_thread_p.cpp \
+    service/service_base.cpp \
+    service/service_base_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -69,7 +71,9 @@ HEADERS += \
     websocket/transport_thread.h \
     websocket/transport_thread_p.h \
     websocket/process_thread.h \
-    websocket/process_thread_p.h
+    websocket/process_thread_p.h \
+    service/service_base.h \
+    service/service_base_p.h
 
 DISTFILES = qmldir
 

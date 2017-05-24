@@ -7,7 +7,8 @@ MessageQueue::MessageQueue():
 }
 MessageQueue::~MessageQueue()
 {
-
+    this->setAbort(true);
+    this->flush();
 }
 void MessageQueue::push(QSharedPointer<MessagePacket> t)
 {

@@ -8,7 +8,7 @@ Authorization::Authorization(QObject *parent) :
     QObject(parent),
     d_ptr(new AuthorizationPrivate(this))
 {
-    qRegisterMetaType<QNetworkRequest>();
+
 }
 
 QString Authorization::userId() const
@@ -39,7 +39,7 @@ bool Authorization::authorized() const
 void Authorization::authorize()
 {
     Q_D(Authorization);
-
+#if(0)
     QVariantMap data;
     data.insert(QStringLiteral("userId"), d->userId);
     data.insert(QStringLiteral("userGroup"), d->userGroup);
@@ -57,27 +57,9 @@ void Authorization::authorize()
     request.setRawHeader("Authorization", auth->make().toUtf8());
 
     Q_EMIT d->authorizing(request);
-}
-
-void Authorization::setSocket(MessageSocket *socket)
-{
-    Q_D(Authorization);
-    if(d->socket)
-        d->socket->disconnect(d);
-
-    d->socket = socket;
-    connect(d->socket, SIGNAL(connected()),
-            d, SLOT(onConnected()));
-    connect(d->socket, SIGNAL(disconnected()),
-            d, SLOT(onDisConnected()));
-    connect(d, SIGNAL(authorizing(QNetworkRequest)),
-            d->socket, SLOT(open(QNetworkRequest)));
-}
-
-MessageSocket *Authorization::socket()
-{
-    Q_D(Authorization);
-    return d->socket;
+#else
+    Q_EMIT d->authorizing(QUrl("ws://localhost:1234"));//test
+#endif
 }
 
 void Authorization::setuserId(QString userId)

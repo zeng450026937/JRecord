@@ -27,8 +27,6 @@ public:
     TransportThread *transport;
     ProcessThread *process;
 
-    int ref;
-
 public Q_SLOTS:
     void onConnected();
     void onDisconnected();

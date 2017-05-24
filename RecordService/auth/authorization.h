@@ -29,9 +29,6 @@ public:
 
     Q_INVOKABLE void authorize();
 
-    void setSocket(MessageSocket *socket);
-    MessageSocket *socket();
-
 public Q_SLOTS:
     void setuserId(QString userId);
     void setUserGroup(QString userGroup);
