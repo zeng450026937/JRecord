@@ -22,6 +22,7 @@ public:
         filesTableName(QStringLiteral("Files")),
         downloadsTableName(QStringLiteral("Downloads"))
     {}
+
     ~SqlInitialize(){}
 
     const QString accountTypeTableName;

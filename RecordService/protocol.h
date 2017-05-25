@@ -66,7 +66,7 @@ Conferencs
 'title' TEXT NOT NULL,
 'description' TEXT NOT NULL,
 'members' TEXT NOT NULL,
-'members' TEXT NOT NULL,
+'userlist' TEXT NOT NULL,
 'create_time' TEXT NOT NULL,
 'update_time' TEXT NOT NULL,
 'completed' INTEGER DEFAULT '0',
