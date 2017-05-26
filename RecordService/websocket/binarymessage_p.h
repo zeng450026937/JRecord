@@ -7,6 +7,7 @@ class BinaryMessage;
 
 class BinaryMessagePrivate
 {
+    Q_DISABLE_COPY(BinaryMessagePrivate)
     Q_DECLARE_PUBLIC(BinaryMessage)
 public:
     BinaryMessagePrivate(BinaryMessage* q);
@@ -23,7 +24,7 @@ public:
 
     QByteArray data;
 
-private:
+protected:
     const int mode_size;
     const int from_size;
     const int uuid_size;

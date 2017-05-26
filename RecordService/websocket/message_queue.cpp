@@ -1,10 +1,13 @@
 #include "message_queue.h"
+#include "message_queue_p.h"
 
-MessageQueue::MessageQueue():
-    abort_(false)
+MessageQueue::MessageQueue(QObject *parent) :
+    QObject(parent),
+    d_ptr(new MessageQueuePrivate(this))
 {
 
 }
+
 MessageQueue::~MessageQueue()
 {
     this->setAbort(true);
@@ -12,34 +15,38 @@ MessageQueue::~MessageQueue()
 }
 void MessageQueue::push(QSharedPointer<MessagePacket> t)
 {
-    QMutexLocker locker(&mutex_);
+    Q_D(MessageQueue);
+    QMutexLocker locker(&d->mutex);
 
-    if(abort_)
+    if(d->abort)
         return;
 
-    queue_.push_back(t);
-    cond_.wakeAll();
+    d->queue.push_back(t);
+    d->cond.wakeAll();
+
+    Q_EMIT sizeChanged(d->queue.size());
 }
 QSharedPointer<MessagePacket> MessageQueue::pop(bool block)
 {
-    QMutexLocker locker(&mutex_);
+    Q_D(MessageQueue);
+    QMutexLocker locker(&d->mutex);
 
     QSharedPointer<MessagePacket> t;
 
     for(;;){
-        if(abort_)
+        if(d->abort)
             break;
 
-        if(!queue_.isEmpty()){
-            t = queue_.front();
-            queue_.pop_front();
+        if(!d->queue.isEmpty()){
+            t = d->queue.front();
+            d->queue.pop_front();
             break;
         }
         else if(!block){
             break;
         }
         else{
-            cond_.wait(&mutex_);
+            d->cond.wait(&d->mutex);
         }
     }
 
@@ -47,29 +54,43 @@ QSharedPointer<MessagePacket> MessageQueue::pop(bool block)
 }
 void MessageQueue::flush()
 {
-    QMutexLocker locker(&mutex_);
-    queue_.clear();
+    Q_D(MessageQueue);
+    QMutexLocker locker(&d->mutex);
+    d->queue.clear();
 }
-bool MessageQueue::isEmpty()
+
+bool MessageQueue::abort()
 {
-    QMutexLocker locker(&mutex_);
-    return queue_.isEmpty();
+    QMutexLocker locker(&d_func()->mutex);
+    return d_func()->abort;
+}
+
+bool MessageQueue::empty()
+{
+    QMutexLocker locker(&d_func()->mutex);
+    return d_func()->queue.isEmpty();
 }
 
 int MessageQueue::size()
 {
-    QMutexLocker locker(&mutex_);
-    return queue_.size();
+    QMutexLocker locker(&d_func()->mutex);
+    return d_func()->queue.size();
 }
 
 void MessageQueue::setAbort(bool abort)
 {
-    QMutexLocker locker(&mutex_);
-    abort_ = abort;
-    cond_.wakeAll();
+    Q_D(MessageQueue);
+    QMutexLocker locker(&d_func()->mutex);
+
+    if(abort != d->abort){
+        d->abort = abort;
+        Q_EMIT abortChanged(d->abort);
+    }
 }
-bool MessageQueue::isAbort()
+
+MessageQueue::MessageQueue(MessageQueuePrivate *d, QObject *parent) :
+    QObject(parent),
+    d_ptr(d)
 {
-    QMutexLocker locker(&mutex_);
-    return abort_;
+
 }

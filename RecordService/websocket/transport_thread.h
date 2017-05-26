@@ -4,7 +4,6 @@
 #include "message_thread.h"
 
 class MessagePacket;
-class MessageQueue;
 class TransportThreadPrivate;
 
 class TransportThread : public MessageThread
@@ -16,8 +15,7 @@ public:
     explicit TransportThread(QObject *parent = 0);
     ~TransportThread();
 
-    void setQueue(MessageQueue *queue);
-    MessageQueue *queue();
+    void setSocket(QWebSocket *socket) override;
 
 Q_SIGNALS:
     void transportStarted();

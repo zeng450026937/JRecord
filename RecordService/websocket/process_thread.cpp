@@ -3,12 +3,13 @@
 #include "message_queue.h"
 #include "textmessage.h"
 #include "binarymessage.h"
+#include <QWebSocket>
 
 ProcessThread::ProcessThread(QObject *parent) :
     MessageThread(new ProcessThreadPrivate(this), parent)
 {
-    connect(this, SIGNAL(started()), SIGNAL(processStarted()));
-    connect(this, SIGNAL(finished()), SIGNAL(processStopped()));
+    QObject::connect(this, SIGNAL(started()), SIGNAL(processStarted()));
+    QObject::connect(this, SIGNAL(finished()), SIGNAL(processStopped()));
 }
 
 ProcessThread::~ProcessThread()
@@ -21,16 +22,20 @@ ProcessThread::~ProcessThread()
     }
 }
 
-void ProcessThread::setQueue(MessageQueue *queue)
+void ProcessThread::setSocket(QWebSocket *socket)
 {
     Q_D(ProcessThread);
-    d->queue = queue;
-}
+    if(d->socket){
+        QObject::disconnect(d->textConnection);
+        QObject::disconnect(d->binaryConnection);
+    }
 
-MessageQueue *ProcessThread::queue()
-{
-    Q_D(ProcessThread);
-    return d->queue;
+    d->textConnection = QObject::connect(socket, &QWebSocket::textMessageReceived,
+                     [this](const QString &message){ pushMessage(new TextMessage(message)); });
+    d->binaryConnection = QObject::connect(socket, &QWebSocket::binaryMessageReceived,
+                     [this](const QByteArray &message){ pushMessage(new BinaryMessage(message)); });
+
+    MessageThread::setSocket(socket);
 }
 
 void ProcessThread::pushMessage(MessagePacket *message)
@@ -45,7 +50,7 @@ void ProcessThread::run()
 {
     Q_D(ProcessThread);
     do {
-        if(d->queue == Q_NULLPTR || d->queue->isAbort())
+        if(d->queue == Q_NULLPTR || d->queue->abort())
             return;
 
         for(;;){
@@ -68,5 +73,5 @@ void ProcessThread::run()
             }
         }
 
-    }while (!d->queue->isAbort());
+    }while (!d->queue->abort());
 }

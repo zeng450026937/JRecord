@@ -4,7 +4,6 @@
 #include "message_thread.h"
 
 class MessagePacket;
-class MessageQueue;
 class ProcessThreadPrivate;
 
 class ProcessThread : public MessageThread
@@ -16,8 +15,7 @@ public:
     explicit ProcessThread(QObject *parent = 0);
     ~ProcessThread();
 
-    void setQueue(MessageQueue *queue);
-    MessageQueue *queue();
+    void setSocket(QWebSocket *socket) override;
 
 Q_SIGNALS:
     void processStarted();

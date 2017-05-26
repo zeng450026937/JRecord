@@ -28,8 +28,6 @@ Q_SIGNALS:
 
 protected:
     UserList(UserListPrivate *d, QObject *parent = 0);
-
-private:
     QScopedPointer<UserListPrivate> d_ptr;
 };
 

@@ -1,17 +1,23 @@
 #ifndef MESSAGE_QUEUE_H
 #define MESSAGE_QUEUE_H
 
-#include <QList>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QWaitCondition>
+#include <QObject>
 #include <QSharedPointer>
 
 #include "message_packet.h"
 
-class MessageQueue {
+class MessageQueuePrivate;
+
+class MessageQueue : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(MessageQueue)
+    Q_DECLARE_PRIVATE(MessageQueue)
+    Q_PROPERTY(bool abort READ abort WRITE setAbort NOTIFY abortChanged)
+    Q_PROPERTY(bool empty READ empty)
+    Q_PROPERTY(bool size READ size NOTIFY sizeChanged)
 public:
-    MessageQueue();
+    explicit MessageQueue(QObject *parent = 0);
     ~MessageQueue();
 
     void push(QSharedPointer<MessagePacket> t);
@@ -20,18 +26,20 @@ public:
 
     void flush();
 
-    bool isEmpty();
-
+    bool abort();
+    bool empty();
     int size();
 
-    void setAbort(bool abort = true);
-    bool isAbort();
+Q_SIGNALS:
+    void abortChanged(bool abort);
+    void sizeChanged(int size);
 
-private:
-    bool abort_;
-    QList<QSharedPointer<MessagePacket>> queue_;
-    QMutex mutex_;
-    QWaitCondition cond_;
+public Q_SLOTS:
+    void setAbort(bool abort);
+
+protected:
+    MessageQueue(MessageQueuePrivate *d, QObject *parent = 0);
+    QScopedPointer<MessageQueuePrivate> d_ptr;
 };
 
 #endif // MESSAGE_QUEUE_H

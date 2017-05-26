@@ -1,14 +1,15 @@
 #ifndef CONFERENCE_P_H
 #define CONFERENCE_P_H
 
-#include "auth/authorization_p.h"
+#include "client/client_p.h"
 #include "conference.h"
 #include <QDate>
 
 class User;
 
-class ConferencePrivate : public AuthorizationPrivate
+class ConferencePrivate : public ClientPrivate
 {
+    Q_DISABLE_COPY(ConferencePrivate)
     Q_DECLARE_PUBLIC(Conference)
 public:
     ConferencePrivate(Conference *q);

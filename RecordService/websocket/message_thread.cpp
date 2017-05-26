@@ -14,14 +14,24 @@ MessageThread::MessageThread(MessageThreadPrivate *d, QObject *parent) :
 {
 
 }
+void MessageThread::setQueue(MessageQueue *queue)
+{
+    Q_D(MessageThread);
+    d->queue = queue;
+}
 
-void MessageThread::setMessageSocket(MessageSocket *socket)
+MessageQueue *MessageThread::queue()
+{
+    Q_D(MessageThread);
+    return d->queue;
+}
+void MessageThread::setSocket(QWebSocket *socket)
 {
     Q_D(MessageThread);
     d->socket = socket;
 }
 
-MessageSocket *MessageThread::messageSocket()
+QWebSocket *MessageThread::socket()
 {
     Q_D(MessageThread);
     return d->socket;

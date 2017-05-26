@@ -1,41 +1,74 @@
 #ifndef SERVICE_BASE_H
 #define SERVICE_BASE_H
 
-#include <QThread>
+#include <QObject>
+#include <QNetworkRequest>
 
-class MessageSocket;
+class MessagePacket;
 class ServiceBasePrivate;
 
-class ServiceBase : public QThread
+class ServiceBase : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(ServiceBase)
     Q_DECLARE_PRIVATE(ServiceBase)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(QString errorString READ errorString)
+    Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
+
+    Q_PROPERTY(QString userId READ userId WRITE setuserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
+    Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
+    Q_PROPERTY(QString deviceType READ deviceType WRITE setDeviceType NOTIFY deviceTypeChanged)
+
 public:
-    static ServiceBase *GetInstance();
-    static bool DeleteInstance(ServiceBase *instance);
+    ServiceBase(QObject *parent = 0);
+    ~ServiceBase();
 
-    int AddRef();
-    int Release();
+    enum Status{
+        Connecting,
+        Open,
+        Closing,
+        Closed,
+        Error
+    };
+    Q_ENUM(Status)
 
-    //avariable when service is started.
-    MessageSocket *messageSocket();
+
+    Status status() const;
+    bool active() const;
+    QString errorString() const;
+    QUrl url() const;
+
+    QString userId() const;
+    QString userGroup() const;
+    QString userName() const;
+    QString deviceType() const;
+
+    void sendMessage(MessagePacket *message);
 
 public Q_SLOTS:
+    void setActive(bool active);
+    void setuserId(QString userId);
+    void setUserGroup(QString userGroup);
+    void setUserName(QString userName);
+    void setDeviceType(QString deviceType);
 
 Q_SIGNALS:
-    void serviceStarted();
-    void serviceStopped();
+    void statusChanged(Status status);
+    void activeChanged(bool active);
+    void userIdChanged(QString &userId);
+    void userGroupChanged(QString &userGroup);
+    void userNameChanged(QString &userName);
+    void deviceTypeChanged(QString &deviceType);
 
-private Q_SLOTS:
-    void onStarted();
-    void onFinished();
+    void open(const QUrl &url);
+    void open(const QNetworkRequest &authorization);
+    void close();
 
 protected:
-    void run() override;
-    ServiceBase(QObject *parent = 0);
     ServiceBase(ServiceBasePrivate *d, QObject *parent = 0);
-    ~ServiceBase();
     QScopedPointer<ServiceBasePrivate> d_ptr;
 };
 

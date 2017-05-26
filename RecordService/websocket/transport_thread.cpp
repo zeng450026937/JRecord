@@ -3,12 +3,13 @@
 #include "message_queue.h"
 #include "textmessage.h"
 #include "binarymessage.h"
+#include <QWebSocket>
 
 TransportThread::TransportThread(QObject *parent) :
     MessageThread(new TransportThreadPrivate(this), parent)
 {
-    connect(this, SIGNAL(started()), SIGNAL(transportStarted()));
-    connect(this, SIGNAL(finished()), SIGNAL(transportStopped()));
+    QObject::connect(this, SIGNAL(started()), SIGNAL(transportStarted()));
+    QObject::connect(this, SIGNAL(finished()), SIGNAL(transportStopped()));
 }
 
 TransportThread::~TransportThread()
@@ -21,16 +22,21 @@ TransportThread::~TransportThread()
     }
 }
 
-void TransportThread::setQueue(MessageQueue *queue)
+void TransportThread::setSocket(QWebSocket *socket)
 {
     Q_D(TransportThread);
-    d->queue = queue;
-}
 
-MessageQueue *TransportThread::queue()
-{
-    Q_D(TransportThread);
-    return d->queue;
+    if(d->socket){
+        QObject::disconnect(d->textConnection);
+        QObject::disconnect(d->binaryConnection);
+    }
+
+    d->textConnection = QObject::connect(this, SIGNAL(messageTransported(QString)),
+                     socket, SLOT(sendTextMessage(QString)));
+    d->binaryConnection = QObject::connect(this, SIGNAL(messageTransported(QByteArray)),
+                     socket, SLOT(sendBinaryMessage(QByteArray)));
+
+    MessageThread::setSocket(socket);
 }
 
 void TransportThread::pushMessage(MessagePacket *message)
@@ -45,7 +51,7 @@ void TransportThread::run()
 {
     Q_D(TransportThread);
     do {
-        if(d->queue == Q_NULLPTR || d->queue->isAbort())
+        if(d->queue == Q_NULLPTR || d->queue->abort())
             return;
 
         for(;;){
@@ -68,5 +74,5 @@ void TransportThread::run()
             }
         }
 
-    }while (!d->queue->isAbort());
+    }while (!d->queue->abort());
 }

@@ -1,7 +1,7 @@
 #include "conference_p.h"
 
 ConferencePrivate::ConferencePrivate(Conference *q) :
-    AuthorizationPrivate(q)
+    ClientPrivate(q)
 {
 
 }

@@ -1,13 +1,13 @@
 #ifndef CONFERENCE_H
 #define CONFERENCE_H
 
-#include "auth/authorization.h"
+#include "client/client.h"
 #include "user/user.h"
 #include <QQmlListProperty>
 
 class ConferencePrivate;
 
-class Conference : public Authorization
+class Conference : public Client
 {
     Q_OBJECT
     Q_DISABLE_COPY(Conference)

@@ -1,129 +1,154 @@
 #include "service_base.h"
 #include "service/service_base_p.h"
-
-#include "websocket/message_socket.h"
 #include "websocket/transport_thread.h"
 #include "websocket/process_thread.h"
 #include "websocket/message_queue.h"
-
-#include <QDebug>
-
-static ServiceBase *gServiceInstance = Q_NULLPTR;
-
-//static
-ServiceBase *ServiceBase::GetInstance()
-{
-    if(!gServiceInstance){
-        gServiceInstance = new ServiceBase();
-        if(!gServiceInstance)
-            gServiceInstance->AddRef();
-    }
-    else{
-        gServiceInstance->AddRef();
-    }
-    return gServiceInstance;
-}
-
-//static
-bool ServiceBase::DeleteInstance(ServiceBase *instance)
-{
-    if(!instance)
-        return false;
-
-    int ref = instance->Release();
-    instance = Q_NULLPTR;
-
-    if(ref != 0) {
-        qDebug()<<"Delete did not release the very last reference.";
-    }
-    return true;
-}
-
-int ServiceBase::AddRef()
-{
-    Q_D(ServiceBase);
-    return ++d->ref;
-}
-
-int ServiceBase::Release()
-{
-    Q_D(ServiceBase);
-    int new_ref = --d->ref;
-
-    if(new_ref == 0)
-        delete this;
-
-    return new_ref;
-}
-
-MessageSocket *ServiceBase::messageSocket()
-{
-    Q_D(ServiceBase);
-    return d->socket;
-}
-
-void ServiceBase::onStarted()
-{
-    Q_EMIT serviceStarted();
-}
-
-void ServiceBase::onFinished()
-{
-    Q_D(ServiceBase);
-    if(d->transport_queue)
-        delete d->transport_queue;
-    if(d->process_queue)
-        delete d->process_queue;
-    if(d->transport_thread)
-        delete d->transport_thread;
-    if(d->process_thread)
-        delete d->process_thread;
-    if(d->socket)
-        delete d->socket;
-
-    Q_EMIT serviceStopped();
-}
-
-void ServiceBase::run()
-{
-    Q_D(ServiceBase);
-    d->socket = new MessageSocket(true, Q_NULLPTR);
-    d->transport_thread = new TransportThread;
-    d->process_thread = new ProcessThread;
-    d->transport_queue = new MessageQueue;
-    d->process_queue = new MessageQueue;
-
-    d->transport_thread->setQueue(d->transport_queue);
-    d->process_thread->setQueue(d->process_queue);
-    d->socket->setTransportThread(d->transport_thread);
-    d->socket->setProcessThread(d->process_thread);
-
-    this->exec();
-}
+#include "websocket/textmessage.h"
 
 ServiceBase::ServiceBase(QObject *parent) :
-    QThread(parent),
+    QObject(parent),
     d_ptr(new ServiceBasePrivate(this))
 {
-    connect(this,SIGNAL(started()),this,SLOT(onStarted()));
-    connect(this,SIGNAL(finished()),this,SLOT(onFinished()));
 
-    this->start();
-}
-ServiceBase::ServiceBase(ServiceBasePrivate *d, QObject *parent) :
-    QThread(parent),
-    d_ptr(d)
-{
-    connect(this,SIGNAL(started()),this,SLOT(onStarted()));
-    connect(this,SIGNAL(finished()),this,SLOT(onFinished()));
-
-    this->start();
 }
 
 ServiceBase::~ServiceBase()
 {
-    if(this->isRunning()){
-        this->quit();
-        this->wait(3000);
+
+}
+
+bool ServiceBase::active() const
+{
+    return d_func()->active;
+}
+
+QString ServiceBase::errorString() const
+{
+    return d_func()->errorString;
+}
+
+QUrl ServiceBase::url() const
+{
+    return d_func()->url;
+}
+QString ServiceBase::userId() const
+{
+    return d_func()->userId;
+}
+
+QString ServiceBase::userGroup() const
+{
+    return d_func()->userGroup;
+}
+
+QString ServiceBase::userName() const
+{
+    return d_func()->userName;
+}
+
+QString ServiceBase::deviceType() const
+{
+    return d_func()->deviceType;
+}
+void ServiceBase::setActive(bool active)
+{
+    Q_D(ServiceBase);
+    if(active != d->active){
+        if(active){
+            d->transport_queue->setAbort(false);
+            d->process_queue->setAbort(false);
+
+            d->transport_thread->start();
+            d->process_thread->start();
+            d->socket_thread->start();
+            d->main_thread->start();
+
+            #if(1)
+                QVariantMap data;
+                data.insert(QStringLiteral("userId"), d->userId);
+                data.insert(QStringLiteral("userGroup"), d->userGroup);
+                data.insert(QStringLiteral("userName"), d->userName);
+                data.insert(QStringLiteral("deviceType"), d->deviceType);
+
+                QScopedPointer<TextMessage> auth(new TextMessage);
+                auth->setMode(QStringLiteral("auth"));
+                auth->setAction(QStringLiteral("login"));
+                auth->setData(data);
+
+                QNetworkRequest request(d->url);
+                request.setRawHeader("Accept", "application/json");
+                request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
+                request.setRawHeader("Authorization", auth->make().toUtf8());
+
+                Q_EMIT open(request);
+            #else
+                Q_EMIT open(d->url);
+            #endif
+        }
+        else{
+            d->transport_queue->setAbort(true);
+            d->process_queue->setAbort(true);
+
+            d->transport_thread->quit();
+            d->process_thread->quit();
+            d->socket_thread->quit();
+            d->main_thread->quit();
+            d->transport_thread->wait(3000);
+            d->process_thread->wait(3000);
+            d->socket_thread->wait(3000);
+            d->main_thread->wait(3000);
+
+            Q_EMIT close();
+        }
     }
 }
+void ServiceBase::setuserId(QString userId)
+{
+    Q_D(ServiceBase);
+    if(userId != d->userId){
+        d->userId = userId;
+        Q_EMIT userIdChanged(d->userId);
+    }
+}
+
+void ServiceBase::setUserGroup(QString userGroup)
+{
+    Q_D(ServiceBase);
+    if(userGroup != d->userGroup){
+        d->userGroup = userGroup;
+        Q_EMIT userGroupChanged(d->userGroup);
+    }
+}
+
+void ServiceBase::setUserName(QString userName)
+{
+    Q_D(ServiceBase);
+    if(userName != d->userName){
+        d->userName = userName;
+        Q_EMIT deviceTypeChanged(d->userName);
+    }
+}
+
+void ServiceBase::setDeviceType(QString deviceType)
+{
+    Q_D(ServiceBase);
+    if(deviceType != d->deviceType){
+        d->deviceType = deviceType;
+        Q_EMIT deviceTypeChanged(d->deviceType);
+    }
+}
+
+void ServiceBase::sendMessage(MessagePacket *message)
+{
+    Q_D(ServiceBase);
+    if(d->active)
+        d->transport_thread->pushMessage(message);
+}
+
+ServiceBase::ServiceBase(ServiceBasePrivate *d, QObject *parent) :
+    QObject(parent),
+    d_ptr(d)
+{
+
+}
+

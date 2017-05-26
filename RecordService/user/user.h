@@ -38,8 +38,6 @@ Q_SIGNALS:
 
 protected:
     User(UserPrivate *d, QObject *parent = 0);
-
-private:
     QScopedPointer<UserPrivate> d_ptr;
 };
 

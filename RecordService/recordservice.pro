@@ -16,11 +16,7 @@ SOURCES += \
     model/account_model.cpp \
     model/device_model.cpp \
     sql_initialize.cpp \
-    websocket/message_socket.cpp \
-    websocket/message_socket_p.cpp \
     conference/conference.cpp \
-    auth/authorization.cpp \
-    auth/authorization_p.cpp \
     conference/conference_p.cpp \
     user/userlist.cpp \
     user/userlist_p.cpp \
@@ -38,7 +34,13 @@ SOURCES += \
     websocket/process_thread.cpp \
     websocket/process_thread_p.cpp \
     service/service_base.cpp \
-    service/service_base_p.cpp
+    service/service_base_p.cpp \
+    websocket/message_queue_p.cpp \
+    user/devicedescription_p.cpp \
+    client/client.cpp \
+    client/client_p.cpp \
+    model/sql_initialize.cpp \
+    model/user_model.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -51,11 +53,7 @@ HEADERS += \
     model/device_model.h \
     sql_initialize.h \
     protocol.h \
-    websocket/message_socket.h \
-    websocket/message_socket_p.h \
     conference/conference.h \
-    auth/authorization.h \
-    auth/authorization_p.h \
     conference/conference_p.h \
     user/userlist.h \
     user/userlist_p.h \
@@ -73,7 +71,13 @@ HEADERS += \
     websocket/process_thread.h \
     websocket/process_thread_p.h \
     service/service_base.h \
-    service/service_base_p.h
+    service/service_base_p.h \
+    websocket/message_queue_p.h \
+    user/devicedescription_p.h \
+    client/client.h \
+    client/client_p.h \
+    model/sql_initialize.h \
+    model/user_model.h
 
 DISTFILES = qmldir
 

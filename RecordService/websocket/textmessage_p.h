@@ -8,6 +8,7 @@ class TextMessage;
 
 class TextMessagePrivate
 {
+    Q_DISABLE_COPY(TextMessagePrivate)
     Q_DECLARE_PUBLIC(TextMessage)
 public:
     TextMessagePrivate(TextMessage *q);

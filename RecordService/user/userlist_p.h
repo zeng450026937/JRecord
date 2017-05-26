@@ -9,6 +9,7 @@ class UserList;
 
 class UserListPrivate
 {
+    Q_DISABLE_COPY(UserListPrivate)
     Q_DECLARE_PUBLIC(UserList)
 public:
     UserListPrivate(UserList *q);

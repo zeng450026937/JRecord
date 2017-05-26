@@ -3,7 +3,8 @@
 
 #include <QThread>
 
-class MessageSocket;
+class QWebSocket;
+class MessageQueue;
 class MessageThreadPrivate;
 
 class MessageThread : public QThread
@@ -14,8 +15,11 @@ class MessageThread : public QThread
 public:
     explicit MessageThread(QObject *parent = 0);
 
-    void setMessageSocket(MessageSocket *socket);
-    MessageSocket *messageSocket();
+    void setQueue(MessageQueue *queue);
+    MessageQueue *queue();
+
+    virtual void setSocket(QWebSocket *socket);
+    QWebSocket *socket();
 
 protected:
     MessageThread(MessageThreadPrivate *d, QObject *parent = 0);

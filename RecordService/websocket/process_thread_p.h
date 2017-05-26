@@ -4,16 +4,17 @@
 #include "message_thread_p.h"
 #include "process_thread.h"
 
-class MessageQueue;
 class ProcessThread;
 
 class ProcessThreadPrivate : public MessageThreadPrivate
 {
+    Q_DISABLE_COPY(ProcessThreadPrivate)
     Q_DECLARE_PUBLIC(ProcessThread)
 public:
     ProcessThreadPrivate(ProcessThread* q);
 
-    MessageQueue* queue;
+    QMetaObject::Connection textConnection;
+    QMetaObject::Connection binaryConnection;
 };
 
 #endif // PROCESS_THREAD_P_H

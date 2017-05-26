@@ -4,16 +4,19 @@
 #include <QObject>
 
 class MessageThread;
-class MessageSocket;
+class MessageQueue;
+class QWebSocket;
 
 class MessageThreadPrivate
 {
+    Q_DISABLE_COPY(MessageThreadPrivate)
     Q_DECLARE_PUBLIC(MessageThread)
 public:
     MessageThreadPrivate(MessageThread *q);
 
     MessageThread *q_ptr;
-    MessageSocket *socket;
+    MessageQueue *queue;
+    QWebSocket *socket;
 };
 
 #endif // MESSAGE_THREAD_P_H

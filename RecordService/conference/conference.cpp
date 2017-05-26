@@ -2,7 +2,7 @@
 #include "conference_p.h"
 
 Conference::Conference(QObject *parent) :
-    Authorization(new ConferencePrivate(this), parent)
+    Client(new ConferencePrivate(this), parent)
 {
 
 }
