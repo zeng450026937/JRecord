@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QWaitCondition>
+#include <QSharedPointer>
 #include "message_packet.h"
 
 class MessageQueue;

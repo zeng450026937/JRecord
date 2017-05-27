@@ -1,7 +1,6 @@
 #ifndef BINARYMESSAGE_H
 #define BINARYMESSAGE_H
 
-#include <QObject>
 #include "message_packet.h"
 
 class BinaryMessagePrivate;
@@ -23,6 +22,7 @@ class BinaryMessage : public QObject, public MessagePacket
 public:
     explicit BinaryMessage(QObject *parent = 0);
     BinaryMessage(QByteArray message, QObject *parent = 0);
+    ~BinaryMessage() override;
 
     MessageType type() { return Binary; }
 
@@ -60,6 +60,5 @@ protected:
     QScopedPointer<BinaryMessagePrivate> d_ptr;
 
 };
-
 
 #endif // BINARYMESSAGE_H

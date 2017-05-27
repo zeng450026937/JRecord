@@ -6,7 +6,6 @@
 
 class SqlInitialize
 {
-public:
     SqlInitialize() :
         accountTypeTableName(QStringLiteral("AccountType")),
         accountStatusTableName(QStringLiteral("AccountStatus")),
@@ -24,6 +23,8 @@ public:
     {}
 
     ~SqlInitialize(){}
+public:
+    static SqlInitialize *GetInstance();
 
     const QString accountTypeTableName;
     const QString accountStatusTableName;

@@ -12,12 +12,11 @@ class ServiceBase : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(ServiceBase)
     Q_DECLARE_PRIVATE(ServiceBase)
-    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(QString errorString READ errorString)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
 
-    Q_PROPERTY(QString userId READ userId WRITE setuserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
     Q_PROPERTY(QString deviceType READ deviceType WRITE setDeviceType NOTIFY deviceTypeChanged)
@@ -50,18 +49,20 @@ public:
 
 public Q_SLOTS:
     void setActive(bool active);
-    void setuserId(QString userId);
-    void setUserGroup(QString userGroup);
-    void setUserName(QString userName);
-    void setDeviceType(QString deviceType);
+    void setUrl(const QUrl &url);
+    void setUserId(const QString &userId);
+    void setUserGroup(const QString &userGroup);
+    void setUserName(const QString &userName);
+    void setDeviceType(const QString &deviceType);
 
 Q_SIGNALS:
     void statusChanged(Status status);
     void activeChanged(bool active);
-    void userIdChanged(QString &userId);
-    void userGroupChanged(QString &userGroup);
-    void userNameChanged(QString &userName);
-    void deviceTypeChanged(QString &deviceType);
+    void urlChanged(const QUrl &url);
+    void userIdChanged(const QString &userId);
+    void userGroupChanged(const QString &userGroup);
+    void userNameChanged(const QString &userName);
+    void deviceTypeChanged(const QString &deviceType);
 
     void open(const QUrl &url);
     void open(const QNetworkRequest &authorization);

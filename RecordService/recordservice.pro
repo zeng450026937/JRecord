@@ -12,9 +12,6 @@ SOURCES += \
     account/account.cpp \
     account/nd_account.cpp \
     websocket/message_queue.cpp \
-    model/fileentrymodel.cpp \
-    model/account_model.cpp \
-    model/device_model.cpp \
     sql_initialize.cpp \
     conference/conference.cpp \
     conference/conference_p.cpp \
@@ -39,8 +36,9 @@ SOURCES += \
     user/devicedescription_p.cpp \
     client/client.cpp \
     client/client_p.cpp \
-    model/sql_initialize.cpp \
-    model/user_model.cpp
+    model/user_model.cpp \
+    model/sql_initializer.cpp \
+    model/user_model_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -48,9 +46,6 @@ HEADERS += \
     account/nd_account.h \
     websocket/message_queue.h \
     websocket/message_packet.h \
-    model/fileentrymodel.h \
-    model/account_model.h \
-    model/device_model.h \
     sql_initialize.h \
     protocol.h \
     conference/conference.h \
@@ -76,8 +71,9 @@ HEADERS += \
     user/devicedescription_p.h \
     client/client.h \
     client/client_p.h \
-    model/sql_initialize.h \
-    model/user_model.h
+    model/user_model.h \
+    model/sql_initializer.h \
+    model/user_model_p.h
 
 DISTFILES = qmldir
 

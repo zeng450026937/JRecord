@@ -17,6 +17,11 @@ BinaryMessage::BinaryMessage(QByteArray message, QObject *parent) :
     this->parse(message);
 }
 
+BinaryMessage::~BinaryMessage()
+{
+
+}
+
 int BinaryMessage::mode() const
 {
     return d_func()->mode;

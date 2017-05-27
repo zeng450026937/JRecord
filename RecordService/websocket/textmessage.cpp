@@ -41,6 +41,11 @@ TextMessage::TextMessage(QString from, QString to,
     d->data = QJsonObject::fromVariantMap(data);
 }
 
+TextMessage::~TextMessage()
+{
+
+}
+
 QString TextMessage::version() const
 {
     return d_func()->version;
@@ -64,6 +69,11 @@ QString TextMessage::mode() const
 QString TextMessage::action() const
 {
     return d_func()->command.value("action").toString();
+}
+
+QVariantMap TextMessage::data() const
+{
+    return d_func()->data.toVariantMap();
 }
 
 void TextMessage::parse(const QString &message)

@@ -1,6 +1,8 @@
 #ifndef MESSAGE_PACKET_H
 #define MESSAGE_PACKET_H
 
+#include <QObject>
+
 class MessagePacket
 {
 public:
@@ -12,5 +14,7 @@ public:
     virtual ~MessagePacket() {}
     virtual MessageType type() { return Unknow; }
 };
+
+Q_DECLARE_METATYPE(MessagePacket)
 
 #endif // MESSAGE_PACKET_H

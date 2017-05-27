@@ -102,7 +102,16 @@ void ServiceBase::setActive(bool active)
         }
     }
 }
-void ServiceBase::setuserId(QString userId)
+
+void ServiceBase::setUrl(const QUrl &url)
+{
+    Q_D(ServiceBase);
+    if(url != d->url){
+        d->url = url;
+        Q_EMIT urlChanged(d->url);
+    }
+}
+void ServiceBase::setUserId(const QString &userId)
 {
     Q_D(ServiceBase);
     if(userId != d->userId){
@@ -111,7 +120,7 @@ void ServiceBase::setuserId(QString userId)
     }
 }
 
-void ServiceBase::setUserGroup(QString userGroup)
+void ServiceBase::setUserGroup(const QString &userGroup)
 {
     Q_D(ServiceBase);
     if(userGroup != d->userGroup){
@@ -120,7 +129,7 @@ void ServiceBase::setUserGroup(QString userGroup)
     }
 }
 
-void ServiceBase::setUserName(QString userName)
+void ServiceBase::setUserName(const QString &userName)
 {
     Q_D(ServiceBase);
     if(userName != d->userName){
@@ -129,7 +138,7 @@ void ServiceBase::setUserName(QString userName)
     }
 }
 
-void ServiceBase::setDeviceType(QString deviceType)
+void ServiceBase::setDeviceType(const QString &deviceType)
 {
     Q_D(ServiceBase);
     if(deviceType != d->deviceType){

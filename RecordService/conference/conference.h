@@ -4,6 +4,7 @@
 #include "client/client.h"
 #include "user/user.h"
 #include <QQmlListProperty>
+#include <QDate>
 
 class ConferencePrivate;
 

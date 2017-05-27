@@ -24,7 +24,7 @@ Item {
                 width: 300
                 height: parent.height
 
-                model:  UserEntryModel {
+                model:  UserModel {
                     id: userModel
                 }
 
@@ -33,14 +33,16 @@ Item {
                     height: 140
                     Label {
                         anchors.fill: parent
-                        text: model.account + "\n" +
+                        text: model.userId + "\n" +
+                              model.userType + "\n" +
                               model.userName + "\n" +
+                              model.deviceType + "\n" +
                               model.deviceName + "\n" +
-                              model.selected + "\n" +
                               model.batteryPercent + "\n" +
                               model.batteryTime + "\n" +
-                              model.deviceStatus + "\n" +
-                              model.voiceStatus
+                              model.status + "\n" +
+                              model.vad + "\n" +
+                              model.locked
                     }
                 }
 

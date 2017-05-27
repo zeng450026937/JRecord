@@ -26,7 +26,7 @@ QString User::userName() const
 DeviceDescription *User::device()
 {
     Q_D(User);
-    return &d->device;
+    return d->device;
 }
 
 

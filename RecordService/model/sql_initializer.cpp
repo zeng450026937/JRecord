@@ -1,4 +1,4 @@
-#include "sql_initialize.h"
+#include "sql_initializer.h"
 
 #include <QCoreApplication>
 #include <QSqlDatabase>
@@ -9,7 +9,7 @@
 #include <QDebug>
 
 
-void SqlInitialize::connectToDatabase()
+void connectToDatabase()
 {
     QSqlDatabase database = QSqlDatabase::database();
     if (!database.isValid()) {
@@ -17,6 +17,9 @@ void SqlInitialize::connectToDatabase()
         if (!database.isValid())
             qFatal("Cannot add database: %s", qPrintable(database.lastError().text()));
     }
+
+    if(database.isOpen())
+        return;
 
     const QDir writeDir = QCoreApplication::applicationDirPath();
     if (!writeDir.mkpath("."))
@@ -32,7 +35,7 @@ void SqlInitialize::connectToDatabase()
     }
 }
 
-void SqlInitialize::createUserTable()
+void createUserTable()
 {
     if (QSqlDatabase::database().tables().contains(userTableName)) {
         // The table already exists; we don't need to do anything.
@@ -101,9 +104,10 @@ void SqlInitialize::createUserTable()
     }
 }
 
-void SqlInitialize::createConferencsTable()
+
+void createConferencsTable()
 {
-    if (QSqlDatabase::database().tables().contains(conferencesTableName)) {
+    if (QSqlDatabase::database().tables().contains(conferenceTableName)) {
         // The table already exists; we don't need to do anything.
         return;
     }
@@ -169,9 +173,10 @@ void SqlInitialize::createConferencsTable()
         return;
     }
 }
-void SqlInitialize::createFilesTable()
+
+void createFilesTable()
 {
-    if (QSqlDatabase::database().tables().contains(filesTableName)) {
+    if (QSqlDatabase::database().tables().contains(fileTableName)) {
         // The table already exists; we don't need to do anything.
         return;
     }
@@ -226,9 +231,9 @@ void SqlInitialize::createFilesTable()
     }
 }
 
-void SqlInitialize::createDownloadsTable()
+void createDownloadsTable()
 {
-    if (QSqlDatabase::database().tables().contains(downloadsTableName)) {
+    if (QSqlDatabase::database().tables().contains(downloadTableName)) {
         // The table already exists; we don't need to do anything.
         return;
     }

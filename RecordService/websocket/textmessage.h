@@ -1,8 +1,8 @@
 #ifndef TEXTMESSAGE_H
 #define TEXTMESSAGE_H
 
-#include <QObject>
 #include "message_packet.h"
+#include <QVariantMap>
 
 class TextMessagePrivate;
 
@@ -28,6 +28,7 @@ public:
                 QString action,
                 QVariantMap data,
                 QObject *parent = 0);
+    ~TextMessage() override;
 
     MessageType type() { return Text; }
 
@@ -36,17 +37,17 @@ public:
     QString to() const;
     QString mode() const;
     QString action() const;
-    QVariantMap &data() const;
+    QVariantMap data() const;
 
     Q_INVOKABLE void parse(const QString &message);
     Q_INVOKABLE QString make();
 
 Q_SIGNALS:
-    void versionChanged(QString &version);
-    void fromChanged(QString &from);
-    void toChanged(QString &to);
-    void modeChanged(QString &mode);
-    void actionChanged(QString &action);
+    void versionChanged(const QString &version);
+    void fromChanged(const QString &from);
+    void toChanged(const QString &to);
+    void modeChanged(const QString &mode);
+    void actionChanged(const QString &action);
     void dataChanged();
 
 public Q_SLOTS:
