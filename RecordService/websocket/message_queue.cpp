@@ -10,7 +10,7 @@ MessageQueue::MessageQueue(QObject *parent) :
 
 MessageQueue::~MessageQueue()
 {
-    this->setAbort(true);
+    this->setActive(false);
     this->flush();
 }
 void MessageQueue::push(QSharedPointer<MessagePacket> t)
@@ -18,7 +18,7 @@ void MessageQueue::push(QSharedPointer<MessagePacket> t)
     Q_D(MessageQueue);
     QMutexLocker locker(&d->mutex);
 
-    if(d->abort)
+    if(!d->active)
         return;
 
     d->queue.push_back(t);
@@ -34,7 +34,7 @@ QSharedPointer<MessagePacket> MessageQueue::pop(bool block)
     QSharedPointer<MessagePacket> t;
 
     for(;;){
-        if(d->abort)
+        if(!d->active)
             break;
 
         if(!d->queue.isEmpty()){
@@ -59,10 +59,10 @@ void MessageQueue::flush()
     d->queue.clear();
 }
 
-bool MessageQueue::abort()
+bool MessageQueue::active()
 {
     QMutexLocker locker(&d_func()->mutex);
-    return d_func()->abort;
+    return d_func()->active;
 }
 
 bool MessageQueue::empty()
@@ -77,14 +77,15 @@ int MessageQueue::size()
     return d_func()->queue.size();
 }
 
-void MessageQueue::setAbort(bool abort)
+void MessageQueue::setActive(bool active)
 {
     Q_D(MessageQueue);
     QMutexLocker locker(&d_func()->mutex);
 
-    if(abort != d->abort){
-        d->abort = abort;
-        Q_EMIT abortChanged(d->abort);
+    if(active != d->active){
+        d->active = active;
+        d->cond.wakeAll();
+        Q_EMIT activeChanged(d->active);
     }
 }
 

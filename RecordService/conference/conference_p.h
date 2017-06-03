@@ -5,6 +5,7 @@
 #include "conference.h"
 #include <QDate>
 
+class ProtoConf;
 class User;
 
 class ConferencePrivate : public ClientPrivate
@@ -23,6 +24,9 @@ public:
 
     User *host;
     QList<User *> userlist;
+
+    QString protocolName;
+    ProtoConf *protocol;
 
 public:
     void append(User* user);

@@ -20,7 +20,7 @@ public:
 
     MessageQueue *q_ptr;
 
-    bool abort;
+    bool active;
     QList<QSharedPointer<MessagePacket>> queue;
     QMutex mutex;
     QWaitCondition cond;

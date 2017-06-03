@@ -3,7 +3,6 @@
 
 #include "message_thread.h"
 
-class MessagePacket;
 class TransportThreadPrivate;
 
 class TransportThread : public MessageThread
@@ -15,18 +14,11 @@ public:
     explicit TransportThread(QObject *parent = 0);
     ~TransportThread();
 
-    void setSocket(QWebSocket *socket) override;
+    void setSocket(MessageSocket *socket) override;
 
 Q_SIGNALS:
-    void transportStarted();
-    void transportStopped();
-
-    void messageTransported(const QString &message);
-    void messageTransported(const QByteArray &message);
-
-public Q_SLOTS:
-    //send message to server
-    void pushMessage(MessagePacket *message);
+    void textTransported(const QString &message);
+    void binaryTransported(const QByteArray &message);
 
 protected:
     void run() override;

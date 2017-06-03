@@ -11,5 +11,5 @@ UserPrivate::UserPrivate(User *q) :
 
 UserPrivate::~UserPrivate()
 {
-    delete device;
+    device->deleteLater();
 }

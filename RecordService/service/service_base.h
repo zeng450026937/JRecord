@@ -5,6 +5,7 @@
 #include <QNetworkRequest>
 
 class MessagePacket;
+class ProtoBase;
 class ServiceBasePrivate;
 
 class ServiceBase : public QObject
@@ -20,7 +21,7 @@ class ServiceBase : public QObject
     Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
     Q_PROPERTY(QString deviceType READ deviceType WRITE setDeviceType NOTIFY deviceTypeChanged)
-
+    Q_PROPERTY(QString deviceUuid READ deviceUuid NOTIFY deviceUuidChanged)
 public:
     ServiceBase(QObject *parent = 0);
     ~ServiceBase();
@@ -34,7 +35,6 @@ public:
     };
     Q_ENUM(Status)
 
-
     Status status() const;
     bool active() const;
     QString errorString() const;
@@ -44,8 +44,13 @@ public:
     QString userGroup() const;
     QString userName() const;
     QString deviceType() const;
+    QString deviceUuid() const;
 
-    void sendMessage(MessagePacket *message);
+    void registerProtocol(ProtoBase *protocol);
+    void removeProtocol(const QString &name);
+    ProtoBase *protocol(const QString &name);
+
+    void sendMessage(MessagePacket *pkt);
 
 public Q_SLOTS:
     void setActive(bool active);
@@ -63,10 +68,8 @@ Q_SIGNALS:
     void userGroupChanged(const QString &userGroup);
     void userNameChanged(const QString &userName);
     void deviceTypeChanged(const QString &deviceType);
-
-    void open(const QUrl &url);
-    void open(const QNetworkRequest &authorization);
-    void close();
+    void deviceUuidChanged(const QString &deviceUuid);
+    void protocolChanged(const QString &protocolName);
 
 protected:
     ServiceBase(ServiceBasePrivate *d, QObject *parent = 0);

@@ -20,7 +20,7 @@ public:
     ServiceBase *service() const;
 
 public Q_SLOTS:
-    void setService(ServiceBase *servie);
+    virtual void setService(ServiceBase *servie);
 
 Q_SIGNALS:
     void serviceChanged();

@@ -1,8 +1,20 @@
 #include "conference.h"
 #include "conference_p.h"
+#include "service/service_base.h"
+#include "websocket/protocol/proto_conf.h"
 
 Conference::Conference(QObject *parent) :
     Client(new ConferencePrivate(this), parent)
+{
+
+}
+
+void Conference::lock()
+{
+
+}
+
+void Conference::unlock()
 {
 
 }
@@ -92,6 +104,30 @@ QQmlListProperty<User> Conference::userlist()
                                   &ConferencePrivate::count,
                                   &ConferencePrivate::at,
                                   &ConferencePrivate::clear);
+}
+
+void Conference::setService(ServiceBase *servie)
+{
+    Client::setService(servie);
+
+    Q_D(Conference);
+    if(d->protocol == Q_NULLPTR){
+        if(d->service){
+            d->protocol = static_cast<ProtoConf*>(d->service->protocol(d->protocolName));
+
+            if(d->protocol){
+
+                QObject::connect(d->protocol, &ProtoConf::actionRecived,
+                                 [this,d](ProtoConf::Actions action, const QJsonValue &data){
+
+                    Q_UNUSED(data);
+                    switch (action) {
+
+                    }
+                });
+            }
+        }
+    }
 }
 
 void Conference::setHost(User *host)

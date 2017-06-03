@@ -1,28 +1,29 @@
 #include "process_thread.h"
 #include "process_thread_p.h"
 #include "message_queue.h"
+#include "message_socket.h"
 #include "textmessage.h"
 #include "binarymessage.h"
-#include <QWebSocket>
+#include "protocol/proto_base.h"
+#include <QDebug>
 
 ProcessThread::ProcessThread(QObject *parent) :
     MessageThread(new ProcessThreadPrivate(this), parent)
 {
-    QObject::connect(this, SIGNAL(started()), SIGNAL(processStarted()));
-    QObject::connect(this, SIGNAL(finished()), SIGNAL(processStopped()));
+
 }
 
 ProcessThread::~ProcessThread()
 {
     if(this->isRunning()){
         Q_D(ProcessThread);
-        d->queue->setAbort(true);
+        d->queue->setActive(false);
         this->quit();
         this->wait(3000);
     }
 }
 
-void ProcessThread::setSocket(QWebSocket *socket)
+void ProcessThread::setSocket(MessageSocket *socket)
 {
     Q_D(ProcessThread);
     if(d->socket){
@@ -30,27 +31,23 @@ void ProcessThread::setSocket(QWebSocket *socket)
         QObject::disconnect(d->binaryConnection);
     }
 
-    d->textConnection = QObject::connect(socket, &QWebSocket::textMessageReceived,
-                     [this](const QString &message){ pushMessage(new TextMessage(message)); });
-    d->binaryConnection = QObject::connect(socket, &QWebSocket::binaryMessageReceived,
-                     [this](const QByteArray &message){ pushMessage(new BinaryMessage(message)); });
+    d->textConnection = QObject::connect(socket, &MessageSocket::textReceived,
+                     [this](const QString &message){
+        pushMessage(new TextMessage(message));
+    });
+    d->binaryConnection = QObject::connect(socket, &MessageSocket::binaryReceived,
+                     [this](const QByteArray &message){
+        pushMessage(new BinaryMessage(message));
+    });
 
     MessageThread::setSocket(socket);
-}
-
-void ProcessThread::pushMessage(MessagePacket *message)
-{
-    Q_D(ProcessThread);
-    if(d->queue){
-        d->queue->push(QSharedPointer<MessagePacket>(message));
-    }
 }
 
 void ProcessThread::run()
 {
     Q_D(ProcessThread);
     do {
-        if(d->queue == Q_NULLPTR || d->queue->abort())
+        if(d->queue == Q_NULLPTR || !d->queue->active())
             return;
 
         for(;;){
@@ -63,15 +60,21 @@ void ProcessThread::run()
                 QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
                 if(msg){
                     //TBD
+                    ProtoBase *protocol = d->protocols->value(msg->mode(), Q_NULLPTR);
+                    if(protocol){
+                        protocol->process(pkt);
+                    }
+                    if(msg->action() != "heartBeat")
+                        qDebug()<<"received:"<<msg->makeJson();
                 }
             }
             if(pkt->type() == MessagePacket::Binary){
                 QSharedPointer<BinaryMessage> msg = pkt.dynamicCast<BinaryMessage>();
                 if(msg){
-                    //TBD
+
                 }
             }
         }
 
-    }while (!d->queue->abort());
+    }while (d->queue->active());
 }

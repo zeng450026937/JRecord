@@ -11,8 +11,6 @@ Item {
     height: 350
     clip: true
 
-    signal loginSuccessed
-
     Item {
         clip: true
         anchors.top: parent.top
@@ -152,8 +150,7 @@ Item {
 
                     Connections {
                         onClicked: {
-                            //Account.signIn()
-                            loginSuccessed()
+                            Account.signIn()
                         }
                     }
                 }
@@ -177,20 +174,14 @@ Item {
         target: Account
         onStatusChanged: {
             if(status == Account.Logining){
-                console.log("Logining")
             }
             if(status == Account.Login){
-                console.log("Login")
-                loginSuccessed()
             }
             if(status == Account.Logouting){
-                console.log("Logouting")
             }
             if(status == Account.Logout){
-                console.log("Logout")
             }
             if(status == Account.Error){
-                console.log("Error")
                 popup.open()
             }
         }

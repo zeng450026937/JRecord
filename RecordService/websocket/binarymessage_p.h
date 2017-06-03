@@ -15,7 +15,8 @@ public:
     BinaryMessage* q_ptr;
 
     int mode;
-    QString from;
+    QString userId;
+    QString deviceUuid;
     QString uuid;
     int timestamp;
     int startpos;
@@ -26,7 +27,8 @@ public:
 
 protected:
     const int mode_size;
-    const int from_size;
+    const int userId_size;
+    const int deviceUuid_size;
     const int uuid_size;
     const int timestamp_size;
     const int startpos_size;

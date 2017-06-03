@@ -7,13 +7,10 @@
 
 
 UserModel::UserModel(QSqlTableModel *parent) :
-    QSqlTableModel(parent),
+    QSqlTableModel(parent, QSqlDatabase::database()),
     d_ptr(new UserModelPrivate(this))
 {
-    connectToDatabase();
     createUserTable();
-
-    Q_D(UserModel);
 
     setTable(userTableName);
     setSort(8, Qt::DescendingOrder);
@@ -21,6 +18,8 @@ UserModel::UserModel(QSqlTableModel *parent) :
     setEditStrategy(QSqlTableModel::OnManualSubmit);
 
     select();
+
+    Q_D(UserModel);
 
     // Set names to the role name hash container (QHash<int, QByteArray>)
     d->roleNames[UserIdRole] = "userId";

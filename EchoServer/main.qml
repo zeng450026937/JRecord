@@ -22,6 +22,7 @@ ApplicationWindow {
                 appendMessage(qsTr("Server received message: %1").arg(message));
                 webSocket.sendTextMessage(message);
             });
+            webSocket.sendTextMessage(qsTr("I got you!"));
         }
         onErrorStringChanged: {
             appendMessage(qsTr("Server error: %1").arg(errorString));
@@ -30,6 +31,7 @@ ApplicationWindow {
 
     WebSocket {
         id: socket
+        active: true
         url: server.url
         onTextMessageReceived: appendMessage(qsTr("Client received message: %1").arg(message))
         onStatusChanged: {

@@ -1,5 +1,6 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
+import com.nd.recordservice 1.0
 
 ApplicationWindow {
     id: root
@@ -13,6 +14,7 @@ ApplicationWindow {
     Loader{
         id: sceneLoader
         anchors.fill: parent
+        focus: true
 
         states: [
             State {
@@ -41,15 +43,28 @@ ApplicationWindow {
     }
 
     Connections {
-        target: sceneLoader.item
-        ignoreUnknownSignals: true
-        onLoginSuccessed: {
-            console.log("login successed")
-            sceneLoader.state = "HOME"
+        target: Account
+        onStatusChanged: {
+            if(status == Account.Logining){
+                console.log("Logining")
+            }
+            if(status == Account.Login){
+                console.log("Login")
+                sceneLoader.state = "HOME"
+            }
+            if(status == Account.Logouting){
+                console.log("Logouting")
+            }
+            if(status == Account.Logout){
+                console.log("Logout")
+            }
+            if(status == Account.Error){
+                console.log("Error")
+            }
         }
     }
 
     Component.onCompleted: {
-        sceneLoader.state = "HOME"
+        sceneLoader.state = "LOGIN"
     }
 }

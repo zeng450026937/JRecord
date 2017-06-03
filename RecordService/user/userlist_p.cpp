@@ -1,7 +1,9 @@
 #include "userlist_p.h"
 
 UserListPrivate::UserListPrivate(UserList *q) :
-    q_ptr(q)
+    ClientPrivate(q),
+    protocol(Q_NULLPTR),
+    protocolName(QStringLiteral("info"))
 {
 
 }

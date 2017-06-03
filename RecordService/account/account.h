@@ -12,6 +12,7 @@ class Account : public QObject
 
     Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
     Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
+    Q_PROPERTY(QString display READ display WRITE setDisplay NOTIFY displayChanged)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
 
 public:
@@ -32,16 +33,19 @@ public:
 
     QString username() const;
     QString password() const;
+    QString display() const;
     QString errorString() const;
 
 public Q_SLOTS:
-    void setUsername(QString username);
-    void setPassword(QString password);
+    void setUsername(const QString &username);
+    void setPassword(const QString &password);
+    void setDisplay(const QString &display);
 
 Q_SIGNALS:
-    void usernameChanged(QString username);
-    void passwordChanged(QString password);
-    void errorStringChanged(QString errorString);
+    void usernameChanged(const QString &username);
+    void passwordChanged(const QString &password);
+    void displayChanged(const QString &display);
+    void errorStringChanged(const QString &errorString);
     void statusChanged(Status status);
 
 private Q_SLOTS:
@@ -55,6 +59,7 @@ private:
 private:
     QString username_;
     QString password_;
+    QString display_;
     QString errorString_;
     Status  status_;
 

@@ -44,6 +44,8 @@ public:
     };
     Q_ENUM(Type)
 
+    Q_INVOKABLE void lock();
+    Q_INVOKABLE void unlock();
     Q_INVOKABLE void create();
     Q_INVOKABLE void start();
     Q_INVOKABLE void pause();
@@ -61,6 +63,8 @@ public:
     QString content() const;
     QString member() const;
     QQmlListProperty<User> userlist();
+
+    void setService(ServiceBase *servie) override;
 
 Q_SIGNALS:
     void hostChanged();

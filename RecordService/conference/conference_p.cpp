@@ -1,7 +1,9 @@
 #include "conference_p.h"
 
 ConferencePrivate::ConferencePrivate(Conference *q) :
-    ClientPrivate(q)
+    ClientPrivate(q),
+    protocol(Q_NULLPTR),
+    protocolName(QStringLiteral("conference"))
 {
 
 }

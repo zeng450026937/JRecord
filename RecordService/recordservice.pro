@@ -38,7 +38,15 @@ SOURCES += \
     client/client_p.cpp \
     model/user_model.cpp \
     model/sql_initializer.cpp \
-    model/user_model_p.cpp
+    model/user_model_p.cpp \
+    websocket/message_socket.cpp \
+    websocket/message_socket_p.cpp \
+    websocket/protocol/proto_info.cpp \
+    websocket/protocol/proto_base.cpp \
+    websocket/protocol/proto_base_p.cpp \
+    websocket/protocol/proto_info_p.cpp \
+    websocket/protocol/proto_conf.cpp \
+    websocket/protocol/proto_conf_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -73,7 +81,15 @@ HEADERS += \
     client/client_p.h \
     model/user_model.h \
     model/sql_initializer.h \
-    model/user_model_p.h
+    model/user_model_p.h \
+    websocket/message_socket.h \
+    websocket/message_socket_p.h \
+    websocket/protocol/proto_info.h \
+    websocket/protocol/proto_base.h \
+    websocket/protocol/proto_base_p.h \
+    websocket/protocol/proto_info_p.h \
+    websocket/protocol/proto_conf.h \
+    websocket/protocol/proto_conf_p.h
 
 DISTFILES = qmldir
 

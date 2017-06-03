@@ -1,5 +1,6 @@
 #include "recordservice_plugin.h"
 #include "account/account.h"
+#include "model/sql_initializer.h"
 #include "model/user_model.h"
 #include "model/user_model_p.h"
 #include "service/service_base.h"
@@ -38,9 +39,7 @@ QObject *service_singletontype_provider(QQmlEngine *engine, QJSEngine *scriptEng
 void RecordServicePlugin::registerTypes(const char *uri)
 {
     // @uri com.nd.recordservice
-
-    //init sqlite database(TBD)
-    //init service(TBD)
+    connectToDatabase();
 
     qmlRegisterType<UserModel>(uri, 1, 0, "UserModel");
     qmlRegisterType<Conference>(uri, 1, 0, "Conference");

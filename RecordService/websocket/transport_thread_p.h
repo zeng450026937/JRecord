@@ -14,7 +14,6 @@ class TransportThreadPrivate : public MessageThreadPrivate
 public:
     TransportThreadPrivate(TransportThread* q);
 
-    MessageQueue* queue;
     QMetaObject::Connection textConnection;
     QMetaObject::Connection binaryConnection;
 };

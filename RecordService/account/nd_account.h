@@ -53,13 +53,14 @@ private:
     QString randString();
 
     QString encryptMD5_Salt(QString content);
-    QString hmacSha1(QByteArray key, QByteArray baseString);
+    QString hmacSha256(QByteArray key, QByteArray baseString);
 
 private:
     QNetworkAccessManager* manager;
     QMap<QNetworkReply *, int> currentRequest;
 
-    const QString HOST = "https://aqapi.101.com";
+    const QString PROTOCOL = "https://";
+    const QString HOST = "aqapi.101.com";
     const QString ORG_NAME = "ND";
 
     struct SESSION{
@@ -110,7 +111,6 @@ private:
         QString nick_name;
         QString nick_name_full;
         QString nick_name_short;
-        QString realm_exinfo;
         int region;
     }_user_info;
 };

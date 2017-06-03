@@ -7,8 +7,9 @@ class ServiceBase;
 class TransportThread;
 class ProcessThread;
 class MessageQueue;
+class MessageSocket;
+class ProtoBase;
 class QThread;
-class QWebSocket;
 
 class ServiceBasePrivate
 {
@@ -22,11 +23,12 @@ public:
 
     QThread *main_thread;
     QThread *socket_thread;
-    QWebSocket *socket;
+    MessageSocket *socket;
     TransportThread *transport_thread;
     ProcessThread *process_thread;
     MessageQueue *transport_queue;
     MessageQueue *process_queue;
+    QHash<QString, ProtoBase*> protocols;
 
     bool active;
     ServiceBase::Status status;
@@ -36,6 +38,7 @@ public:
     QString userGroup;
     QString userName;
     QString deviceType;
+    QString deviceUuid;
 };
 
 #endif // SERVICE_BASE_P_H

@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
+import com.nd.recordservice 1.0
 
 ApplicationWindow {
     id: root
@@ -138,5 +139,37 @@ ApplicationWindow {
                 clip: true
             }
         }
+    }
+
+    Connections {
+        target: ServiceBase
+        onStatusChanged: {
+            if(status == ServiceBase.Connecting){
+                console.log(qsTr("Connecting"))
+            }
+            if(status == ServiceBase.Open){
+                console.log(qsTr("Open"))
+            }
+            if(status == ServiceBase.Closing){
+                console.log(qsTr("Closing"))
+            }
+            if(status == ServiceBase.Closed){
+                console.log(qsTr("Closed"))
+            }
+            if(status == ServiceBase.Error){
+                console.log(qsTr("Error:")+ServiceBase.errorString)
+            }
+        }
+    }
+
+    Component.onCompleted: {
+
+        ServiceBase.url = qsTr("ws://192.168.85.31:9008");
+        ServiceBase.userId = Account.username
+        ServiceBase.userName = qsTr("user name");
+        ServiceBase.userGroup = qsTr("ND");
+        ServiceBase.deviceType = qsTr("PC");
+
+        ServiceBase.active = true;
     }
 }

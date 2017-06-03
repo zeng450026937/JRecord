@@ -39,23 +39,36 @@ QString Account::password() const
 {
     return password_;
 }
+
+QString Account::display() const
+{
+    return display_;
+}
 QString Account::errorString() const
 {
     return errorString_;
 }
 
-void Account::setUsername(QString username)
+void Account::setUsername(const QString &username)
 {
     if(username_ != username){
         username_ = username;
         Q_EMIT usernameChanged(username_);
     }
 }
-void Account::setPassword(QString password)
+void Account::setPassword(const QString &password)
 {
     if(password_ != password){
         password_ = password;
         Q_EMIT usernameChanged(password);
+    }
+}
+
+void Account::setDisplay(const QString &display)
+{
+    if(display_ != display){
+        display_ = display;
+        Q_EMIT displayChanged(display);
     }
 }
 

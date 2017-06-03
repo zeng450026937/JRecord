@@ -4,17 +4,30 @@
 #include "websocket/process_thread.h"
 #include "websocket/message_queue.h"
 #include "websocket/textmessage.h"
+#include "websocket/message_socket.h"
+#include "websocket/protocol/proto_info.h"
+#include "websocket/protocol/proto_conf.h"
 
 ServiceBase::ServiceBase(QObject *parent) :
     QObject(parent),
     d_ptr(new ServiceBasePrivate(this))
 {
+    Q_D(ServiceBase);
 
+    this->registerProtocol(new ProtoInfo(this));
+    this->registerProtocol(new ProtoConf(this));
+
+    d->process_thread->setProtocols(&d->protocols);
+    d->transport_thread->setProtocols(&d->protocols);
 }
 
 ServiceBase::~ServiceBase()
 {
+    Q_D(ServiceBase);
+    this->setActive(false);
 
+    qDeleteAll(d->protocols);
+    d->protocols.clear();
 }
 
 bool ServiceBase::active() const
@@ -50,56 +63,79 @@ QString ServiceBase::deviceType() const
 {
     return d_func()->deviceType;
 }
+
+QString ServiceBase::deviceUuid() const
+{
+    return d_func()->deviceUuid;
+}
+
+void ServiceBase::registerProtocol(ProtoBase *protocol)
+{
+    Q_D(ServiceBase);
+
+    bool changed(false);
+    if(d->protocols.contains(protocol->mode()))
+        changed = true;
+
+    d->protocols.insert(protocol->mode(), protocol);
+
+    if(changed)
+        Q_EMIT protocolChanged(protocol->mode());
+}
+
+void ServiceBase::removeProtocol(const QString &name)
+{
+    Q_D(ServiceBase);
+    d->protocols.remove(name);
+}
+
+ProtoBase *ServiceBase::protocol(const QString &name)
+{
+    return d_func()->protocols.value(name, Q_NULLPTR);
+}
+
+void ServiceBase::sendMessage(MessagePacket *pkt)
+{
+    Q_D(ServiceBase);
+    if(d->transport_thread)
+        d->transport_thread->pushMessage(pkt);
+}
 void ServiceBase::setActive(bool active)
 {
     Q_D(ServiceBase);
     if(active != d->active){
         if(active){
-            d->transport_queue->setAbort(false);
-            d->process_queue->setAbort(false);
 
-            d->transport_thread->start();
-            d->process_thread->start();
-            d->socket_thread->start();
-            d->main_thread->start();
+            d->status = ServiceBase::Connecting;
+            Q_EMIT statusChanged(d->status);
 
-            #if(1)
-                QVariantMap data;
-                data.insert(QStringLiteral("userId"), d->userId);
-                data.insert(QStringLiteral("userGroup"), d->userGroup);
-                data.insert(QStringLiteral("userName"), d->userName);
-                data.insert(QStringLiteral("deviceType"), d->deviceType);
+            QVariantMap data;
+            data.insert(QStringLiteral("userId"), d->userId);
+            data.insert(QStringLiteral("userGroup"), d->userGroup);
+            data.insert(QStringLiteral("userName"), d->userName);
+            data.insert(QStringLiteral("deviceType"), d->deviceType);
+            data.insert(QStringLiteral("deviceUuid"), d->deviceUuid);
 
-                QScopedPointer<TextMessage> auth(new TextMessage);
-                auth->setMode(QStringLiteral("auth"));
-                auth->setAction(QStringLiteral("login"));
-                auth->setData(data);
+            QScopedPointer<TextMessage> auth(new TextMessage);
+            auth->setMode(QStringLiteral("auth"));
+            auth->setAction(QStringLiteral("login"));
+            auth->setData(data);
 
-                QNetworkRequest request(d->url);
-                request.setRawHeader("Accept", "application/json");
-                request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
-                request.setRawHeader("Authorization", auth->make().toUtf8());
+            QNetworkRequest request(d->url);
+            request.setRawHeader("Accept", "application/json");
+            request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
+            request.setRawHeader("Authorization", auth->make().toUtf8());
 
-                Q_EMIT open(request);
-            #else
-                Q_EMIT open(d->url);
-            #endif
+            d->socket->setRequest(request);
         }
         else{
-            d->transport_queue->setAbort(true);
-            d->process_queue->setAbort(true);
 
-            d->transport_thread->quit();
-            d->process_thread->quit();
-            d->socket_thread->quit();
-            d->main_thread->quit();
-            d->transport_thread->wait(3000);
-            d->process_thread->wait(3000);
-            d->socket_thread->wait(3000);
-            d->main_thread->wait(3000);
-
-            Q_EMIT close();
+            d->status = ServiceBase::Closing;
+            Q_EMIT statusChanged(d->status);
         }
+
+        d->active = active;
+        Q_EMIT activeChanged(d->active);
     }
 }
 
@@ -145,13 +181,6 @@ void ServiceBase::setDeviceType(const QString &deviceType)
         d->deviceType = deviceType;
         Q_EMIT deviceTypeChanged(d->deviceType);
     }
-}
-
-void ServiceBase::sendMessage(MessagePacket *message)
-{
-    Q_D(ServiceBase);
-    if(d->active)
-        d->transport_thread->pushMessage(message);
 }
 
 ServiceBase::ServiceBase(ServiceBasePrivate *d, QObject *parent) :

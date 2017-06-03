@@ -27,8 +27,8 @@ NdAccount::NdAccount(QObject *parent)
             //QNetworkAccessManager will take long time to excute at first call
             //make a first call in threaded
             //see QTBUG-10106
-            QNetworkAccessManager m;
-            m.post(QNetworkRequest(),QByteArray());
+            QScopedPointer<QNetworkAccessManager> m(new QNetworkAccessManager);
+            m->post(QNetworkRequest(),QByteArray());
         });
     });
 }
@@ -116,12 +116,13 @@ QUrl NdAccount::commandToUrl(int command)
         url = QString("/v0.93/tokens/%1").arg(_user.access_token);
         break;
     case UserInfo:
-        url = QString("/v0.93/users/actions/query?realm=xxx");
-        this->encryptAuthorization(NdAccount::POST, url);
+        //url = QString("/v0.93/users/actions/query?realm=xxx");
+        url = QString("/v0.93/users/%1?realm=uc.sdp.nd").arg(_user.user_id);
+        this->encryptAuthorization(NdAccount::GET, url);
         break;
     }
 
-    uri.setUrl(HOST+url);
+    uri.setUrl(PROTOCOL+HOST+url);
 
     return uri;
 }
@@ -194,6 +195,8 @@ void NdAccount::parseResult(bool error, int command, const QJsonDocument& jsonDo
             _user.server_time = content.value("server_time").toString();
             _user.user_id = content.value("user_id").toString();
             _user.warning_code = content.value("warning_code").toString();
+
+            this->doRequest(NdAccount::GET ,NdAccount::UserInfo, QByteArray());
         }
         else{
             reason = content.value("message").toString();
@@ -217,14 +220,13 @@ void NdAccount::parseResult(bool error, int command, const QJsonDocument& jsonDo
         _user.user_id.clear();
         break;
     case UserInfo:
-        //qDebug()<<jsonDocument;
+        qDebug()<<jsonDocument;
         content = jsonDocument.toVariant().toMap();
 
         if(!error){
             _user_info.nick_name = content.value("nick_name").toString();
             _user_info.nick_name_full = content.value("nick_name_full").toString();
             _user_info.nick_name_short = content.value("nick_name_short").toString();
-            _user_info.realm_exinfo = content.value("realm_exinfo").toString();
             _user_info.region = content.value("region").toInt();
             _user_info.user_id = content.value("user_id").toString();
             _user_info.user_name = content.value("user_name").toString();
@@ -263,18 +265,22 @@ void NdAccount::encryptAuthorization(int method, QString uri)
     mac += "\n";
     mac += HOST;
     mac += "\n";
-    _authorization.mac = this->hmacSha1(_user.mac_key.toUtf8(), mac.toUtf8());
+    _authorization.mac = this->hmacSha256(_user.mac_key.toUtf8(), mac.toUtf8());
 
-    qDebug()<<_authorization.mac;
-    qDebug()<<_authorization.nonce;
-    qDebug()<<_authorization.mac_id;
+    qDebug()<<"mac_key:"<<_user.mac_key;
+    qDebug()<<"httpMethod:"<<httpMethod;
+    qDebug()<<"uri:"<<uri;
+    qDebug()<<"HOST:"<<HOST;
+    qDebug()<<"mac:"<<_authorization.mac;
+    qDebug()<<"nonce:"<<_authorization.nonce;
+    qDebug()<<"mac_id"<<_authorization.mac_id;
     qDebug()<<_authorization.getAuthorization();
 }
 
 QString NdAccount::makeNonce()
 {
     QString nonce;
-    nonce += QDateTime::currentDateTime().toString("yyyyMMddhhmmsszzz");
+    nonce += QString::number(QDateTime::currentMSecsSinceEpoch());
     nonce += ":";
     nonce += this->randString();
 
@@ -331,11 +337,11 @@ QString NdAccount::encryptMD5_Salt(QString content)
     return QString(md5);
 }
 
-QString NdAccount::hmacSha1(QByteArray key, QByteArray baseString)
+QString NdAccount::hmacSha256(QByteArray key, QByteArray baseString)
 {
     int blockSize = 64; // HMAC-SHA-1 block size, defined in SHA-1 standard
     if (key.length() > blockSize) { // if key is longer than block size (64), reduce key length with SHA-1 compression
-        key = QCryptographicHash::hash(key, QCryptographicHash::Sha1);
+        key = QCryptographicHash::hash(key, QCryptographicHash::Sha256);
     }
 
     QByteArray innerPadding(blockSize, char(0x36)); // initialize inner padding with char "6"
@@ -352,7 +358,7 @@ QString NdAccount::hmacSha1(QByteArray key, QByteArray baseString)
     QByteArray total = outerPadding;
     QByteArray part = innerPadding;
     part.append(baseString);
-    total.append(QCryptographicHash::hash(part, QCryptographicHash::Sha1));
-    QByteArray hashed = QCryptographicHash::hash(total, QCryptographicHash::Sha1);
+    total.append(QCryptographicHash::hash(part, QCryptographicHash::Sha256));
+    QByteArray hashed = QCryptographicHash::hash(total, QCryptographicHash::Sha256);
     return hashed.toBase64();
 }

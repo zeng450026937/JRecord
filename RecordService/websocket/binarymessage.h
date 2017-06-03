@@ -12,7 +12,8 @@ class BinaryMessage : public QObject, public MessagePacket
     Q_DECLARE_PRIVATE(BinaryMessage)
 
     Q_PROPERTY(int mode READ mode WRITE setMode NOTIFY modeChanged)
-    Q_PROPERTY(QString from READ from WRITE setFrom NOTIFY fromChanged)
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString deviceUuid READ deviceUuid WRITE setDeviceUuid NOTIFY deviceUuidChanged)
     Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
     Q_PROPERTY(int timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
     Q_PROPERTY(int startpos READ startpos WRITE setStartpos NOTIFY startposChanged)
@@ -27,7 +28,8 @@ public:
     MessageType type() { return Binary; }
 
     int mode() const;
-    QString from() const;
+    QString userId() const;
+    QString deviceUuid() const;
     QString uuid() const;
     int timestamp() const;
     int startpos() const;
@@ -39,8 +41,9 @@ public:
 
 Q_SIGNALS:
     void modeChanged(int mode);
-    void fromChanged(QString from);
-    void uuidChanged(QString uuid);
+    void userIdChanged(const QString &userId);
+    void deviceUuidChanged(const QString &deviceUuid);
+    void uuidChanged(const QString &uuid);
     void timestampChanged(int timestamp);
     void startposChanged(int startpos);
     void statusChanged(int status);
@@ -48,7 +51,8 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void setMode(int mode);
-    void setFrom(const QString &from);
+    void setUserId(const QString &userId);
+    void setDeviceUuid(const QString &deviceUuid);
     void setUuid(const QString &uuid);
     void setTimestamp(int timestamp);
     void setStartpos(int startpos);

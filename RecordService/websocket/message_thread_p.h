@@ -2,10 +2,12 @@
 #define MESSAGE_THREAD_P_H
 
 #include <QObject>
+#include <QHash>
 
+class ProtoBase;
 class MessageThread;
 class MessageQueue;
-class QWebSocket;
+class MessageSocket;
 
 class MessageThreadPrivate
 {
@@ -16,7 +18,9 @@ public:
 
     MessageThread *q_ptr;
     MessageQueue *queue;
-    QWebSocket *socket;
+    MessageSocket *socket;
+    bool active;
+    QHash<QString, ProtoBase*> *protocols;
 };
 
 #endif // MESSAGE_THREAD_P_H

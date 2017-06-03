@@ -27,9 +27,14 @@ int BinaryMessage::mode() const
     return d_func()->mode;
 }
 
-QString BinaryMessage::from() const
+QString BinaryMessage::userId() const
 {
-    return d_func()->from;
+    return d_func()->userId;
+}
+
+QString BinaryMessage::deviceUuid() const
+{
+    return d_func()->deviceUuid;
 }
 
 QString BinaryMessage::uuid() const
@@ -71,8 +76,11 @@ void BinaryMessage::parse(QByteArray message)
     d->mode = buffer.read(d->mode_size).toHex().toUInt(&ok,16);
     qDebug()<<"mode"<<d->mode<<ok;
 
-    d->from = QString::fromLatin1(buffer.read(d->from_size));
-    qDebug()<<"from"<<d->from;
+    d->userId = QString::fromLatin1(buffer.read(d->userId_size));
+    qDebug()<<"userId"<<d->userId;
+
+    d->deviceUuid = QString::fromLatin1(buffer.read(d->deviceUuid_size));
+    qDebug()<<"deviceUuid"<<d->deviceUuid;
 
     d->uuid = QString::fromLatin1(buffer.read(d->uuid_size));
     qDebug()<<"uuid"<<d->uuid;
@@ -109,12 +117,21 @@ void BinaryMessage::setMode(int mode)
     }
 }
 
-void BinaryMessage::setFrom(const QString &from)
+void BinaryMessage::setUserId(const QString &userId)
 {
     Q_D(BinaryMessage);
-    if(from != d->from){
-        d->from = from;
-        Q_EMIT fromChanged(d->from);
+    if(userId != d->userId){
+        d->userId = userId;
+        Q_EMIT userIdChanged(d->userId);
+    }
+}
+
+void BinaryMessage::setDeviceUuid(const QString &deviceUuid)
+{
+    Q_D(BinaryMessage);
+    if(deviceUuid != d->deviceUuid){
+        d->deviceUuid = deviceUuid;
+        Q_EMIT deviceUuidChanged(d->deviceUuid);
     }
 }
 

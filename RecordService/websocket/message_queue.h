@@ -13,7 +13,7 @@ class MessageQueue : public QObject
     Q_OBJECT
     Q_DISABLE_COPY(MessageQueue)
     Q_DECLARE_PRIVATE(MessageQueue)
-    Q_PROPERTY(bool abort READ abort WRITE setAbort NOTIFY abortChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
     Q_PROPERTY(bool empty READ empty)
     Q_PROPERTY(bool size READ size NOTIFY sizeChanged)
 public:
@@ -26,16 +26,16 @@ public:
 
     void flush();
 
-    bool abort();
+    bool active();
     bool empty();
     int size();
 
 Q_SIGNALS:
-    void abortChanged(bool abort);
+    void activeChanged(bool active);
     void sizeChanged(int size);
 
 public Q_SLOTS:
-    void setAbort(bool abort);
+    void setActive(bool active);
 
 protected:
     MessageQueue(MessageQueuePrivate *d, QObject *parent = 0);

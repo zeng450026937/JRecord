@@ -24,14 +24,15 @@ Item {
                 width: 300
                 height: parent.height
 
-                model:  UserModel {
+                model:  UserModel{
                     id: userModel
                 }
 
                 delegate: ItemDelegate {
                     width: deviceList.width
-                    height: 140
+                    height: label.implicitHeight
                     Label {
+                        id: label
                         anchors.fill: parent
                         text: model.userId + "\n" +
                               model.userType + "\n" +
@@ -46,10 +47,29 @@ Item {
                     }
                 }
 
+                Keys.onPressed: console.log("key pressed.")
                 Keys.onUpPressed: scrollbar.decrease()
                 Keys.onDownPressed: scrollbar.increase()
                 ScrollBar.vertical: ScrollBar { id:scrollbar }
             }
         }
+        Button{
+            anchors.centerIn: parent
+            onClicked: {
+
+                userList.pull();
+            }
+        }
+    }
+
+    UserList{
+        id: userList
+        service: ServiceBase
+        list: [
+            User{
+                userId: qsTr("userId")
+                userName: qsTr("userName")
+            }
+        ]
     }
 }

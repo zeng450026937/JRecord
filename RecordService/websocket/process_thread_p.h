@@ -3,6 +3,7 @@
 
 #include "message_thread_p.h"
 #include "process_thread.h"
+#include <QHash>
 
 class ProcessThread;
 

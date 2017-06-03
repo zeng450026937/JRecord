@@ -3,7 +3,6 @@
 
 #include "message_thread.h"
 
-class MessagePacket;
 class ProcessThreadPrivate;
 
 class ProcessThread : public MessageThread
@@ -15,14 +14,7 @@ public:
     explicit ProcessThread(QObject *parent = 0);
     ~ProcessThread();
 
-    void setSocket(QWebSocket *socket) override;
-
-Q_SIGNALS:
-    void processStarted();
-    void processStopped();
-
-public Q_SLOTS:
-    void pushMessage(MessagePacket *message);
+    void setSocket(MessageSocket *socket) override;
 
 protected:
     void run() override;

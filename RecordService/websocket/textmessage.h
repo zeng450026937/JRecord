@@ -3,6 +3,7 @@
 
 #include "message_packet.h"
 #include <QVariantMap>
+#include <QJsonValue>
 
 class TextMessagePrivate;
 
@@ -18,10 +19,12 @@ class TextMessage : public QObject, public MessagePacket
     Q_PROPERTY(QString mode READ mode WRITE setMode NOTIFY modeChanged)
     Q_PROPERTY(QString action READ action WRITE setAction NOTIFY actionChanged)
     Q_PROPERTY(QVariantMap data READ data WRITE setData NOTIFY dataChanged)
+    Q_PROPERTY(bool result READ result WRITE setResult NOTIFY resultChanged)
+    Q_PROPERTY(QJsonValue json READ json)
 
 public:
     explicit TextMessage(QObject *parent = 0);
-    TextMessage(QString message, QObject *parent = 0);
+    TextMessage(QString json, QObject *parent = 0);
     TextMessage(QString from,
                 QString to,
                 QString mode,
@@ -38,9 +41,12 @@ public:
     QString mode() const;
     QString action() const;
     QVariantMap data() const;
+    bool result() const;
+    QJsonValue json() const;
 
     Q_INVOKABLE void parse(const QString &message);
     Q_INVOKABLE QString make();
+    Q_INVOKABLE QJsonValue makeJson();
 
 Q_SIGNALS:
     void versionChanged(const QString &version);
@@ -49,6 +55,7 @@ Q_SIGNALS:
     void modeChanged(const QString &mode);
     void actionChanged(const QString &action);
     void dataChanged();
+    void resultChanged(const bool result);
 
 public Q_SLOTS:
     void setVersion(const QString &version);
@@ -57,6 +64,7 @@ public Q_SLOTS:
     void setMode(const QString &mode);
     void setAction(const QString &action);
     void setData(const QVariantMap &data);
+    void setResult(const bool &result);
 
 protected:
     TextMessage(TextMessagePrivate *d, QObject *parent = 0);

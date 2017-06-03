@@ -2,7 +2,7 @@
 
 MessageQueuePrivate::MessageQueuePrivate(MessageQueue *q) :
     q_ptr(q),
-    abort(false)
+    active(false)
 {
 
 }
