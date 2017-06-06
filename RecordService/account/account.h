@@ -3,17 +3,24 @@
 
 #include <QObject>
 
-class NdAccount;
+class AccountPrivate;
 
 class Account : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(Account)
+    Q_DECLARE_PRIVATE(Account)
 
-    Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString userName READ userName NOTIFY userNameChanged)
+    Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
     Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
-    Q_PROPERTY(QString display READ display WRITE setDisplay NOTIFY displayChanged)
-    Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
+    Q_PROPERTY(QString image READ image NOTIFY imageChanged)
+    Q_PROPERTY(QString signature READ signature NOTIFY signatureChanged)
+
+    Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
+    Q_PROPERTY(Status status READ status NOTIFY statusChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
     explicit Account(QObject *parent = Q_NULLPTR);
@@ -28,42 +35,38 @@ public:
     };
     Q_ENUM(Status)
 
-    Q_INVOKABLE void signIn();
-    Q_INVOKABLE void signOut();
-
-    QString username() const;
+    QString userId() const;
+    QString userName() const;
+    QString userGroup() const;
     QString password() const;
-    QString display() const;
+    QString image() const;
+    QString signature() const;
+
     QString errorString() const;
+    Status status() const;
+    bool active() const;
 
 public Q_SLOTS:
-    void setUsername(const QString &username);
+    void setUserId(const QString &userId);
+    void setUserGroup(const QString &userGroup);
     void setPassword(const QString &password);
-    void setDisplay(const QString &display);
+    virtual void setActive(const bool active);
 
 Q_SIGNALS:
-    void usernameChanged(const QString &username);
+    void userIdChanged(const QString &userId);
+    void userNameChanged(const QString &username);
+    void userGroupChanged(const QString &userGroup);
     void passwordChanged(const QString &password);
-    void displayChanged(const QString &display);
+    void imageChanged(const QString &image);
+    void signatureChanged(const QString &signature);
+
     void errorStringChanged(const QString &errorString);
-    void statusChanged(Status status);
+    void statusChanged(const Status status);
+    void activeChanged(const bool active);
 
-private Q_SLOTS:
-    void onSignIned(QString account, bool ok, QString reason);
-    void onSignOuted(QString account, bool ok, QString reason);
-
-private:
-    void setStatus(Status status);
-    void setErrorString(QString errorString);
-
-private:
-    QString username_;
-    QString password_;
-    QString display_;
-    QString errorString_;
-    Status  status_;
-
-    NdAccount* client_;
+protected:
+    Account(AccountPrivate *d, QObject *parent = Q_NULLPTR);
+    QScopedPointer<AccountPrivate> d_ptr;
 };
 
 #endif // ACCOUNT_H

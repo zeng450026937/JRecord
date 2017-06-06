@@ -3,6 +3,10 @@ import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import com.nd.recordservice 1.0
 
+import "../UiRecord"
+import "../UiFile"
+import "../UiSetting"
+
 ApplicationWindow {
     id: root
     width: 800
@@ -58,7 +62,7 @@ ApplicationWindow {
 
                 Label {
                     clip: true
-                    text: Account.username == ""?"admin":Account.username
+                    text: NdAccount.userName
                     Layout.fillWidth: true
                     horizontalAlignment: Qt.AlignRight
                 }
@@ -165,8 +169,8 @@ ApplicationWindow {
     Component.onCompleted: {
 
         ServiceBase.url = qsTr("ws://192.168.85.31:9008");
-        ServiceBase.userId = Account.username
-        ServiceBase.userName = qsTr("user name");
+        ServiceBase.userId = NdAccount.userId;
+        ServiceBase.userName = NdAccount.userName;
         ServiceBase.userGroup = qsTr("ND");
         ServiceBase.deviceType = qsTr("PC");
 

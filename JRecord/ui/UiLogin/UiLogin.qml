@@ -150,7 +150,7 @@ Item {
 
                     Connections {
                         onClicked: {
-                            Account.signIn()
+                            NdAccount.active = !NdAccount.active
                         }
                     }
                 }
@@ -160,28 +160,28 @@ Item {
     }
 
     Binding {
-        target: Account
-        property: "username"
+        target: NdAccount
+        property: "userId"
         value: inputField.username
     }
     Binding {
-        target: Account
+        target: NdAccount
         property: "password"
         value: inputField.password
     }
 
     Connections {
-        target: Account
+        target: NdAccount
         onStatusChanged: {
-            if(status == Account.Logining){
+            if(status == NdAccount.Logining){
             }
-            if(status == Account.Login){
+            if(status == NdAccount.Login){
             }
-            if(status == Account.Logouting){
+            if(status == NdAccount.Logouting){
             }
-            if(status == Account.Logout){
+            if(status == NdAccount.Logout){
             }
-            if(status == Account.Error){
+            if(status == NdAccount.Error){
                 popup.open()
             }
         }
@@ -204,7 +204,7 @@ Item {
             wrapMode: Text.Wrap
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
-            text: Account.errorString
+            text: NdAccount.errorString
         }
     }
 }

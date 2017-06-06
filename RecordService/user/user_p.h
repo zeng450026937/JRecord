@@ -3,7 +3,6 @@
 
 #include <QObject>
 
-class DeviceDescription;
 class User;
 
 class UserPrivate
@@ -12,14 +11,12 @@ class UserPrivate
     Q_DECLARE_PUBLIC(User)
 public:
     UserPrivate(User* q);
-    ~UserPrivate();
 
     User* q_ptr;
 
     QString userId;
     QString userGroup;
     QString userName;
-    DeviceDescription *device;
 };
 
 #endif // USER_P_H

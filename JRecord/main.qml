@@ -43,22 +43,22 @@ ApplicationWindow {
     }
 
     Connections {
-        target: Account
+        target: NdAccount
         onStatusChanged: {
-            if(status == Account.Logining){
+            if(status == NdAccount.Logining){
                 console.log("Logining")
             }
-            if(status == Account.Login){
+            if(status == NdAccount.Login){
                 console.log("Login")
                 sceneLoader.state = "HOME"
             }
-            if(status == Account.Logouting){
+            if(status == NdAccount.Logouting){
                 console.log("Logouting")
             }
-            if(status == Account.Logout){
+            if(status == NdAccount.Logout){
                 console.log("Logout")
             }
-            if(status == Account.Error){
+            if(status == NdAccount.Error){
                 console.log("Error")
             }
         }

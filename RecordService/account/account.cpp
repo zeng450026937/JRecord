@@ -1,118 +1,106 @@
 #include "account.h"
-#include "nd_account.h"
-#include <QDebug>
+#include "account_p.h"
 
-Account::Account(QObject *parent):
+Account::Account(QObject *parent) :
     QObject(parent),
-    status_(Logout)
+    d_ptr(new AccountPrivate(this))
 {
-    client_ = new NdAccount(this);
 
-    connect(client_, SIGNAL(signInResult(QString,bool,QString)),
-            this, SLOT(onSignIned(QString,bool,QString)));
-    connect(client_, SIGNAL(signOutResult(QString,bool,QString)),
-            this, SLOT(onSignOuted(QString,bool,QString)));
 }
 
 Account::~Account()
 {
-    if(status_ == Login)
-        client_->userSignOut();
+
 }
 
-void Account::signIn()
+QString Account::userId() const
 {
-    client_->userSignIn(username_, password_);
-    this->setStatus(Logining);
-}
-void Account::signOut()
-{
-    client_->userSignOut();
-    this->setStatus(Logouting);
+    return d_func()->userId;
 }
 
-QString Account::username() const
+QString Account::userName() const
 {
-    return username_;
+    return d_func()->userName;
 }
+
+QString Account::userGroup() const
+{
+    return d_func()->userGroup;
+}
+
 QString Account::password() const
 {
-    return password_;
+    return d_func()->password;
 }
 
-QString Account::display() const
+QString Account::image() const
 {
-    return display_;
+    return d_func()->image;
 }
+
+QString Account::signature() const
+{
+    return d_func()->signature;
+}
+
 QString Account::errorString() const
 {
-    return errorString_;
+    return d_func()->errorString;
 }
 
-void Account::setUsername(const QString &username)
+Account::Status Account::status() const
 {
-    if(username_ != username){
-        username_ = username;
-        Q_EMIT usernameChanged(username_);
+    return d_func()->status;
+}
+
+bool Account::active() const
+{
+    return d_func()->active;
+}
+
+void Account::setUserId(const QString &userId)
+{
+    Q_D(Account);
+    if(userId != d->userId){
+        d->userId = userId;
+        Q_EMIT userIdChanged(d->userId);
     }
 }
+
+void Account::setUserGroup(const QString &userGroup)
+{
+    Q_D(Account);
+    if(userGroup != d->userGroup){
+        d->userGroup = userGroup;
+        Q_EMIT userIdChanged(d->userGroup);
+    }
+}
+
 void Account::setPassword(const QString &password)
 {
-    if(password_ != password){
-        password_ = password;
-        Q_EMIT usernameChanged(password);
+    Q_D(Account);
+    if(password != d->password){
+        d->password = password;
+        Q_EMIT passwordChanged(d->password);
     }
 }
 
-void Account::setDisplay(const QString &display)
+void Account::setActive(const bool active)
 {
-    if(display_ != display){
-        display_ = display;
-        Q_EMIT displayChanged(display);
+    Q_D(Account);
+    if(active != d->active){
+        if(active){
+            Q_EMIT statusChanged(Logining);
+        }
+        else{
+            Q_EMIT statusChanged(Logouting);
+        }
     }
 }
 
-void Account::setStatus(Status status)
+Account::Account(AccountPrivate *d, QObject *parent) :
+    QObject(parent),
+    d_ptr(d)
 {
-    if(status_ != status){
-        status_ = status;
-        Q_EMIT statusChanged(status_);
-    }
-}
 
-void Account::setErrorString(QString errorString)
-{
-    if(errorString_ != errorString){
-        errorString_ = errorString;
-        Q_EMIT errorStringChanged(errorString_);
-    }
-}
-
-void Account::onSignIned(QString account, bool ok, QString reason)
-{
-    if(account != username_)
-        return;
-
-    this->setErrorString(reason);
-
-    if(ok){
-        this->setStatus(Login);
-    }
-    else{
-        this->setStatus(Error);
-    }
-}
-void Account::onSignOuted(QString account, bool ok, QString reason)
-{
-    if(account != username_)
-        return;
-
-    this->setErrorString(reason);
-
-    if(ok){
-        this->setStatus(Logout);
-    }
-    else{
-        this->setStatus(Error);
-    }
 }

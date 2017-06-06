@@ -15,11 +15,6 @@ SOURCES += \
     sql_initialize.cpp \
     conference/conference.cpp \
     conference/conference_p.cpp \
-    user/userlist.cpp \
-    user/userlist_p.cpp \
-    user/user.cpp \
-    user/user_p.cpp \
-    user/devicedescription.cpp \
     websocket/textmessage.cpp \
     websocket/textmessage_p.cpp \
     websocket/binarymessage.cpp \
@@ -33,7 +28,6 @@ SOURCES += \
     service/service_base.cpp \
     service/service_base_p.cpp \
     websocket/message_queue_p.cpp \
-    user/devicedescription_p.cpp \
     client/client.cpp \
     client/client_p.cpp \
     model/user_model.cpp \
@@ -46,7 +40,13 @@ SOURCES += \
     websocket/protocol/proto_base_p.cpp \
     websocket/protocol/proto_info_p.cpp \
     websocket/protocol/proto_conf.cpp \
-    websocket/protocol/proto_conf_p.cpp
+    websocket/protocol/proto_conf_p.cpp \
+    account/account_p.cpp \
+    account/nd_account_p.cpp \
+    user/user.cpp \
+    user/user_p.cpp \
+    device/device.cpp \
+    device/device_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -58,11 +58,6 @@ HEADERS += \
     protocol.h \
     conference/conference.h \
     conference/conference_p.h \
-    user/userlist.h \
-    user/userlist_p.h \
-    user/user.h \
-    user/user_p.h \
-    user/devicedescription.h \
     websocket/textmessage.h \
     websocket/textmessage_p.h \
     websocket/binarymessage.h \
@@ -76,7 +71,6 @@ HEADERS += \
     service/service_base.h \
     service/service_base_p.h \
     websocket/message_queue_p.h \
-    user/devicedescription_p.h \
     client/client.h \
     client/client_p.h \
     model/user_model.h \
@@ -89,7 +83,13 @@ HEADERS += \
     websocket/protocol/proto_base_p.h \
     websocket/protocol/proto_info_p.h \
     websocket/protocol/proto_conf.h \
-    websocket/protocol/proto_conf_p.h
+    websocket/protocol/proto_conf_p.h \
+    account/account_p.h \
+    account/nd_account_p.h \
+    user/user.h \
+    user/user_p.h \
+    device/device.h \
+    device/device_p.h
 
 DISTFILES = qmldir
 

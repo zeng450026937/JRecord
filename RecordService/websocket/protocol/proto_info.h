@@ -4,7 +4,7 @@
 #include "proto_base.h"
 #include <QJsonValue>
 
-class User;
+class Device;
 class ProtoInfoPrivate;
 
 class ProtoInfo : public ProtoBase
@@ -34,7 +34,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void beat();
-    void push(User *user);
+    void push(Device *device);
     void pull();
 
 public Q_SLOTS:

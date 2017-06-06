@@ -1,7 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
-#include "devicedescription.h"
+#include <QObject>
 
 class UserPrivate;
 
@@ -14,7 +14,6 @@ class User : public QObject
     Q_PROPERTY(QString userId READ userId WRITE setuserId NOTIFY userIdChanged)
     Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
-    Q_PROPERTY(DeviceDescription *device READ device CONSTANT)
 
 public:
     explicit User(QObject *parent = 0);
@@ -23,18 +22,15 @@ public:
     QString userGroup() const;
     QString userName() const;
 
-    DeviceDescription *device();
-
 public Q_SLOTS:
     void setuserId(QString userId);
     void setUserGroup(QString userGroup);
     void setUserName(QString userName);
 
-
 Q_SIGNALS:
-    void userIdChanged(QString &userId);
-    void userGroupChanged(QString &userGroup);
-    void userNameChanged(QString &userName);
+    void userIdChanged(const QString &userId);
+    void userGroupChanged(const QString &userGroup);
+    void userNameChanged(const QString &userName);
 
 protected:
     User(UserPrivate *d, QObject *parent = 0);

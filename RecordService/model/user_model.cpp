@@ -13,7 +13,7 @@ UserModel::UserModel(QSqlTableModel *parent) :
     createUserTable();
 
     setTable(userTableName);
-    setSort(8, Qt::DescendingOrder);
+    setSort(8, Qt::AscendingOrder);
     // Ensures that the model is sorted correctly after submitting a new row.
     setEditStrategy(QSqlTableModel::OnManualSubmit);
 

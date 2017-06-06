@@ -23,13 +23,6 @@ QString User::userName() const
     return d_func()->userName;
 }
 
-DeviceDescription *User::device()
-{
-    Q_D(User);
-    return d->device;
-}
-
-
 void User::setuserId(QString userId)
 {
     Q_D(User);

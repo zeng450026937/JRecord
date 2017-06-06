@@ -2,7 +2,7 @@
 #include "proto_info_p.h"
 #include "service/service_base.h"
 #include "websocket/textmessage.h"
-#include "user/user.h"
+#include "device/device.h"
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QDebug>
@@ -66,16 +66,16 @@ void ProtoInfo::beat()
                             );
 }
 
-void ProtoInfo::push(User *user)
+void ProtoInfo::push(Device *device)
 {
     Q_D(ProtoInfo);
 
     QVariantMap data;
-    data.insert(QStringLiteral("deviceName"),user->device()->name());
-    data.insert(QStringLiteral("batteryPercent"),user->device()->percent());
-    data.insert(QStringLiteral("batteryTime"),user->device()->time());
-    data.insert(QStringLiteral("status"),user->device()->status());
-    data.insert(QStringLiteral("vad"),user->device()->vad());
+    data.insert(QStringLiteral("deviceName"),device->name());
+    data.insert(QStringLiteral("batteryPercent"),device->percent());
+    data.insert(QStringLiteral("batteryTime"),device->time());
+    data.insert(QStringLiteral("status"),device->status());
+    data.insert(QStringLiteral("vad"),device->vad());
 
     d->service->sendMessage(this->make(d->service->userId(),
                                        QStringLiteral(""),
