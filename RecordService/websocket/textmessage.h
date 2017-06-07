@@ -20,7 +20,7 @@ class TextMessage : public QObject, public MessagePacket
     Q_PROPERTY(QString action READ action WRITE setAction NOTIFY actionChanged)
     Q_PROPERTY(QVariantMap data READ data WRITE setData NOTIFY dataChanged)
     Q_PROPERTY(bool result READ result WRITE setResult NOTIFY resultChanged)
-    Q_PROPERTY(QJsonValue json READ json)
+    Q_PROPERTY(QJsonValue json READ json CONSTANT)
 
 public:
     explicit TextMessage(QObject *parent = 0);
