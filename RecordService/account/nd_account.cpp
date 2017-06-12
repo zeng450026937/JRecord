@@ -56,7 +56,7 @@ NdAccount::NdAccount(QObject *parent) :
                         d->userInfoMap = document.object().toVariantMap();
                         d->userId = d->userInfoMap.value(QStringLiteral("user_id")).toString();
                         Q_EMIT userIdChanged(d->userId);
-                        d->userName = d->userInfoMap.value(QStringLiteral("nick_name")).toString();
+                        d->userName = d->userInfoMap.value(QStringLiteral("org_exinfo")).toMap().value("username").toString();
                         Q_EMIT userNameChanged(d->userName);
                         d->image = QString("http://cs.101.com/v0.1/static/cscommon/avatar/%1/%1.jpg").arg(d->userId);
                         Q_EMIT imageChanged(d->image);

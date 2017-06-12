@@ -14,8 +14,6 @@ public:
     explicit TransportThread(QObject *parent = 0);
     ~TransportThread();
 
-    void setSocket(MessageSocket *socket) override;
-
 Q_SIGNALS:
     void textTransported(const QString &message);
     void binaryTransported(const QByteArray &message);

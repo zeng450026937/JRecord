@@ -15,10 +15,18 @@ class ProtoBase : public QObject
     Q_DISABLE_COPY(ProtoBase)
     Q_DECLARE_PRIVATE(ProtoBase)
     Q_PROPERTY(QString mode READ mode CONSTANT)
+    Q_PROPERTY(QString owner READ owner WRITE setOwner NOTIFY ownerChanged)
 public:
-    explicit ProtoBase(ServiceBase *service, QObject *parent = nullptr);
+    explicit ProtoBase(QObject *parent = nullptr);
 
-    virtual QString mode() const;
+    QString mode() const;
+    QString owner() const;
+
+Q_SIGNALS:
+    void ownerChanged(const QString &owner);
+
+public Q_SLOTS:
+    void setOwner(const QString &owner);
 
 protected:
     /*
@@ -26,11 +34,12 @@ protected:
     */
     virtual void process(QSharedPointer<MessagePacket> pkt);
 
-    virtual MessagePacket *make(QString from, QString to, int action, QVariantMap data, QString mode = "");
+    virtual void transport(QString to, QString action, QVariantMap data);
 
     ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
     QScopedPointer<ProtoBasePrivate> d_ptr;
     friend class ProcessThread;
+    friend class ServiceBase;
 };
 
 #endif // PROTO_BASE_H

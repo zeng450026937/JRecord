@@ -1,11 +1,8 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
+import QtGraphicalEffects 1.0
 import com.nd.recordservice 1.0
-
-import "../UiRecord"
-import "../UiFile"
-import "../UiSetting"
 
 ApplicationWindow {
     id: root
@@ -103,14 +100,21 @@ ApplicationWindow {
             anchors.fill: parent
             currentIndex: tabBar.currentIndex
 
-            UiRecord {
-                clip: true
+            ListModel {
+                id: viewModel
+                ListElement{ sourceUri: "../UiRecord/UiRecord.qml" }
+                ListElement{ sourceUri: "../UiFile/UiFile.qml" }
+                ListElement{ sourceUri: "../UiSetting/UiSetting.qml" }
             }
-            UiFile {
-                clip: true
-            }
-            UiSetting {
-                clip: true
+
+            Repeater {
+                model: viewModel
+
+                Loader {
+                    id: viewLoader
+                    clip: true
+                    source: sourceUri
+                }
             }
         }
 
@@ -118,6 +122,57 @@ ApplicationWindow {
             id: drawer
             width: root.width * 0.3
             height: root.height
+            clip: true
+
+            Rectangle {
+                width: parent.width
+                height: parent.height
+                color: "lightgray"
+                clip: true
+
+                Column{
+                    anchors.fill: parent
+                    Image {
+                        id: image
+                        property bool rounded: true
+                        property bool adapt: false
+
+                        width: parent.width / 2
+                        height: width
+                        source: NdAccount.image
+                        asynchronous: true
+                        clip: true
+
+//                        layer.enabled: rounded
+//                        layer.effect: OpacityMask {
+//                            maskSource: Item {
+//                                width: image.width
+//                                height: image.height
+//                                Rectangle {
+//                                    anchors.centerIn: parent
+//                                    width: image.adapt ? image.width : Math.min(image.width, image.height)
+//                                    height: image.adapt ? image.height : width
+//                                    radius: Math.min(width, height)
+//                                }
+//                            }
+//                        }
+                    }
+                    Label {
+                        clip: true
+                        text: NdAccount.userName
+                    }
+                    Label {
+                        clip: true
+                        text: NdAccount.signature
+                        wrapMode: Text.Wrap
+                    }
+                    Button {
+                        clip: true
+                        text: qsTr("Sign Out")
+                        onClicked: NdAccount.active = false
+                    }
+                }
+            }
         }
 
         footer: TabBar {
@@ -143,37 +198,5 @@ ApplicationWindow {
                 clip: true
             }
         }
-    }
-
-    Connections {
-        target: ServiceBase
-        onStatusChanged: {
-            if(status == ServiceBase.Connecting){
-                console.log(qsTr("Connecting"))
-            }
-            if(status == ServiceBase.Open){
-                console.log(qsTr("Open"))
-            }
-            if(status == ServiceBase.Closing){
-                console.log(qsTr("Closing"))
-            }
-            if(status == ServiceBase.Closed){
-                console.log(qsTr("Closed"))
-            }
-            if(status == ServiceBase.Error){
-                console.log(qsTr("Error:")+ServiceBase.errorString)
-            }
-        }
-    }
-
-    Component.onCompleted: {
-
-        ServiceBase.url = qsTr("ws://192.168.85.31:9008");
-        ServiceBase.userId = NdAccount.userId;
-        ServiceBase.userName = NdAccount.userName;
-        ServiceBase.userGroup = qsTr("ND");
-        ServiceBase.deviceType = qsTr("PC");
-
-        ServiceBase.active = true;
     }
 }

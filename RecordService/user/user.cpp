@@ -23,7 +23,7 @@ QString User::userName() const
     return d_func()->userName;
 }
 
-void User::setuserId(QString userId)
+void User::setUserId(QString userId)
 {
     Q_D(User);
     if(userId != d->userId){

@@ -13,13 +13,9 @@ class ProtoInfo : public ProtoBase
     Q_DISABLE_COPY(ProtoInfo)
     Q_DECLARE_PRIVATE(ProtoInfo)
 public:
-    explicit ProtoInfo(ServiceBase *service, QObject *parent = nullptr);
-
-    QString mode() const override;
+    explicit ProtoInfo(QObject *parent = nullptr);
 
     void process(QSharedPointer<MessagePacket> pkt) override;
-
-    MessagePacket *make(QString from, QString to, int action, QVariantMap data, QString mode = "") override;
 
     enum Actions{
         heartBeat,
@@ -36,8 +32,6 @@ public Q_SLOTS:
     void beat();
     void push(Device *device);
     void pull();
-
-public Q_SLOTS:
 
 };
 

@@ -64,8 +64,6 @@ public:
     QString member() const;
     QQmlListProperty<User> userlist();
 
-    void setService(ServiceBase *servie) override;
-
 Q_SIGNALS:
     void hostChanged();
     void titleChanged(const QString &title);

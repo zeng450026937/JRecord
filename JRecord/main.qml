@@ -14,7 +14,6 @@ ApplicationWindow {
     Loader{
         id: sceneLoader
         anchors.fill: parent
-        focus: true
 
         states: [
             State {
@@ -50,13 +49,14 @@ ApplicationWindow {
             }
             if(status == NdAccount.Login){
                 console.log("Login")
-                sceneLoader.state = "HOME"
+                ServiceBase.active = true
             }
             if(status == NdAccount.Logouting){
                 console.log("Logouting")
             }
             if(status == NdAccount.Logout){
                 console.log("Logout")
+                ServiceBase.active = false
             }
             if(status == NdAccount.Error){
                 console.log("Error")
@@ -64,7 +64,45 @@ ApplicationWindow {
         }
     }
 
+    Connections {
+        target: ServiceBase
+        onStatusChanged: {
+            if(status == ServiceBase.Connecting){
+                console.log(qsTr("Connecting"))
+            }
+            if(status == ServiceBase.Open){
+                console.log(qsTr("Open"))
+                sceneLoader.state = "HOME"
+            }
+            if(status == ServiceBase.Closing){
+                console.log(qsTr("Closing"))
+            }
+            if(status == ServiceBase.Closed){
+                console.log(qsTr("Closed"))
+                sceneLoader.state = "LOGIN"
+            }
+            if(status == ServiceBase.Error){
+                console.log(qsTr("Error:")+ServiceBase.errorString)
+            }
+        }
+    }
+
+    Binding {
+        target: ServiceBase
+        property: "userId"
+        value: NdAccount.userId
+    }
+    Binding {
+        target: ServiceBase
+        property: "userName"
+        value: NdAccount.userName
+    }
+
     Component.onCompleted: {
         sceneLoader.state = "LOGIN"
+
+        ServiceBase.url = qsTr("ws://192.168.85.31:9008");
+        ServiceBase.userGroup = qsTr("ND");
+        ServiceBase.deviceType = qsTr("PC");
     }
 }

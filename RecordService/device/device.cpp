@@ -3,8 +3,7 @@
 #include "user/user.h"
 
 Device::Device(QObject *parent) :
-    QObject(parent),
-    d_ptr(new DevicePrivate(this))
+    Client(new DevicePrivate(this), parent)
 {
     Q_D(Device);
     d->owner = new User(this);
@@ -56,6 +55,11 @@ int Device::percent() const
 int Device::time() const
 {
     return d_func()->time;
+}
+
+bool Device::lock() const
+{
+    return d_func()->lock;
 }
 
 User *Device::owner() const
@@ -126,6 +130,15 @@ void Device::setTime(const int time)
     }
 }
 
+void Device::setLock(const bool lock)
+{
+    Q_D(Device);
+    if(lock != d->lock){
+        d->lock = lock;
+        Q_EMIT lockChanged(d->lock);
+    }
+}
+
 void Device::setOwner(User *owner)
 {
     Q_D(Device);
@@ -136,8 +149,7 @@ void Device::setOwner(User *owner)
 }
 
 Device::Device(DevicePrivate *d, QObject *parent) :
-    QObject(parent),
-    d_ptr(d)
+    Client(d, parent)
 {
 
 }

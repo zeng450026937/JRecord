@@ -73,7 +73,7 @@ void createUserTable()
     QVariantList vad;
     QVariantList locked;
 
-    for(int i = 0; i < 15; i++){
+    for(int i = 0; i < 25; i++){
         userId << QString("userId %1").arg(i);
         userType << QString("userType %1").arg(i);
         userName << QString("userName %1").arg(i);

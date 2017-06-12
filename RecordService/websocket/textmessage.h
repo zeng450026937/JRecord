@@ -24,7 +24,7 @@ class TextMessage : public QObject, public MessagePacket
 
 public:
     explicit TextMessage(QObject *parent = 0);
-    TextMessage(QString json, QObject *parent = 0);
+    TextMessage(QString string, QObject *parent = 0);
     TextMessage(QString from,
                 QString to,
                 QString mode,
@@ -44,9 +44,8 @@ public:
     bool result() const;
     QJsonValue json() const;
 
-    Q_INVOKABLE void parse(const QString &message);
-    Q_INVOKABLE QString make();
-    Q_INVOKABLE QJsonValue makeJson();
+    Q_INVOKABLE void decode(const QString &message);
+    Q_INVOKABLE QString encode();
 
 Q_SIGNALS:
     void versionChanged(const QString &version);

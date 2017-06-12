@@ -6,15 +6,12 @@
 #include <QMetaEnum>
 #include <QDebug>
 
-ProtoConf::ProtoConf(ServiceBase *service, QObject *parent) :
-    ProtoBase(new ProtoConfPrivate(service, this), parent)
+ProtoConf::ProtoConf(QObject *parent) :
+    ProtoBase(new ProtoConfPrivate(this), parent)
 {
-
-}
-
-QString ProtoConf::mode() const
-{
-    return d_func()->mode;
+    Q_D(ProtoConf);
+    d->mode = QStringLiteral("conference");
+    d->metaEnum = this->metaObject()->enumerator(this->metaObject()->indexOfEnumerator("Actions"));
 }
 
 void ProtoConf::process(QSharedPointer<MessagePacket> pkt)
@@ -48,14 +45,6 @@ void ProtoConf::process(QSharedPointer<MessagePacket> pkt)
     }
 }
 
-MessagePacket *ProtoConf::make(QString from, QString to, int action, QVariantMap data, QString mode)
-{
-    const QMetaObject *MetaObject = this->metaObject();
-    QMetaEnum MetaEnum = MetaObject->enumerator(MetaObject->indexOfEnumerator("Actions"));
-
-    return new TextMessage(from,to,d_func()->mode,MetaEnum.valueToKey(action),data);
-}
-
 void ProtoConf::lock()
 {
 
@@ -76,11 +65,9 @@ void ProtoConf::create(const QString &title, const QString &content, const QStri
     data.insert(QStringLiteral("members"),members);
     data.insert(QStringLiteral("devices"),devices);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::createConference,
-                                       data)
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(createConference),
+                    data);
 }
 
 void ProtoConf::start(const QString &uuid)
@@ -90,11 +77,9 @@ void ProtoConf::start(const QString &uuid)
     QVariantMap data;
     data.insert(QStringLiteral("uuid"),uuid);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::startConference,
-                                       data)
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(startConference),
+                    data);
 }
 
 void ProtoConf::pause(const QString &uuid)
@@ -104,11 +89,9 @@ void ProtoConf::pause(const QString &uuid)
     QVariantMap data;
     data.insert(QStringLiteral("uuid"),uuid);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::pauseConference,
-                                       data)
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(pauseConference),
+                    data);
 }
 
 void ProtoConf::resume(const QString &uuid)
@@ -123,11 +106,9 @@ void ProtoConf::stop(const QString &uuid)
     QVariantMap data;
     data.insert(QStringLiteral("uuid"),uuid);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::stopConference,
-                                       data)
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(stopConference),
+                    data);
 }
 
 void ProtoConf::join(const QString &uuid)
@@ -146,21 +127,17 @@ void ProtoConf::query(const QString &uuid)
 
     if(uuid.isEmpty()){
 
-        d->service->sendMessage(this->make(d->service->userId(),
-                                           QStringLiteral(""),
-                                           Actions::getConferenceList,
-                                           QVariantMap())
-                                );
+        this->transport(QStringLiteral(""),
+                        d->metaEnum.valueToKey(getConferenceList),
+                        QVariantMap());
     }
     else{
         QVariantMap data;
         data.insert(QStringLiteral("uuid"),uuid);
 
-        d->service->sendMessage(this->make(d->service->userId(),
-                                           QStringLiteral(""),
-                                           Actions::getConferenceInfo,
-                                           data)
-                                );
+        this->transport(QStringLiteral(""),
+                        d->metaEnum.valueToKey(getConferenceInfo),
+                        data);
     }
 }
 

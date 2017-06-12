@@ -5,6 +5,8 @@
 #include "websocket/message_queue.h"
 #include "websocket/textmessage.h"
 #include "websocket/message_socket.h"
+#include "websocket/protocol/proto_base.h"
+#include "websocket/protocol/proto_base_p.h"
 #include "websocket/protocol/proto_info.h"
 #include "websocket/protocol/proto_conf.h"
 
@@ -26,7 +28,6 @@ ServiceBase::~ServiceBase()
     Q_D(ServiceBase);
     this->setActive(false);
 
-    qDeleteAll(d->protocols);
     d->protocols.clear();
 }
 
@@ -73,19 +74,23 @@ void ServiceBase::registerProtocol(ProtoBase *protocol)
 {
     Q_D(ServiceBase);
 
-    bool changed(false);
-    if(d->protocols.contains(protocol->mode()))
-        changed = true;
+    this->removeProtocol(protocol->mode());
+
+    protocol->d_func()->transport = d->transport_thread;
+    QObject::connect(this, &ServiceBase::userIdChanged,
+                     protocol, &ProtoBase::setOwner);
 
     d->protocols.insert(protocol->mode(), protocol);
 
-    if(changed)
-        Q_EMIT protocolChanged(protocol->mode());
+    Q_EMIT protocolChanged(protocol->mode());
 }
 
 void ServiceBase::removeProtocol(const QString &name)
 {
     Q_D(ServiceBase);
+    ProtoBase *protocol = d->protocols.value(name, Q_NULLPTR);
+    if(protocol)
+        protocol->deleteLater();
     d->protocols.remove(name);
 }
 
@@ -94,12 +99,6 @@ ProtoBase *ServiceBase::protocol(const QString &name)
     return d_func()->protocols.value(name, Q_NULLPTR);
 }
 
-void ServiceBase::sendMessage(MessagePacket *pkt)
-{
-    Q_D(ServiceBase);
-    if(d->transport_thread)
-        d->transport_thread->pushMessage(pkt);
-}
 void ServiceBase::setActive(bool active)
 {
     Q_D(ServiceBase);
@@ -124,7 +123,7 @@ void ServiceBase::setActive(bool active)
             QNetworkRequest request(d->url);
             request.setRawHeader("Accept", "application/json");
             request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
-            request.setRawHeader("Authorization", auth->make().toUtf8());
+            request.setRawHeader("Authorization", auth->encode().toUtf8());
 
             d->socket->setRequest(request);
         }

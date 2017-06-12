@@ -9,7 +9,17 @@
 TransportThread::TransportThread(QObject *parent) :
     MessageThread(new TransportThreadPrivate(this), parent)
 {
+    QObject::connect(this, &TransportThread::socketChanged, [this](MessageSocket *socket){
+        Q_D(TransportThread);
 
+        QObject::disconnect(d->textConnection);
+        QObject::disconnect(d->binaryConnection);
+
+        d->textConnection = QObject::connect(this, &TransportThread::textTransported,
+                                             socket, &MessageSocket::sendText);
+        d->binaryConnection = QObject::connect(this, &TransportThread::binaryTransported,
+                                               socket, &MessageSocket::sendBinary);
+    });
 }
 
 TransportThread::~TransportThread()
@@ -20,23 +30,6 @@ TransportThread::~TransportThread()
         this->quit();
         this->wait(3000);
     }
-}
-
-void TransportThread::setSocket(MessageSocket *socket)
-{
-    Q_D(TransportThread);
-
-    if(d->socket){
-        QObject::disconnect(d->textConnection);
-        QObject::disconnect(d->binaryConnection);
-    }
-
-    d->textConnection = QObject::connect(this, SIGNAL(textTransported(QString)),
-                                         socket, SLOT(sendText(QString)));
-    d->binaryConnection = QObject::connect(this, SIGNAL(binaryTransported(QByteArray)),
-                                           socket, SLOT(sendBinary(QByteArray)));
-
-    MessageThread::setSocket(socket);
 }
 
 void TransportThread::run()
@@ -58,9 +51,9 @@ void TransportThread::run()
             if(pkt->type() == MessagePacket::Text){
                 QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
                 if(msg){
-                    Q_EMIT textTransported(msg->make());
+                    Q_EMIT textTransported(msg->encode());
                     if(msg->action() != "heartBeat")
-                        qDebug()<<"send:"<<msg->makeJson();
+                        qDebug()<<"send:"<<msg->encode();
                 }
             }
             if(pkt->type() == MessagePacket::Binary){

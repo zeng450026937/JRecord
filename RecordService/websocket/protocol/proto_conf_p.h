@@ -11,7 +11,7 @@ class ProtoConfPrivate : public ProtoBasePrivate
     Q_DISABLE_COPY(ProtoConfPrivate)
     Q_DECLARE_PUBLIC(ProtoConf)
 public:
-    ProtoConfPrivate(ServiceBase *s, ProtoConf *q);
+    ProtoConfPrivate(ProtoConf *q);
 };
 
 #endif // PROTO_CONF_P_H

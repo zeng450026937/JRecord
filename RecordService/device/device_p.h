@@ -1,19 +1,19 @@
 #ifndef DEVICE_P_H
 #define DEVICE_P_H
 
-#include <QObject>
+#include "client/client_p.h"
+#include "device.h"
 
 class User;
 class Device;
 
-class DevicePrivate
+class DevicePrivate : public ClientPrivate
 {
     Q_DISABLE_COPY(DevicePrivate)
     Q_DECLARE_PUBLIC(Device)
 public:
     DevicePrivate(Device *q);
 
-    Device *q_ptr;
     QString type;
     QString uuid;
     QString name;
@@ -21,6 +21,7 @@ public:
     QString vad;
     int percent;
     int time;
+    bool lock;
     User *owner;
 };
 

@@ -11,7 +11,7 @@ class User : public QObject
     Q_DISABLE_COPY(User)
     Q_DECLARE_PRIVATE(User)
 
-    Q_PROPERTY(QString userId READ userId WRITE setuserId NOTIFY userIdChanged)
+    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
     Q_PROPERTY(QString userGroup READ userGroup WRITE setUserGroup NOTIFY userGroupChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
 
@@ -23,7 +23,7 @@ public:
     QString userName() const;
 
 public Q_SLOTS:
-    void setuserId(QString userId);
+    void setUserId(QString userId);
     void setUserGroup(QString userGroup);
     void setUserName(QString userName);
 

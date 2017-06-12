@@ -13,13 +13,9 @@ class ProtoConf : public ProtoBase
     Q_DISABLE_COPY(ProtoConf)
     Q_DECLARE_PRIVATE(ProtoConf)
 public:
-    explicit ProtoConf(ServiceBase *service, QObject *parent = nullptr);
-
-    QString mode() const override;
+    explicit ProtoConf(QObject *parent = nullptr);
 
     void process(QSharedPointer<MessagePacket> pkt) override;
-
-    MessagePacket *make(QString from, QString to, int action, QVariantMap data, QString mode = "") override;
 
     enum Actions{
         lockDevice,

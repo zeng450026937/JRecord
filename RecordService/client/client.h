@@ -20,10 +20,10 @@ public:
     ServiceBase *service() const;
 
 public Q_SLOTS:
-    virtual void setService(ServiceBase *servie);
+    void setService(ServiceBase *servie);
 
 Q_SIGNALS:
-    void serviceChanged();
+    void serviceChanged(ServiceBase *servie);
 
 protected:
     Client(ClientPrivate *d, QObject *parent = 0);

@@ -46,11 +46,11 @@ public:
     QString deviceType() const;
     QString deviceUuid() const;
 
+    //protocol which register by registerProtocol(), will be deleted when removeProtocol is called
+    //register protocol with same mode,the old one will be deleted
     void registerProtocol(ProtoBase *protocol);
     void removeProtocol(const QString &name);
     ProtoBase *protocol(const QString &name);
-
-    void sendMessage(MessagePacket *pkt);
 
 public Q_SLOTS:
     void setActive(bool active);

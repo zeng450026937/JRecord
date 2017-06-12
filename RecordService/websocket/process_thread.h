@@ -14,8 +14,6 @@ public:
     explicit ProcessThread(QObject *parent = 0);
     ~ProcessThread();
 
-    void setSocket(MessageSocket *socket) override;
-
 protected:
     void run() override;
 };

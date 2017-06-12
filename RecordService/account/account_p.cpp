@@ -9,3 +9,28 @@ AccountPrivate::AccountPrivate(Account *q) :
 
 }
 
+bool AccountPrivate::getActive() const
+{
+    return active;
+}
+
+void AccountPrivate::setActive(bool value)
+{
+    active = value;
+}
+
+QString AccountPrivate::getErrorString() const
+{
+    return errorString;
+}
+
+void AccountPrivate::setErrorString(const QString &value)
+{
+    errorString = value;
+}
+
+QString AccountPrivate::getUserId() const
+{
+    return userId;
+}
+

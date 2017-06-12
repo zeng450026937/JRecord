@@ -1,9 +1,10 @@
 #include "device_p.h"
 
 DevicePrivate::DevicePrivate(Device *q) :
-    q_ptr(q),
+    ClientPrivate(q),
     percent(0),
     time(0),
+    lock(false),
     owner(Q_NULLPTR)
 {
 

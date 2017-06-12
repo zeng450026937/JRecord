@@ -10,7 +10,20 @@
 ProcessThread::ProcessThread(QObject *parent) :
     MessageThread(new ProcessThreadPrivate(this), parent)
 {
+    QObject::connect(this, &ProcessThread::socketChanged, [this](MessageSocket *socket){
+        Q_D(ProcessThread);
+        QObject::disconnect(d->textConnection);
+        QObject::disconnect(d->binaryConnection);
 
+        d->textConnection = QObject::connect(socket, &MessageSocket::textReceived,
+                         [this](const QString &message){
+            pushMessage(new TextMessage(message));
+        });
+        d->binaryConnection = QObject::connect(socket, &MessageSocket::binaryReceived,
+                         [this](const QByteArray &message){
+            pushMessage(new BinaryMessage(message));
+        });
+    });
 }
 
 ProcessThread::~ProcessThread()
@@ -21,26 +34,6 @@ ProcessThread::~ProcessThread()
         this->quit();
         this->wait(3000);
     }
-}
-
-void ProcessThread::setSocket(MessageSocket *socket)
-{
-    Q_D(ProcessThread);
-    if(d->socket){
-        QObject::disconnect(d->textConnection);
-        QObject::disconnect(d->binaryConnection);
-    }
-
-    d->textConnection = QObject::connect(socket, &MessageSocket::textReceived,
-                     [this](const QString &message){
-        pushMessage(new TextMessage(message));
-    });
-    d->binaryConnection = QObject::connect(socket, &MessageSocket::binaryReceived,
-                     [this](const QByteArray &message){
-        pushMessage(new BinaryMessage(message));
-    });
-
-    MessageThread::setSocket(socket);
 }
 
 void ProcessThread::run()
@@ -65,7 +58,7 @@ void ProcessThread::run()
                         protocol->process(pkt);
                     }
                     if(msg->action() != "heartBeat")
-                        qDebug()<<"received:"<<msg->makeJson();
+                        qDebug()<<"received:"<<msg->encode();
                 }
             }
             if(pkt->type() == MessagePacket::Binary){

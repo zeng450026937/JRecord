@@ -1,21 +1,16 @@
 #include "proto_info.h"
 #include "proto_info_p.h"
-#include "service/service_base.h"
 #include "websocket/textmessage.h"
 #include "device/device.h"
 #include <QMetaObject>
-#include <QMetaEnum>
 #include <QDebug>
 
-ProtoInfo::ProtoInfo(ServiceBase *service, QObject *parent) :
-    ProtoBase(new ProtoInfoPrivate(service, this), parent)
+ProtoInfo::ProtoInfo(QObject *parent) :
+    ProtoBase(new ProtoInfoPrivate(this), parent)
 {
-
-}
-
-QString ProtoInfo::mode() const
-{
-    return d_func()->mode;
+    Q_D(ProtoInfo);
+    d->mode = QStringLiteral("info");
+    d->metaEnum = this->metaObject()->enumerator(this->metaObject()->indexOfEnumerator("Actions"));
 }
 
 void ProtoInfo::process(QSharedPointer<MessagePacket> pkt)
@@ -23,11 +18,10 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt)
     QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
     if(msg){
 
-        const QMetaObject *MetaObject = this->metaObject();
-        QMetaEnum MetaEnum = MetaObject->enumerator(MetaObject->indexOfEnumerator("Actions"));
+        Q_D(ProtoInfo);
 
         Actions action;
-        switch(MetaEnum.keysToValue(msg->action().toUtf8())){
+        switch(d->metaEnum.keysToValue(msg->action().toUtf8())){
         case heartBeat:
             action = Actions::heartBeat;
             this->beat();
@@ -47,23 +41,13 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt)
     }
 }
 
-MessagePacket *ProtoInfo::make(QString from, QString to, int action, QVariantMap data, QString mode)
-{
-    const QMetaObject *MetaObject = this->metaObject();
-    QMetaEnum MetaEnum = MetaObject->enumerator(MetaObject->indexOfEnumerator("Actions"));
-
-    return new TextMessage(from,to,d_func()->mode,MetaEnum.valueToKey(action),data);
-}
-
 void ProtoInfo::beat()
 {
     Q_D(ProtoInfo);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::heartBeat,
-                                       QVariantMap())
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(Actions::heartBeat),
+                    QVariantMap());
 }
 
 void ProtoInfo::push(Device *device)
@@ -77,20 +61,18 @@ void ProtoInfo::push(Device *device)
     data.insert(QStringLiteral("status"),device->status());
     data.insert(QStringLiteral("vad"),device->vad());
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::updateDeviceInfo,
-                                       data)
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(Actions::updateDeviceInfo),
+                    data);
+
 }
 
 void ProtoInfo::pull()
 {
     Q_D(ProtoInfo);
 
-    d->service->sendMessage(this->make(d->service->userId(),
-                                       QStringLiteral(""),
-                                       Actions::getDeviceList,
-                                       QVariantMap())
-                            );
+    this->transport(QStringLiteral(""),
+                    d->metaEnum.valueToKey(Actions::getDeviceList),
+                    QVariantMap());
+
 }

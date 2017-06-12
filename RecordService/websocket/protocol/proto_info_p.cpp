@@ -1,7 +1,7 @@
 #include "proto_info_p.h"
 
-ProtoInfoPrivate::ProtoInfoPrivate(ServiceBase *s, ProtoInfo *q) :
-    ProtoBasePrivate(s,q)
+ProtoInfoPrivate::ProtoInfoPrivate(ProtoInfo *q) :
+    ProtoBasePrivate(q)
 {
-    mode = QStringLiteral("info");
+
 }

@@ -1,11 +1,10 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
+import com.nd.recordservice 1.0
 
-ItemDelegate {
+CheckDelegate {
     id: delegate
-    width: 500
-    height: 40
     clip: true
 
     property alias locked: userCheckBox.checked
@@ -14,6 +13,11 @@ ItemDelegate {
     property alias percent: percentLabel.text
     property alias time: timeLabel.text
     property alias status: statusLabel.text
+
+    property var device: Device{
+        service: ServiceBase
+        uuid: deviceUuid
+    }
 
     contentItem: RowLayout {
         spacing: 5

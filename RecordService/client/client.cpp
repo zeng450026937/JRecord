@@ -18,7 +18,7 @@ void Client::setService(ServiceBase *servie)
     Q_D(Client);
     if(servie != d->service){
         d->service = servie;
-        Q_EMIT serviceChanged();
+        Q_EMIT serviceChanged(d->service);
     }
 }
 

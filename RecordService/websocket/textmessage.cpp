@@ -19,11 +19,11 @@ TextMessage::TextMessage(TextMessagePrivate *d, QObject *parent) :
 
 }
 
-TextMessage::TextMessage(QString json, QObject *parent) :
+TextMessage::TextMessage(QString string, QObject *parent) :
     QObject(parent),
     d_ptr(new TextMessagePrivate(this))
 {
-    this->parse(json);
+    this->decode(string);
 }
 
 TextMessage::TextMessage(QString from, QString to,
@@ -85,7 +85,7 @@ QJsonValue TextMessage::json() const
     return d_func()->json;
 }
 
-void TextMessage::parse(const QString &message)
+void TextMessage::decode(const QString &message)
 {
     QJsonParseError error;
     QJsonDocument jsonDocument  = QJsonDocument::fromJson(message.toUtf8(), &error);
@@ -93,7 +93,9 @@ void TextMessage::parse(const QString &message)
     if(error.error == QJsonParseError::NoError){
         Q_D(TextMessage);
         if(jsonDocument.isObject()){
+
             d->json = jsonDocument.object();
+
             d->version = d->json.value(QStringLiteral("version")).toString();
             d->authorization = d->json.value(QStringLiteral("authorization")).toString();
             d->from = d->json.value(QStringLiteral("from")).toString();
@@ -111,15 +113,7 @@ void TextMessage::parse(const QString &message)
     }
 }
 
-QString TextMessage::make()
-{
-    QJsonDocument document;
-    document.setObject(this->makeJson().toObject());
-
-    return document.toJson();
-}
-
-QJsonValue TextMessage::makeJson()
+QString TextMessage::encode()
 {
     Q_D(TextMessage);
 
@@ -131,7 +125,10 @@ QJsonValue TextMessage::makeJson()
     d->json.insert("data", QJsonValue(d->data));
     d->json.insert("result", QJsonValue(d->result));
 
-    return d->json;
+    QJsonDocument document;
+    document.setObject(d->json);
+
+    return document.toJson(QJsonDocument::Compact);
 }
 
 void TextMessage::setVersion(const QString &version)

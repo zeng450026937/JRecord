@@ -50,7 +50,7 @@ void MessageThread::setQueue(MessageQueue *queue)
     Q_D(MessageThread);
     if(queue != d->queue){
         d->queue = queue;
-        Q_EMIT queueChanged();
+        Q_EMIT queueChanged(d->queue);
     }
 }
 
@@ -59,7 +59,7 @@ void MessageThread::setSocket(MessageSocket *socket)
     Q_D(MessageThread);
     if(socket != d->socket){
         d->socket = socket;
-        Q_EMIT socketChanged();
+        Q_EMIT socketChanged(d->socket);
     }
 }
 

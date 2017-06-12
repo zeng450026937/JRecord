@@ -1,12 +1,12 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include <QObject>
+#include "client/client.h"
 
 class User;
 class DevicePrivate;
 
-class Device : public QObject
+class Device : public Client
 {
     Q_OBJECT
     Q_DISABLE_COPY(Device)
@@ -19,6 +19,7 @@ class Device : public QObject
     Q_PROPERTY(QString vad READ vad WRITE setVad NOTIFY vadChanged)
     Q_PROPERTY(int percent READ percent WRITE setPercent NOTIFY percentChanged)
     Q_PROPERTY(int time READ time WRITE setTime NOTIFY timeChanged)
+    Q_PROPERTY(bool lock READ lock WRITE setLock NOTIFY lockChanged)
     Q_PROPERTY(User* owner READ owner WRITE setOwner NOTIFY ownerChanged)
 public:
     explicit Device(QObject *parent = 0);
@@ -30,6 +31,7 @@ public:
     QString vad() const;
     int percent() const;
     int time() const;
+    bool lock() const;
     User *owner() const;
 
 Q_SIGNALS:
@@ -40,6 +42,7 @@ Q_SIGNALS:
     void vadChanged(const QString &vad);
     void percentChanged(const int percent);
     void timeChanged(const int time);
+    void lockChanged(const bool lock);
     void ownerChanged(const User* user);
 
 public Q_SLOTS:
@@ -50,11 +53,11 @@ public Q_SLOTS:
     void setVad(const QString &vad);
     void setPercent(const int percent);
     void setTime(const int time);
+    void setLock(const bool lock);
     void setOwner(User *owner);
 
 protected:
     Device(DevicePrivate *d, QObject *parent = 0);
-    QScopedPointer<DevicePrivate> d_ptr;
 };
 
 #endif // DEVICE_H

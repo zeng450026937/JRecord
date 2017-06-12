@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
 import com.nd.recordservice 1.0
@@ -21,35 +21,46 @@ Item {
             initialItem: ListView {
                 id: deviceList
                 clip: true
-                boundsBehavior: Flickable.StopAtBounds
+                //boundsBehavior: Flickable.StopAtBounds
 
                 width: 500
                 height: parent.height
+
+                header: Rectangle{
+                    clip: true
+                    width: deviceList.width
+                    height: 40
+                    color: "lightgray"
+                    Label{
+                        anchors.left: parent.left
+                        anchors.leftMargin: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        clip: true
+                        text: qsTr("device list")
+                        font.bold: true
+                        verticalAlignment: Qt.AlignVCenter
+                    }
+                }
+                headerPositioning: ListView.PullBackHeader
 
                 model:  UserModel{
                     id: userModel
                 }
 
-                delegate: DeviceDelegate {
-                    id: deviceDelegate
-                    locked: model.locked
-                    userName: model.userName
-                    vad: model.vad
-                    percent: model.batteryPercent
-                    time: model.batteryTime
-                    status: model.status
+                delegate: Component{
+
+                    Loader{
+                        width: parent.width
+                        height: 40
+                        property int deviceIndex: index
+                        property string deviceUuid
+                        source: "./DeviceDelegate.qml"
+                    }
                 }
 
-                Keys.onPressed: console.log("key pressed.")
                 Keys.onUpPressed: scrollbar.decrease()
                 Keys.onDownPressed: scrollbar.increase()
                 ScrollBar.vertical: ScrollBar { id:scrollbar }
-            }
-        }
-        Button{
-            anchors.centerIn: parent
-            onClicked: {
-
             }
         }
     }

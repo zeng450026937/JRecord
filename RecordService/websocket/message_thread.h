@@ -30,12 +30,12 @@ public:
 Q_SIGNALS:
     void activeChanged(bool active);
 
-    void queueChanged();
-    void socketChanged();
+    void queueChanged(MessageQueue *queue);
+    void socketChanged(MessageSocket *socket);
 
 public Q_SLOTS:
-    virtual void setQueue(MessageQueue *queue);
-    virtual void setSocket(MessageSocket *socket);
+    void setQueue(MessageQueue *queue);
+    void setSocket(MessageSocket *socket);
     void setActive(bool active);
 
     void pushMessage(MessagePacket *message);
