@@ -7,22 +7,21 @@
 class User;
 class Device;
 
-class DevicePrivate : public ClientPrivate
-{
-    Q_DISABLE_COPY(DevicePrivate)
-    Q_DECLARE_PUBLIC(Device)
-public:
-    DevicePrivate(Device *q);
+class DevicePrivate : public ClientPrivate {
+  Q_DISABLE_COPY(DevicePrivate)
+  Q_DECLARE_PUBLIC(Device)
+ public:
+  DevicePrivate(Device *q);
 
-    QString type;
-    QString uuid;
-    QString name;
-    QString status;
-    QString vad;
-    int percent;
-    int time;
-    bool lock;
-    User *owner;
+  QString type;
+  QString uuid;
+  QString name;
+  QString status;
+  QString vad;
+  int percent;
+  int time;
+  bool lock;
+  User *owner;
 };
 
-#endif // DEVICE_P_H
+#endif  // DEVICE_P_H

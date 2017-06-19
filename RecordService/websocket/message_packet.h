@@ -3,18 +3,13 @@
 
 #include <QObject>
 
-class MessagePacket
-{
-public:
-    enum MessageType{
-        Text,
-        Binary,
-        Unknow
-    };
-    virtual ~MessagePacket() {}
-    virtual MessageType type() { return Unknow; }
+class MessagePacket {
+ public:
+  enum MessageType { Text, Binary, Unknow };
+  virtual ~MessagePacket() {}
+  virtual MessageType type() { return Unknow; }
 };
 
 Q_DECLARE_METATYPE(MessagePacket)
 
-#endif // MESSAGE_PACKET_H
+#endif  // MESSAGE_PACKET_H

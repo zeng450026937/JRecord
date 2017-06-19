@@ -5,36 +5,34 @@
 
 class BinaryMessage;
 
-class BinaryMessagePrivate
-{
-    Q_DISABLE_COPY(BinaryMessagePrivate)
-    Q_DECLARE_PUBLIC(BinaryMessage)
-public:
-    BinaryMessagePrivate(BinaryMessage* q);
+class BinaryMessagePrivate {
+  Q_DISABLE_COPY(BinaryMessagePrivate)
+  Q_DECLARE_PUBLIC(BinaryMessage)
+ public:
+  BinaryMessagePrivate(BinaryMessage* q);
 
-    BinaryMessage* q_ptr;
+  BinaryMessage* q_ptr;
 
-    int mode;
-    QString userId;
-    QString deviceUuid;
-    QString uuid;
-    int timestamp;
-    int startpos;
-    int status;
-    int size;
+  qint32 mode;
+  QString userId;
+  QString deviceUuid;
+  QString uuid;
+  qint32 timestamp;
+  qint32 startpos;
+  qint32 status;
+  qint32 size;
+  QByteArray data;
 
-    QByteArray data;
-
-protected:
-    const int mode_size;
-    const int userId_size;
-    const int deviceUuid_size;
-    const int uuid_size;
-    const int timestamp_size;
-    const int startpos_size;
-    const int status_size;
-    const int size_size;
-    int total_size;
+ protected:
+  const qint32 mode_size;
+  const qint32 userId_size;
+  const qint32 deviceUuid_size;
+  const qint32 uuid_size;
+  const qint32 timestamp_size;
+  const qint32 startpos_size;
+  const qint32 status_size;
+  const qint32 size_size;
+  qint32 total_size;
 };
 
-#endif // BINARYMESSAGE_P_H
+#endif  // BINARYMESSAGE_P_H

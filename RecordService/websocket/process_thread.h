@@ -5,17 +5,16 @@
 
 class ProcessThreadPrivate;
 
-class ProcessThread : public MessageThread
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ProcessThread)
-    Q_DECLARE_PRIVATE(ProcessThread)
-public:
-    explicit ProcessThread(QObject *parent = 0);
-    ~ProcessThread();
+class ProcessThread : public MessageThread {
+  Q_OBJECT
+  Q_DISABLE_COPY(ProcessThread)
+  Q_DECLARE_PRIVATE(ProcessThread)
+ public:
+  explicit ProcessThread(QObject *parent = 0);
+  ~ProcessThread();
 
-protected:
-    void run() override;
+ protected:
+  void run() override;
 };
 
-#endif // PROCESS_THREAD_H
+#endif  // PROCESS_THREAD_H

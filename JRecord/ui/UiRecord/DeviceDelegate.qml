@@ -6,33 +6,33 @@ import com.nd.recordservice 1.0
 CheckDelegate {
     id: delegate
     clip: true
+    text: qsTr(" ")
 
-    property alias locked: userCheckBox.checked
-    property alias userName: userCheckBox.text
-    property alias vad: vadLabel.text
-    property alias percent: percentLabel.text
-    property alias time: timeLabel.text
-    property alias status: statusLabel.text
-
-    property var device: Device{
-        service: ServiceBase
-        uuid: deviceUuid
+    checked: device.lock
+    onClicked: {
+        device.lock = !device.lock
+    }
+    Component.onCompleted: {
+        delegate.indicator.anchors.left = delegate.left
+        delegate.indicator.anchors.leftMargin = 10
     }
 
     contentItem: RowLayout {
         spacing: 5
-        anchors.fill: parent
-        CheckBox {
-            id: userCheckBox
-            text: qsTr("user")
+        anchors.left: delegate.indicator.right
+        anchors.right: delegate.right
+        Label {
+            id: nameLabel
+            text: device.name
             clip: true
         }
         Label {
+            clip: true
             Layout.fillWidth: true
         }
         Label {
             id: vadLabel
-            text: qsTr("vad")
+            text: device.vad
             width: implicitWidth
             clip: true
             leftPadding: 10
@@ -40,7 +40,7 @@ CheckDelegate {
         }
         Label {
             id: percentLabel
-            text: qsTr("percent")
+            text: qsTr(device.percent + " %")
             width: implicitWidth
             clip: true
             leftPadding: 10
@@ -51,14 +51,14 @@ CheckDelegate {
         }
         Label {
             id: timeLabel
-            text: qsTr("time")
+            text: qsTr(device.time / 60 + " m")
             width: implicitWidth
             clip: true
             rightPadding: 10
         }
         Label {
             id: statusLabel
-            text: qsTr("status")
+            text: device.status
             width: implicitWidth
             clip: true
             leftPadding: 10

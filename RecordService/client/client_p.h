@@ -6,15 +6,14 @@
 class Client;
 class ServiceBase;
 
-class ClientPrivate
-{
-    Q_DISABLE_COPY(ClientPrivate)
-    Q_DECLARE_PUBLIC(Client)
-public:
-    ClientPrivate(Client* q);
+class ClientPrivate {
+  Q_DISABLE_COPY(ClientPrivate)
+  Q_DECLARE_PUBLIC(Client)
+ public:
+  ClientPrivate(Client* q);
 
-    Client* q_ptr;
-    ServiceBase *service;
+  Client* q_ptr;
+  ServiceBase* service;
 };
 
-#endif // CLIENT_P_H
+#endif  // CLIENT_P_H

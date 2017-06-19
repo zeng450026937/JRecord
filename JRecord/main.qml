@@ -11,7 +11,7 @@ ApplicationWindow {
 
     flags: Qt.FramelessWindowHint | Qt.Window
 
-    Loader{
+    Loader {
         id: sceneLoader
         anchors.fill: parent
 
@@ -44,65 +44,72 @@ ApplicationWindow {
     Connections {
         target: NdAccount
         onStatusChanged: {
-            if(status == NdAccount.Logining){
+            if (status == NdAccount.Logining) {
                 console.log("Logining")
             }
-            if(status == NdAccount.Login){
+            if (status == NdAccount.Login) {
                 console.log("Login")
-                ServiceBase.active = true
             }
-            if(status == NdAccount.Logouting){
+            if (status == NdAccount.Logouting) {
                 console.log("Logouting")
             }
-            if(status == NdAccount.Logout){
+            if (status == NdAccount.Logout) {
                 console.log("Logout")
-                ServiceBase.active = false
             }
-            if(status == NdAccount.Error){
-                console.log("Error")
+            if (status == NdAccount.Error) {
+                console.log("Error" + NdAccount.errorString)
             }
+        }
+        onActiveChanged: {
+            ServiceBase.active = active
         }
     }
 
     Connections {
         target: ServiceBase
         onStatusChanged: {
-            if(status == ServiceBase.Connecting){
+            if (status == ServiceBase.Connecting) {
                 console.log(qsTr("Connecting"))
             }
-            if(status == ServiceBase.Open){
+            if (status == ServiceBase.Open) {
                 console.log(qsTr("Open"))
-                sceneLoader.state = "HOME"
             }
-            if(status == ServiceBase.Closing){
+            if (status == ServiceBase.Closing) {
                 console.log(qsTr("Closing"))
             }
-            if(status == ServiceBase.Closed){
+            if (status == ServiceBase.Closed) {
                 console.log(qsTr("Closed"))
-                sceneLoader.state = "LOGIN"
             }
-            if(status == ServiceBase.Error){
-                console.log(qsTr("Error:")+ServiceBase.errorString)
+            if (status == ServiceBase.Error) {
+                console.log(qsTr("Error:") + ServiceBase.errorString)
+            }
+        }
+        onActiveChanged: {
+            if (active) {
+                sceneLoader.state = "HOME"
+                var dm = ServiceBase.deviceManager()
+                dm.refresh()
+            } else {
+                sceneLoader.state = "LOGIN"
             }
         }
     }
 
-    Binding {
-        target: ServiceBase
-        property: "userId"
-        value: NdAccount.userId
-    }
-    Binding {
-        target: ServiceBase
-        property: "userName"
-        value: NdAccount.userName
+    Device {
+        id: pc
+        owner: User {
+            id: user
+            userId: NdAccount.userId
+            userName: NdAccount.userName
+            userGroup: qsTr("ND")
+        }
+        type: qsTr("PC")
     }
 
     Component.onCompleted: {
         sceneLoader.state = "LOGIN"
 
-        ServiceBase.url = qsTr("ws://192.168.85.31:9008");
-        ServiceBase.userGroup = qsTr("ND");
-        ServiceBase.deviceType = qsTr("PC");
+        ServiceBase.url = qsTr("ws://192.168.85.31:9008")
+        ServiceBase.device = pc
     }
 }

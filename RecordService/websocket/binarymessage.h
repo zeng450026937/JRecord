@@ -5,64 +5,65 @@
 
 class BinaryMessagePrivate;
 
-class BinaryMessage : public QObject, public MessagePacket
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(BinaryMessage)
-    Q_DECLARE_PRIVATE(BinaryMessage)
+class BinaryMessage : public QObject, public MessagePacket {
+  Q_OBJECT
+  Q_DISABLE_COPY(BinaryMessage)
+  Q_DECLARE_PRIVATE(BinaryMessage)
 
-    Q_PROPERTY(int mode READ mode WRITE setMode NOTIFY modeChanged)
-    Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
-    Q_PROPERTY(QString deviceUuid READ deviceUuid WRITE setDeviceUuid NOTIFY deviceUuidChanged)
-    Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
-    Q_PROPERTY(int timestamp READ timestamp WRITE setTimestamp NOTIFY timestampChanged)
-    Q_PROPERTY(int startpos READ startpos WRITE setStartpos NOTIFY startposChanged)
-    Q_PROPERTY(int status READ status WRITE setStatus NOTIFY statusChanged)
-    Q_PROPERTY(int size READ size WRITE setSize NOTIFY sizeChanged)
+  Q_PROPERTY(qint32 mode READ mode WRITE setMode NOTIFY modeChanged)
+  Q_PROPERTY(QString userId READ userId WRITE setUserId NOTIFY userIdChanged)
+  Q_PROPERTY(QString deviceUuid READ deviceUuid WRITE setDeviceUuid NOTIFY
+                 deviceUuidChanged)
+  Q_PROPERTY(QString uuid READ uuid WRITE setUuid NOTIFY uuidChanged)
+  Q_PROPERTY(qint32 timestamp READ timestamp WRITE setTimestamp NOTIFY
+                 timestampChanged)
+  Q_PROPERTY(
+      qint32 startpos READ startpos WRITE setStartpos NOTIFY startposChanged)
+  Q_PROPERTY(qint32 status READ status WRITE setStatus NOTIFY statusChanged)
+  Q_PROPERTY(QByteArray data READ data WRITE setData NOTIFY dataChanged)
 
-public:
-    explicit BinaryMessage(QObject *parent = 0);
-    BinaryMessage(QByteArray message, QObject *parent = 0);
-    ~BinaryMessage() override;
+ public:
+  explicit BinaryMessage(QObject* parent = 0);
+  BinaryMessage(QByteArray message, QObject* parent = 0);
+  ~BinaryMessage() override;
 
-    MessageType type() { return Binary; }
+  MessageType type() { return Binary; }
 
-    int mode() const;
-    QString userId() const;
-    QString deviceUuid() const;
-    QString uuid() const;
-    int timestamp() const;
-    int startpos() const;
-    int status() const;
-    int size() const;
+  qint32 mode() const;
+  QString userId() const;
+  QString deviceUuid() const;
+  QString uuid() const;
+  qint32 timestamp() const;
+  qint32 startpos() const;
+  qint32 status() const;
+  QByteArray data() const;
 
-    Q_INVOKABLE void parse(QByteArray message);
-    Q_INVOKABLE QByteArray make();
+  Q_INVOKABLE void parse(QByteArray message);
+  Q_INVOKABLE QByteArray make();
 
-Q_SIGNALS:
-    void modeChanged(int mode);
-    void userIdChanged(const QString &userId);
-    void deviceUuidChanged(const QString &deviceUuid);
-    void uuidChanged(const QString &uuid);
-    void timestampChanged(int timestamp);
-    void startposChanged(int startpos);
-    void statusChanged(int status);
-    void sizeChanged(int size);
+ Q_SIGNALS:
+  void modeChanged(qint32 mode);
+  void userIdChanged(const QString& userId);
+  void deviceUuidChanged(const QString& deviceUuid);
+  void uuidChanged(const QString& uuid);
+  void timestampChanged(qint32 timestamp);
+  void startposChanged(qint32 startpos);
+  void statusChanged(qint32 status);
+  void dataChanged(const QByteArray& data);
 
-public Q_SLOTS:
-    void setMode(int mode);
-    void setUserId(const QString &userId);
-    void setDeviceUuid(const QString &deviceUuid);
-    void setUuid(const QString &uuid);
-    void setTimestamp(int timestamp);
-    void setStartpos(int startpos);
-    void setStatus(int status);
-    void setSize(int size);
+ public Q_SLOTS:
+  void setMode(qint32 mode);
+  void setUserId(const QString& userId);
+  void setDeviceUuid(const QString& deviceUuid);
+  void setUuid(const QString& uuid);
+  void setTimestamp(qint32 timestamp);
+  void setStartpos(qint32 startpos);
+  void setStatus(qint32 status);
+  void setData(const QByteArray& data);
 
-protected:
-    BinaryMessage(BinaryMessagePrivate *d, QObject *parent = 0);
-    QScopedPointer<BinaryMessagePrivate> d_ptr;
-
+ protected:
+  BinaryMessage(BinaryMessagePrivate* d, QObject* parent = 0);
+  QScopedPointer<BinaryMessagePrivate> d_ptr;
 };
 
-#endif // BINARYMESSAGE_H
+#endif  // BINARYMESSAGE_H

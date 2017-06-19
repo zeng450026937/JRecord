@@ -36,13 +36,14 @@ Item {
                     yMouse = mouse.y
                 }
                 onPositionChanged: {
-                    deltaX = mouse.x-xMouse
-                    deltaY = mouse.y-yMouse
-                    ApplicationWindow.window.setX(ApplicationWindow.window.x + deltaX)
-                    ApplicationWindow.window.setY(ApplicationWindow.window.y + deltaY)
+                    deltaX = mouse.x - xMouse
+                    deltaY = mouse.y - yMouse
+                    ApplicationWindow.window.setX(
+                                ApplicationWindow.window.x + deltaX)
+                    ApplicationWindow.window.setY(
+                                ApplicationWindow.window.y + deltaY)
                 }
             }
-
         }
         Label {
             id: logo
@@ -89,7 +90,6 @@ Item {
             }
         }
     }
-
 
     Item {
         id: inputField
@@ -156,7 +156,6 @@ Item {
                 }
             }
         }
-
     }
 
     Binding {
@@ -173,15 +172,19 @@ Item {
     Connections {
         target: NdAccount
         onStatusChanged: {
-            if(status == NdAccount.Logining){
+            if (status == NdAccount.Logining) {
+
             }
-            if(status == NdAccount.Login){
+            if (status == NdAccount.Login) {
+
             }
-            if(status == NdAccount.Logouting){
+            if (status == NdAccount.Logouting) {
+
             }
-            if(status == NdAccount.Logout){
+            if (status == NdAccount.Logout) {
+
             }
-            if(status == NdAccount.Error){
+            if (status == NdAccount.Error) {
                 popup.open()
             }
         }
@@ -193,10 +196,8 @@ Item {
         modal: true
         focus: true
         width: parent.width
-        closePolicy: Popup.CloseOnEscape |
-                     Popup.CloseOnPressOutsideParent |
-                     Popup.CloseOnPressOutside |
-                     Popup.CloseOnReleaseOutside
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+                     | Popup.CloseOnPressOutside | Popup.CloseOnReleaseOutside
 
         Text {
             id: message

@@ -1,6 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    JRecord \
     RecordService/recordservice.pro \
+    JRecord \
     EchoServer
+
+JRecord.depends = RecordService/recordservice.pro

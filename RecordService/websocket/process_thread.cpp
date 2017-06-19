@@ -1,73 +1,75 @@
 #include "process_thread.h"
-#include "process_thread_p.h"
+#include <QDebug>
+#include "binarymessage.h"
 #include "message_queue.h"
 #include "message_socket.h"
-#include "textmessage.h"
-#include "binarymessage.h"
+#include "process_thread_p.h"
 #include "protocol/proto_base.h"
-#include <QDebug>
+#include "textmessage.h"
 
-ProcessThread::ProcessThread(QObject *parent) :
-    MessageThread(new ProcessThreadPrivate(this), parent)
-{
-    QObject::connect(this, &ProcessThread::socketChanged, [this](MessageSocket *socket){
+ProcessThread::ProcessThread(QObject *parent)
+    : MessageThread(new ProcessThreadPrivate(this), parent) {
+  QObject::connect(
+      this, &ProcessThread::socketChanged, [this](MessageSocket *socket) {
         Q_D(ProcessThread);
         QObject::disconnect(d->textConnection);
         QObject::disconnect(d->binaryConnection);
 
-        d->textConnection = QObject::connect(socket, &MessageSocket::textReceived,
-                         [this](const QString &message){
-            pushMessage(new TextMessage(message));
-        });
-        d->binaryConnection = QObject::connect(socket, &MessageSocket::binaryReceived,
-                         [this](const QByteArray &message){
-            pushMessage(new BinaryMessage(message));
-        });
-    });
+        d->textConnection =
+            QObject::connect(socket, &MessageSocket::textReceived,
+                             [this](const QString &message) {
+                               pushMessage(new TextMessage(message));
+                             });
+        d->binaryConnection =
+            QObject::connect(socket, &MessageSocket::binaryReceived,
+                             [this](const QByteArray &message) {
+                               pushMessage(new BinaryMessage(message));
+                             });
+      });
 }
 
-ProcessThread::~ProcessThread()
-{
-    if(this->isRunning()){
-        Q_D(ProcessThread);
-        d->queue->setActive(false);
-        this->quit();
-        this->wait(3000);
-    }
-}
-
-void ProcessThread::run()
-{
+ProcessThread::~ProcessThread() {
+  if (this->isRunning()) {
     Q_D(ProcessThread);
-    do {
-        if(d->queue == Q_NULLPTR || !d->queue->active())
-            return;
+    d->queue->setActive(false);
+    this->quit();
+    this->wait(3000);
+  }
+}
 
-        for(;;){
-            QSharedPointer<MessagePacket> pkt = d->queue->pop();//block until new data arrived
+void ProcessThread::run() {
+  Q_D(ProcessThread);
+  do {
+    if (d->queue == Q_NULLPTR || !d->queue->active()) return;
 
-            if(pkt.isNull())
-                return;
+    for (;;) {
+      QSharedPointer<MessagePacket> pkt =
+          d->queue->pop();  // block until new data arrived
 
-            if(pkt->type() == MessagePacket::Text){
-                QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
-                if(msg){
-                    //TBD
-                    ProtoBase *protocol = d->protocols->value(msg->mode(), Q_NULLPTR);
-                    if(protocol){
-                        protocol->process(pkt);
-                    }
-                    if(msg->action() != "heartBeat")
-                        qDebug()<<"received:"<<msg->encode();
-                }
-            }
-            if(pkt->type() == MessagePacket::Binary){
-                QSharedPointer<BinaryMessage> msg = pkt.dynamicCast<BinaryMessage>();
-                if(msg){
+      if (pkt.isNull()) return;
 
-                }
-            }
+      if (pkt->type() == MessagePacket::Text) {
+        QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
+        if (msg) {
+          ProtoBase *protocol = d->protocols->value(msg->mode(), Q_NULLPTR);
+          if (protocol) {
+            protocol->process(pkt);
+          }
+          if (msg->action() != "heartBeat")
+            qDebug() << "received:" << msg->encode();
         }
+      }
+      if (pkt->type() == MessagePacket::Binary) {
+        QSharedPointer<BinaryMessage> msg = pkt.dynamicCast<BinaryMessage>();
+        if (msg) {
+          ProtoBase *protocol =
+              d->protocols->value(QStringLiteral("binary"), Q_NULLPTR);
+          if (protocol) {
+            protocol->process(pkt);
+          }
+        }
+      }
+    }
 
-    }while (d->queue->active());
+  } while (d->queue->active());
 }

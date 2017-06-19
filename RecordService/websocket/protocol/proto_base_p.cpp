@@ -1,8 +1,4 @@
 #include "proto_base_p.h"
 
-ProtoBasePrivate::ProtoBasePrivate(ProtoBase *q) :
-    q_ptr(q),
-    transport(Q_NULLPTR)
-{
-
-}
+ProtoBasePrivate::ProtoBasePrivate(ProtoBase *q)
+    : q_ptr(q), transport(Q_NULLPTR) {}

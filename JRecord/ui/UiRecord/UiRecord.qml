@@ -9,6 +9,8 @@ Item {
     width: 600
     height: 400
 
+    property var dm: ServiceBase.deviceManager()
+
     Pane {
         anchors.fill: parent
         padding: 0
@@ -21,46 +23,43 @@ Item {
             initialItem: ListView {
                 id: deviceList
                 clip: true
-                //boundsBehavior: Flickable.StopAtBounds
 
+                //boundsBehavior: Flickable.StopAtBounds
                 width: 500
                 height: parent.height
 
-                header: Rectangle{
+                header: Rectangle {
                     clip: true
                     width: deviceList.width
                     height: 40
                     color: "lightgray"
-                    Label{
+                    Label {
                         anchors.left: parent.left
                         anchors.leftMargin: 20
                         anchors.verticalCenter: parent.verticalCenter
                         clip: true
-                        text: qsTr("device list")
+                        text: qsTr("DEVICE LIST")
                         font.bold: true
                         verticalAlignment: Qt.AlignVCenter
                     }
                 }
                 headerPositioning: ListView.PullBackHeader
 
-                model:  UserModel{
-                    id: userModel
-                }
+                model: dm.model()
 
-                delegate: Component{
+                delegate: Component {
 
-                    Loader{
+                    Loader {
+                        property var device: dm.device(model.uuid)
                         width: parent.width
                         height: 40
-                        property int deviceIndex: index
-                        property string deviceUuid
                         source: "./DeviceDelegate.qml"
                     }
                 }
 
-                Keys.onUpPressed: scrollbar.decrease()
-                Keys.onDownPressed: scrollbar.increase()
-                ScrollBar.vertical: ScrollBar { id:scrollbar }
+                ScrollBar.vertical: ScrollBar {
+                    id: scrollbar
+                }
             }
         }
     }

@@ -5,41 +5,36 @@
 #include <QSharedPointer>
 #include <QVariantMap>
 
-class ServiceBase;
 class MessagePacket;
 class ProtoBasePrivate;
 
-class ProtoBase : public QObject
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(ProtoBase)
-    Q_DECLARE_PRIVATE(ProtoBase)
-    Q_PROPERTY(QString mode READ mode CONSTANT)
-    Q_PROPERTY(QString owner READ owner WRITE setOwner NOTIFY ownerChanged)
-public:
-    explicit ProtoBase(QObject *parent = nullptr);
+class ProtoBase : public QObject {
+  Q_OBJECT
+  Q_DISABLE_COPY(ProtoBase)
+  Q_DECLARE_PRIVATE(ProtoBase)
+  Q_PROPERTY(QString mode READ mode CONSTANT)
+ public:
+  explicit ProtoBase(QObject *parent = nullptr);
 
-    QString mode() const;
-    QString owner() const;
+  enum MODE { InfoMode, ConfMode, BinaryMode };
+  Q_ENUMS(MODE)
 
-Q_SIGNALS:
-    void ownerChanged(const QString &owner);
+  QString mode() const;
 
-public Q_SLOTS:
-    void setOwner(const QString &owner);
+ protected:
+  /*
+   * it is called in process thread
+   * put heavy work in process function
+   */
+  virtual void process(QSharedPointer<MessagePacket> pkt);
 
-protected:
-    /*
-     *put heavy work in process function
-    */
-    virtual void process(QSharedPointer<MessagePacket> pkt);
+  virtual void transport(QString from, QString to, QString action,
+                         const QVariantMap &data);
 
-    virtual void transport(QString to, QString action, QVariantMap data);
-
-    ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
-    QScopedPointer<ProtoBasePrivate> d_ptr;
-    friend class ProcessThread;
-    friend class ServiceBase;
+  ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
+  QScopedPointer<ProtoBasePrivate> d_ptr;
+  friend class ProcessThread;
+  friend class ServiceBase;
 };
 
-#endif // PROTO_BASE_H
+#endif  // PROTO_BASE_H

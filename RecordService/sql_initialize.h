@@ -4,10 +4,9 @@
 #include <QString>
 #include <QVariant>
 
-class SqlInitialize
-{
-    SqlInitialize() :
-        accountTypeTableName(QStringLiteral("AccountType")),
+class SqlInitialize {
+  SqlInitialize()
+      : accountTypeTableName(QStringLiteral("AccountType")),
         accountStatusTableName(QStringLiteral("AccountStatus")),
         accountsTableName(QStringLiteral("Accounts")),
         deviceTypeTableName(QStringLiteral("DeviceType")),
@@ -19,63 +18,59 @@ class SqlInitialize
         fileTypeTableName(QStringLiteral("FileType")),
         fileSuffixTableName(QStringLiteral("FileSuffix")),
         filesTableName(QStringLiteral("Files")),
-        downloadsTableName(QStringLiteral("Downloads"))
-    {}
+        downloadsTableName(QStringLiteral("Downloads")) {}
 
-    ~SqlInitialize(){}
-public:
-    static SqlInitialize *GetInstance();
+  ~SqlInitialize() {}
 
-    const QString accountTypeTableName;
-    const QString accountStatusTableName;
-    const QString accountsTableName;
-    const QString deviceTypeTableName;
-    const QString deviceStatusTableName;
-    const QString deviceVadTableName;
-    const QString devicesTableName;
-    const QString conferenceTypeTableName;
-    const QString conferencesTableName;
-    const QString fileTypeTableName;
-    const QString fileSuffixTableName;
-    const QString filesTableName;
-    const QString downloadsTableName;
+ public:
+  static SqlInitialize *GetInstance();
 
-    QVariantList accountTypeList;
-    QVariantList accountStatusList;
-    QVariantList accountsList;
-    QVariantList deviceTypeList;
-    QVariantList deviceStatusList;
-    QVariantList deviceVadList;
-    QVariantList devicesList;
-    QVariantList conferenceTypeList;
-    QVariantList conferencesList;
-    QVariantList fileTypeList;
-    QVariantList fileSuffixList;
-    QVariantList filesList;
-    QVariantList downloadsList;
+  const QString accountTypeTableName;
+  const QString accountStatusTableName;
+  const QString accountsTableName;
+  const QString deviceTypeTableName;
+  const QString deviceStatusTableName;
+  const QString deviceVadTableName;
+  const QString devicesTableName;
+  const QString conferenceTypeTableName;
+  const QString conferencesTableName;
+  const QString fileTypeTableName;
+  const QString fileSuffixTableName;
+  const QString filesTableName;
+  const QString downloadsTableName;
 
-    void connectToDatabase();
+  QVariantList accountTypeList;
+  QVariantList accountStatusList;
+  QVariantList accountsList;
+  QVariantList deviceTypeList;
+  QVariantList deviceStatusList;
+  QVariantList deviceVadList;
+  QVariantList devicesList;
+  QVariantList conferenceTypeList;
+  QVariantList conferencesList;
+  QVariantList fileTypeList;
+  QVariantList fileSuffixList;
+  QVariantList filesList;
+  QVariantList downloadsList;
 
-    void createAccountTypeTable();
-    void createAccountStatusTable();
-    void createAccountsTable();
+  void connectToDatabase();
 
-    void createDeviceTypeTable();
-    void createDeviceStatusTable();
-    void createDeviceVadTable();
-    void createDevicesTable();
+  void createAccountTypeTable();
+  void createAccountStatusTable();
+  void createAccountsTable();
 
-    void createConferencTypeTable();
-    void createConferencsTable();
-    void createFileTypeTable();
-    void createFileSuffixTable();
-    void createFilesTable();
+  void createDeviceTypeTable();
+  void createDeviceStatusTable();
+  void createDeviceVadTable();
+  void createDevicesTable();
 
-    void createDownloadsTable();
+  void createConferencTypeTable();
+  void createConferencsTable();
+  void createFileTypeTable();
+  void createFileSuffixTable();
+  void createFilesTable();
+
+  void createDownloadsTable();
 };
 
-
-
-
-
-#endif // SQL_INITIALIZE_H
+#endif  // SQL_INITIALIZE_H

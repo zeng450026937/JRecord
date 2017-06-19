@@ -3,17 +3,16 @@
 
 #include <QString>
 
-static const QString userTableName = QStringLiteral("USER");
+static const QString deviceTableName = QStringLiteral("DEVICE");
 static const QString conferenceTableName = QStringLiteral("CONFERENCE");
 static const QString fileTableName = QStringLiteral("FILE");
 static const QString downloadTableName = QStringLiteral("DOWNLOAD");
 
 void connectToDatabase();
 
-void createUserTable();
+void createDeviceTable();
 void createConferencTable();
 void createFileTable();
 void createDownloadTable();
 
-
-#endif // SQL_INITIALIZER_H
+#endif  // SQL_INITIALIZER_H

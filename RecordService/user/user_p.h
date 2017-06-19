@@ -5,18 +5,17 @@
 
 class User;
 
-class UserPrivate
-{
-    Q_DISABLE_COPY(UserPrivate)
-    Q_DECLARE_PUBLIC(User)
-public:
-    UserPrivate(User* q);
+class UserPrivate {
+  Q_DISABLE_COPY(UserPrivate)
+  Q_DECLARE_PUBLIC(User)
+ public:
+  UserPrivate(User* q);
 
-    User* q_ptr;
+  User* q_ptr;
 
-    QString userId;
-    QString userGroup;
-    QString userName;
+  QString userId;
+  QString userGroup;
+  QString userName;
 };
 
-#endif // USER_P_H
+#endif  // USER_P_H
