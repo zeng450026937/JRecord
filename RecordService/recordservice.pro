@@ -59,7 +59,9 @@ SOURCES += \
     model/conference_model.cpp \
     model/conference_model_p.cpp \
     websocket/protocol/proto_person.cpp \
-    websocket/protocol/proto_person_p.cpp
+    websocket/protocol/proto_person_p.cpp \
+    websocket/protocol/proto_mobile.cpp \
+    websocket/protocol/proto_mobile_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -114,7 +116,9 @@ HEADERS += \
     model/conference_model.h \
     model/conference_model_p.h \
     websocket/protocol/proto_person.h \
-    websocket/protocol/proto_person_p.h
+    websocket/protocol/proto_person_p.h \
+    websocket/protocol/proto_mobile.h \
+    websocket/protocol/proto_mobile_p.h
 
 DISTFILES = qmldir
 

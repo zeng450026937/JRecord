@@ -7,6 +7,7 @@
 
 class ProtoConf;
 class ProtoPerson;
+class ProtoMobile;
 
 class ConferenceManagerPrivate : public ClientPrivate {
   Q_DISABLE_COPY(ConferenceManagerPrivate)
@@ -17,6 +18,7 @@ class ConferenceManagerPrivate : public ClientPrivate {
   QMap<QString, Conference*> confMap;
   ProtoConf* conf_protocol;
   ProtoPerson* person_protocol;
+  ProtoMobile* mobile_protocol;
   ConferenceModel* model;
 };
 

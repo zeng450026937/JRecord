@@ -12,6 +12,7 @@
 #include "websocket/protocol/proto_binary.h"
 #include "websocket/protocol/proto_conf.h"
 #include "websocket/protocol/proto_info.h"
+#include "websocket/protocol/proto_mobile.h"
 #include "websocket/protocol/proto_person.h"
 #include "websocket/textmessage.h"
 #include "websocket/transport_thread.h"
@@ -24,6 +25,7 @@ ServiceBase::ServiceBase(QObject *parent)
   this->registerProtocol(new ProtoInfo(this));
   this->registerProtocol(new ProtoConf(this));
   this->registerProtocol(new ProtoPerson(this));
+  this->registerProtocol(new ProtoMobile(this));
 
   d->process_thread->setProtocols(&d->protocols);
   d->transport_thread->setProtocols(&d->protocols);

@@ -10,6 +10,7 @@
 #include "service/service_base.h"
 #include "user/user.h"
 #include "websocket/protocol/proto_conf.h"
+#include "websocket/protocol/proto_mobile.h"
 #include "websocket/protocol/proto_person.h"
 
 ConferenceManager::ConferenceManager(QObject *parent)
@@ -53,6 +54,9 @@ ConferenceManager::ConferenceManager(QObject *parent)
                   break;
               }
             });
+
+        d->mobile_protocol = dynamic_cast<ProtoMobile *>(
+            servie->protocol(QStringLiteral("mobile")));
       });
 
   d->model = new ConferenceModel(this);
