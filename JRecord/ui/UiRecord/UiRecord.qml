@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import com.nd.recordservice 1.0
 
@@ -61,5 +61,16 @@ Item {
                 }
             }
         }
+    }
+
+    RoundButton {
+        id: startButton
+        anchors.right: parent.right
+        anchors.rightMargin: 40
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 40
+        width: 80
+        height: width
+        text: qsTr("Start")
     }
 }

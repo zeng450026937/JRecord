@@ -130,44 +130,57 @@ ApplicationWindow {
             clip: true
 
             Rectangle {
+                id: background
                 width: parent.width
-                height: parent.height
-                color: "lightgray"
+                height: column.implicitHeight + 30
+                color: Qt.rgba(0.5, 0.5, 0.5, 0.2)
                 clip: true
-
                 Column {
+                    id: column
+                    spacing: 5
                     anchors.fill: parent
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.topMargin: 15
+                    anchors.bottomMargin: 15
                     Image {
                         id: image
                         property bool rounded: true
                         property bool adapt: false
 
-                        width: parent.width / 2
+                        width: parent.width / 3
                         height: width
                         source: NdAccount.image
                         asynchronous: true
                         clip: true
 
-                        //                        layer.enabled: rounded
-                        //                        layer.effect: OpacityMask {
-                        //                            maskSource: Item {
-                        //                                width: image.width
-                        //                                height: image.height
-                        //                                Rectangle {
-                        //                                    anchors.centerIn: parent
-                        //                                    width: image.adapt ? image.width : Math.min(image.width, image.height)
-                        //                                    height: image.adapt ? image.height : width
-                        //                                    radius: Math.min(width, height)
-                        //                                }
-                        //                            }
-                        //                        }
+                        layer.enabled: rounded
+                        layer.effect: OpacityMask {
+                            maskSource: Item {
+                                width: image.width
+                                height: image.height
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: image.adapt ? image.width : Math.min(
+                                                             image.width,
+                                                             image.height)
+                                    height: image.adapt ? image.height : width
+                                    radius: Math.min(width, height)
+                                }
+                            }
+                        }
                     }
                     Label {
                         clip: true
+                        padding: 10
                         text: NdAccount.userName
+                        font.bold: true
+                        font.pointSize: 15
                     }
                     Label {
                         clip: true
+                        width: parent.width
+                        padding: 10
                         text: NdAccount.signature
                         wrapMode: Text.Wrap
                     }
