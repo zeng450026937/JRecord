@@ -15,7 +15,7 @@ class ServiceBase : public QObject {
   Q_DISABLE_COPY(ServiceBase)
   Q_DECLARE_PRIVATE(ServiceBase)
   Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
-  Q_PROPERTY(QString errorString READ errorString)
+  Q_PROPERTY(QString errorString READ errorString NOTIFY errorStringChanged)
   Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
   Q_PROPERTY(Device *device READ device WRITE setDevice NOTIFY deviceChanged)
 
@@ -52,6 +52,7 @@ class ServiceBase : public QObject {
  Q_SIGNALS:
   void statusChanged(Status status);
   void activeChanged(bool active);
+  void errorStringChanged(const QString &errorString);
   void urlChanged(const QUrl &url);
   void deviceChanged(const Device *device);
   void protocolChanged(const QString &protocolName);

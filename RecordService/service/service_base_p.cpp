@@ -61,11 +61,10 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
   QObject::connect(socket, &MessageSocket::errorChanged, q_ptr,
                    [this](const QString error) {
                      Q_Q(ServiceBase);
-                     errorString = error;
-                     status = ServiceBase::Error;
-                     active = false;
-                     Q_EMIT q->activeChanged(active);
-                     Q_EMIT q->statusChanged(status);
+                     if (errorString != error) {
+                       errorString = error;
+                       Q_EMIT q->errorStringChanged(errorString);
+                     }
                    });
 
   QObject::connect(socket, &MessageSocket::activeChanged, transport_queue,

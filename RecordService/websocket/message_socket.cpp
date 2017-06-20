@@ -1,6 +1,6 @@
 #include "message_socket.h"
-#include <QWebSocket>
 #include "message_socket_p.h"
+#include <QWebSocket>
 
 MessageSocket::MessageSocket(QObject *parent)
     : QObject(parent), d_ptr(new MessageSocketPrivate(this)) {
@@ -46,8 +46,6 @@ void MessageSocket::setActive(const bool active) {
               d->error = d->socket->errorString();
               Q_EMIT errorChanged(d->error);
             }
-            d->active = false;
-            Q_EMIT activeChanged(d->active);
           });
       QObject::connect(
           d->socket, &QWebSocket::textMessageReceived,
@@ -58,7 +56,8 @@ void MessageSocket::setActive(const bool active) {
                        });
       d->socket->open(d->request);
     } else {
-      if (d->socket && d->socket->isValid()) d->socket->close();
+      if (d->socket && d->socket->isValid())
+        d->socket->close();
     }
   }
 }
@@ -73,12 +72,14 @@ void MessageSocket::setRequest(const QNetworkRequest &request) {
 
 void MessageSocket::sendText(const QString &message) {
   Q_D(MessageSocket);
-  if (d->socket) d->socket->sendTextMessage(message);
+  if (d->socket)
+    d->socket->sendTextMessage(message);
 }
 
 void MessageSocket::sendBinary(const QByteArray &message) {
   Q_D(MessageSocket);
-  if (d->socket) d->socket->sendBinaryMessage(message);
+  if (d->socket)
+    d->socket->sendBinaryMessage(message);
 }
 
 MessageSocket::MessageSocket(MessageSocketPrivate *d, QObject *parent)
