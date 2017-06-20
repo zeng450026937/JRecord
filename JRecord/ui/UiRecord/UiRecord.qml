@@ -6,8 +6,7 @@ import com.nd.recordservice 1.0
 Item {
     id: recordUi
     clip: true
-    width: 600
-    height: 400
+    anchors.fill: parent
 
     property var dm: ServiceBase.deviceManager()
 
@@ -25,8 +24,8 @@ Item {
                 clip: true
 
                 //boundsBehavior: Flickable.StopAtBounds
-                width: 500
-                height: parent.height
+                width: recordUi.width * 2 / 5
+                height: recordUi.height
 
                 header: Rectangle {
                     clip: true
@@ -51,7 +50,7 @@ Item {
 
                     Loader {
                         property var device: dm.device(model.uuid)
-                        width: parent.width
+                        width: deviceList.width
                         height: 40
                         source: "./DeviceDelegate.qml"
                     }

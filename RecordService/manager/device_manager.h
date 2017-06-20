@@ -27,7 +27,6 @@ class DeviceManager : public Client {
 
  protected:
   DeviceManager(DeviceManagerPrivate *d, QObject *parent = 0);
-  QScopedPointer<DeviceManagerPrivate> d_ptr;
 };
 
 #endif  // DEVICE_MANAGER_H

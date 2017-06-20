@@ -2,7 +2,27 @@
 #include "device_p.h"
 #include "user/user.h"
 
-Device::Device(QObject *parent) : Client(new DevicePrivate(this), parent) {}
+Device::Device(QObject *parent) : Client(new DevicePrivate(this), parent) {
+  Q_D(Device);
+  d->owner = new User(this);
+}
+
+void Device::fromVariant(const QVariantMap &data) {
+  Q_D(Device);
+  if (d->owner) {
+    d->owner->setUserId(data.value(QStringLiteral("userId")).toString());
+    d->owner->setUserName(data.value(QStringLiteral("userName")).toString());
+    d->owner->setUserGroup(data.value(QStringLiteral("userGroup")).toString());
+  }
+
+  this->setUuid(data.value(QStringLiteral("deviceUuid")).toString());
+  this->setName(data.value(QStringLiteral("deviceName")).toString());
+  this->setType(data.value(QStringLiteral("deviceType")).toString());
+  this->setStatus(data.value(QStringLiteral("status")).toString());
+  this->setPercent(data.value(QStringLiteral("batteryPercent")).toInt());
+  this->setTime(data.value(QStringLiteral("batteryTime")).toInt());
+  this->setVad(data.value(QStringLiteral("vad")).toString());
+}
 
 QString Device::type() const { return d_func()->type; }
 
@@ -24,6 +44,7 @@ User *Device::owner() const { return d_func()->owner; }
 
 void Device::setType(const QString &type) {
   Q_D(Device);
+  if (type.isEmpty()) return;
   if (type != d->type) {
     d->type = type;
     Q_EMIT typeChanged(d->type);
@@ -32,6 +53,7 @@ void Device::setType(const QString &type) {
 
 void Device::setUuid(const QString &uuid) {
   Q_D(Device);
+  if (uuid.isEmpty()) return;
   if (uuid != d->uuid) {
     d->uuid = uuid;
     Q_EMIT uuidChanged(d->uuid);
@@ -40,6 +62,7 @@ void Device::setUuid(const QString &uuid) {
 
 void Device::setName(const QString &name) {
   Q_D(Device);
+  if (name.isEmpty()) return;
   if (name != d->name) {
     d->name = name;
     Q_EMIT nameChanged(d->name);
@@ -48,6 +71,7 @@ void Device::setName(const QString &name) {
 
 void Device::setStatus(const QString &status) {
   Q_D(Device);
+  if (status.isEmpty()) return;
   if (status != d->status) {
     d->status = status;
     Q_EMIT statusChanged(d->status);
@@ -56,6 +80,7 @@ void Device::setStatus(const QString &status) {
 
 void Device::setVad(const QString &vad) {
   Q_D(Device);
+  if (vad.isEmpty()) return;
   if (vad != d->vad) {
     d->vad = vad;
     Q_EMIT vadChanged(d->vad);
@@ -64,6 +89,7 @@ void Device::setVad(const QString &vad) {
 
 void Device::setPercent(const int percent) {
   Q_D(Device);
+  if (percent < 0) return;
   if (percent != d->percent) {
     d->percent = percent;
     Q_EMIT percentChanged(d->percent);
@@ -72,6 +98,7 @@ void Device::setPercent(const int percent) {
 
 void Device::setTime(const int time) {
   Q_D(Device);
+  if (time < 0) return;
   if (time != d->time) {
     d->time = time;
     Q_EMIT timeChanged(d->time);
@@ -88,7 +115,9 @@ void Device::setLock(const bool lock) {
 
 void Device::setOwner(User *owner) {
   Q_D(Device);
+  if (owner == Q_NULLPTR) return;
   if (owner != d->owner) {
+    if (d->owner) d->owner->deleteLater();
     d->owner = owner;
 
     QObject::connect(d->owner, &User::userIdChanged,
@@ -115,17 +144,8 @@ Device::Device(const QVariantMap &data, QObject *parent)
     : Client(new DevicePrivate(this), parent) {
   Q_D(Device);
   d->owner = new User(this);
-  d->owner->setUserId(data.value(QStringLiteral("userId")).toString());
-  d->owner->setUserName(data.value(QStringLiteral("userName")).toString());
-  d->owner->setUserGroup(data.value(QStringLiteral("userGroup")).toString());
 
-  this->setUuid(data.value(QStringLiteral("deviceUuid")).toString());
-  this->setName(data.value(QStringLiteral("deviceName")).toString());
-  this->setType(data.value(QStringLiteral("deviceType")).toString());
-  this->setStatus(data.value(QStringLiteral("status")).toString());
-  this->setPercent(data.value(QStringLiteral("batteryPercent")).toInt());
-  this->setTime(data.value(QStringLiteral("batteryTime")).toInt());
-  this->setVad(data.value(QStringLiteral("vad")).toString());
+  this->fromVariant(data);
 }
 
 Device::Device(DevicePrivate *d, QObject *parent) : Client(d, parent) {}

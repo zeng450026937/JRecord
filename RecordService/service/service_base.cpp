@@ -1,5 +1,6 @@
 #include "service_base.h"
 #include "device/device.h"
+#include "manager/conference_manager.h"
 #include "manager/device_manager.h"
 #include "service/service_base_p.h"
 #include "user/user.h"
@@ -11,6 +12,7 @@
 #include "websocket/protocol/proto_binary.h"
 #include "websocket/protocol/proto_conf.h"
 #include "websocket/protocol/proto_info.h"
+#include "websocket/protocol/proto_person.h"
 #include "websocket/textmessage.h"
 #include "websocket/transport_thread.h"
 
@@ -21,12 +23,15 @@ ServiceBase::ServiceBase(QObject *parent)
   this->registerProtocol(new ProtoBinary(this));
   this->registerProtocol(new ProtoInfo(this));
   this->registerProtocol(new ProtoConf(this));
+  this->registerProtocol(new ProtoPerson(this));
 
   d->process_thread->setProtocols(&d->protocols);
   d->transport_thread->setProtocols(&d->protocols);
 
   d->deviceManager = new DeviceManager(this);
   d->deviceManager->setService(this);
+  d->conferenceManager = new ConferenceManager(this);
+  d->conferenceManager->setService(this);
 }
 
 ServiceBase::~ServiceBase() {
@@ -69,6 +74,10 @@ ProtoBase *ServiceBase::protocol(const QString &name) {
 
 DeviceManager *ServiceBase::deviceManager() const {
   return d_func()->deviceManager;
+}
+
+ConferenceManager *ServiceBase::conferenceManager() const {
+  return d_func()->conferenceManager;
 }
 
 void ServiceBase::setActive(bool active) {

@@ -22,12 +22,19 @@ void MessageSocket::setActive(const bool active) {
   if (active != d->active) {
     if (active) {
       d->socket = new QWebSocket();
-      QObject::connect(d->socket, &QWebSocket::connected,
-                       [this]() { Q_EMIT connected(); });
+      QObject::connect(d->socket, &QWebSocket::connected, [this, d]() {
+        d->active = true;
+        Q_EMIT activeChanged(d->active);
+      });
       QObject::connect(d->socket, &QWebSocket::disconnected, [this, d]() {
-        Q_EMIT disconnected();
+        if (d->socket && d->error != d->socket->errorString()) {
+          d->error = d->socket->errorString();
+          Q_EMIT errorChanged(d->error);
+        }
         d->socket->deleteLater();
         d->socket = Q_NULLPTR;
+        d->active = false;
+        Q_EMIT activeChanged(d->active);
       });
       QObject::connect(
           d->socket,
@@ -35,7 +42,7 @@ void MessageSocket::setActive(const bool active) {
               &QWebSocket::error),
           [this, d](QAbstractSocket::SocketError error) {
             Q_UNUSED(error);
-            if (d->error != d->socket->errorString()) {
+            if (d->socket && d->error != d->socket->errorString()) {
               d->error = d->socket->errorString();
               Q_EMIT errorChanged(d->error);
             }
@@ -53,9 +60,6 @@ void MessageSocket::setActive(const bool active) {
     } else {
       if (d->socket && d->socket->isValid()) d->socket->close();
     }
-
-    d->active = active;
-    Q_EMIT activeChanged(d->active);
   }
 }
 

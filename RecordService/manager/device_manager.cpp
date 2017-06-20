@@ -1,4 +1,5 @@
 #include "device_manager.h"
+#include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -9,23 +10,44 @@
 #include "websocket/protocol/proto_info.h"
 
 DeviceManager::DeviceManager(QObject *parent)
-    : Client(parent), d_ptr(new DeviceManagerPrivate(this)) {
+    : Client(new DeviceManagerPrivate(this), parent) {
   Q_D(DeviceManager);
   QObject::connect(
-      this, &DeviceManager::serviceChanged, [d](ServiceBase *servie) {
+      this, &DeviceManager::serviceChanged, [this, d](ServiceBase *servie) {
         d->protocol = (ProtoInfo *)servie->protocol(QStringLiteral("info"));
-      });
 
-  QObject::connect(
-      d->protocol, &ProtoInfo::actionRecived,
-      [this, d](ProtoInfo::Actions action, const QJsonValue &data) {
-
-        QJsonArray;
-        foreach (QJsonValue value, data.toArray()) {
-          Device *device = new Device(value.toVariant().toMap(), this);
-          d->deviceMap.insert(device->uuid(), device);
-          d->model->add(device);
-        }
+        QObject::connect(
+            d->protocol, &ProtoInfo::actionRecived, this,
+            [this, d](const int action, const QJsonValue &data) {
+              Device *device(Q_NULLPTR);
+              switch (action) {
+                case ProtoInfo::getDeviceList:
+                  d->model->clearAll();
+                  foreach (QJsonValue value, data.toArray()) {
+                    device = new Device(value.toVariant().toMap(), this);
+                    device->setService(d->service);
+                    d->deviceMap.insert(device->uuid(), device);
+                    d->model->addDevice(device);
+                  }
+                  break;
+                case ProtoInfo::updateDeviceInfo:
+                case ProtoInfo::notifyDeviceInfoChange:
+                  device = d->deviceMap.value(
+                      data.toObject().value("deviceUuid").toString(),
+                      Q_NULLPTR);
+                  if (device) {
+                    device->fromVariant(data.toObject().toVariantMap());
+                  } else {
+                    device = new Device(data.toObject().toVariantMap(), this);
+                    device->setService(d->service);
+                    d->deviceMap.insert(device->uuid(), device);
+                    d->model->addDevice(device);
+                  }
+                  break;
+                default:
+                  break;
+              }
+            });
       });
 
   d->model = new DeviceModel(this);
@@ -43,4 +65,4 @@ void DeviceManager::refresh() {
 DeviceModel *DeviceManager::model() const { return d_func()->model; }
 
 DeviceManager::DeviceManager(DeviceManagerPrivate *d, QObject *parent)
-    : Client(parent), d_ptr(d) {}
+    : Client(d, parent) {}

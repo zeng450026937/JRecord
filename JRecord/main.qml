@@ -89,9 +89,13 @@ ApplicationWindow {
                 sceneLoader.state = "HOME"
                 var dm = ServiceBase.deviceManager()
                 dm.refresh()
+
+                var cm = ServiceBase.conferenceManager()
+                cm.refresh()
             } else {
                 sceneLoader.state = "LOGIN"
             }
+            NdAccount.active = active
         }
     }
 

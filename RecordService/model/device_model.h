@@ -14,14 +14,25 @@ class DeviceModel : public QSqlTableModel {
   explicit DeviceModel(QObject *parent = 0);
 
   // Define the role names to be used
-  enum RoleNames { UuidRole = Qt::UserRole, RoleCount };
+  enum RoleNames {
+    UuidRole = Qt::UserRole,
+    TypeRole,
+    NameRole,
+    PercentRole,
+    TimeRole,
+    StatusRole,
+    VadRole,
+    LockRole,
+    RoleCount
+  };
 
   QVariant data(const QModelIndex &index,
                 int role = Qt::DisplayRole) const override;
   // return the roles mapping to be used by QML
   QHash<int, QByteArray> roleNames() const override;
 
-  Q_INVOKABLE void add(Device *device);
+  Q_INVOKABLE void addDevice(Device *device);
+  Q_INVOKABLE void clearAll();
 
  Q_SIGNALS:
 

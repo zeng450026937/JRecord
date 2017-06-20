@@ -8,8 +8,12 @@
 #include "conference/conference_p.h"
 #include "device/device.h"
 #include "device/device_p.h"
+#include "manager/conference_manager.h"
+#include "manager/conference_manager_p.h"
 #include "manager/device_manager.h"
 #include "manager/device_manager_p.h"
+#include "model/conference_model.h"
+#include "model/conference_model_p.h"
 #include "model/device_model.h"
 #include "model/device_model_p.h"
 #include "model/sql_initializer.h"
@@ -40,13 +44,15 @@ void RecordServicePlugin::registerTypes(const char *uri) {
   // @uri com.nd.recordservice
   connectToDatabase();
 
-  qmlRegisterType<DeviceModel>(uri, 1, 0, "DeviceModel");
   qmlRegisterType<Client>(uri, 1, 0, "Client");
 
-  qmlRegisterType<Conference>(uri, 1, 0, "Conference");
   qmlRegisterType<User>(uri, 1, 0, "User");
   qmlRegisterType<Device>(uri, 1, 0, "Device");
+  qmlRegisterType<DeviceModel>(uri, 1, 0, "DeviceModel");
   qmlRegisterType<DeviceManager>(uri, 1, 0, "DeviceManager");
+  qmlRegisterType<Conference>(uri, 1, 0, "Conference");
+  qmlRegisterType<ConferenceModel>(uri, 1, 0, "ConferenceModel");
+  qmlRegisterType<ConferenceManager>(uri, 1, 0, "ConferenceManager");
 
   qmlRegisterUncreatableType<Account>(uri, 1, 0, "Account",
                                       "Should not create Account.");

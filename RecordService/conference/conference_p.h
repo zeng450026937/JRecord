@@ -6,7 +6,6 @@
 #include "conference.h"
 
 class ProtoConf;
-class User;
 
 class ConferencePrivate : public ClientPrivate {
   Q_DISABLE_COPY(ConferencePrivate)
@@ -15,28 +14,20 @@ class ConferencePrivate : public ClientPrivate {
   ConferencePrivate(Conference *q);
 
   QString uuid;
-  QDate createTime;
-  QDate updateTime;
+  Conference::Type type;
+  Device *host;
   QString title;
   QString content;
   QString member;
+  QString gps;
+  QString tag;
+  QDate createTime;
+  QDate updateTime;
+  Conference::Status status;
+  int count;
+  QString errorString;
 
-  User *host;
-  QList<User *> userlist;
-
-  QString protocolName;
-  ProtoConf *protocol;
-
- public:
-  void append(User *user);
-  int count() const;
-  User *at(int index) const;
-  void clear();
-
-  static void append(QQmlListProperty<User> *list, User *user);
-  static int count(QQmlListProperty<User> *list);
-  static User *at(QQmlListProperty<User> *list, int index);
-  static void clear(QQmlListProperty<User> *list);
+  QList<Device *> devicelist;
 };
 
 #endif  // CONFERENCE_P_H

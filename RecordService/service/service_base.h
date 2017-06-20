@@ -6,6 +6,7 @@
 
 class Device;
 class DeviceManager;
+class ConferenceManager;
 class ProtoBase;
 class ServiceBasePrivate;
 
@@ -41,6 +42,7 @@ class ServiceBase : public QObject {
   ProtoBase *protocol(const QString &name);
 
   Q_INVOKABLE DeviceManager *deviceManager() const;
+  Q_INVOKABLE ConferenceManager *conferenceManager() const;
 
  public Q_SLOTS:
   void setActive(bool active);

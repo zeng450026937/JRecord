@@ -6,6 +6,7 @@
 #include <QMetaObject>
 #include "device/device.h"
 #include "proto_info_p.h"
+#include "user/user.h"
 #include "websocket/textmessage.h"
 
 ProtoInfo::ProtoInfo(QObject *parent)
@@ -30,6 +31,11 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case updateDeviceInfo:
         action = Actions::updateDeviceInfo;
+        data = QJsonObject::fromVariantMap(msg->data());
+        break;
+      case notifyDeviceInfoChange:
+        action = Actions::notifyDeviceInfoChange;
+        data = QJsonObject::fromVariantMap(msg->data());
         break;
       case getDeviceList:
         action = Actions::getDeviceList;
@@ -56,11 +62,16 @@ void ProtoInfo::push(Device *device) {
   Q_D(ProtoInfo);
 
   QVariantMap data;
+  data.insert(QStringLiteral("deviceUuid"), device->uuid());
   data.insert(QStringLiteral("deviceName"), device->name());
+  data.insert(QStringLiteral("deviceType"), device->type());
   data.insert(QStringLiteral("batteryPercent"), device->percent());
   data.insert(QStringLiteral("batteryTime"), device->time());
   data.insert(QStringLiteral("status"), device->status());
   data.insert(QStringLiteral("vad"), device->vad());
+  data.insert(QStringLiteral("userId"), device->owner()->userId());
+  data.insert(QStringLiteral("userName"), device->owner()->userName());
+  data.insert(QStringLiteral("userGroup"), device->owner()->userGroup());
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
                   d->metaEnum.valueToKey(Actions::updateDeviceInfo), data);

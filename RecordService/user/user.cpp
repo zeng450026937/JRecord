@@ -11,6 +11,7 @@ QString User::userName() const { return d_func()->userName; }
 
 void User::setUserId(QString userId) {
   Q_D(User);
+  if (userId.isEmpty()) return;
   if (userId != d->userId) {
     d->userId = userId;
     Q_EMIT userIdChanged(d->userId);
@@ -19,6 +20,7 @@ void User::setUserId(QString userId) {
 
 void User::setUserGroup(QString userGroup) {
   Q_D(User);
+  if (userGroup.isEmpty()) return;
   if (userGroup != d->userGroup) {
     d->userGroup = userGroup;
     Q_EMIT userGroupChanged(d->userGroup);
@@ -27,6 +29,7 @@ void User::setUserGroup(QString userGroup) {
 
 void User::setUserName(QString userName) {
   Q_D(User);
+  if (userName.isEmpty()) return;
   if (userName != d->userName) {
     d->userName = userName;
     Q_EMIT userNameChanged(d->userName);

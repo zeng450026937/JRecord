@@ -24,6 +24,8 @@ class Device : public Client {
  public:
   explicit Device(QObject *parent = 0);
 
+  void fromVariant(const QVariantMap &data);
+
   QString type() const;
   QString uuid() const;
   QString name() const;
@@ -43,7 +45,7 @@ class Device : public Client {
   void percentChanged(const int percent);
   void timeChanged(const int time);
   void lockChanged(const bool lock);
-  void ownerChanged(const User *user);
+  void ownerChanged(User *user);
 
  public Q_SLOTS:
   void setType(const QString &type);

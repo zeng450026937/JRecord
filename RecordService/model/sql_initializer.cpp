@@ -45,62 +45,21 @@ void createDeviceTable() {
   QSqlQuery query;
   if (!query.exec("CREATE TABLE IF NOT EXISTS 'DEVICE' ("
                   "   'uuid' TEXT NOT NULL,"
-                  "   'type' TEXT NOT NULL,"
-                  "   'name' TEXT NOT NULL,"
+                  "   'type' TEXT DEFAULT '',"
+                  "   'name' TEXT DEFAULT '',"
                   "   'percent' INTEGER DEFAULT '0',"
                   "   'time' INTEGER DEFAULT '0',"
-                  "   'status' TEXT NOT NULL,"
-                  "   'vad' TEXT NOT NULL,"
-                  "   'locked' INTEGER DEFAULT '0',"
+                  "   'status' TEXT DEFAULT '',"
+                  "   'vad' TEXT DEFAULT '',"
+                  "   'lock' INTEGER DEFAULT '0',"
                   "   PRIMARY KEY(uuid)"
                   ")")) {
     qFatal("Failed to query database: %s",
            qPrintable(query.lastError().text()));
   }
-
-#if (1)
-  query.prepare("INSERT INTO DEVICE VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-  QVariantList uuid;
-  QVariantList type;
-  QVariantList name;
-  QVariantList percent;
-  QVariantList time;
-  QVariantList status;
-  QVariantList vad;
-  QVariantList locked;
-
-  for (int i = 0; i < 3; i++) {
-    uuid << QString("uuid %1").arg(i);
-    type << QString("deviceType %1").arg(i);
-    name << QString("deviceName %1").arg(i);
-    percent << qrand() % 100;
-    time << qrand() % 3600;
-    status << QString("status %1").arg(i);
-    vad << QString("vad %1").arg(i);
-    locked << (i % 2 ? 1 : 0);
-  }
-
-  query.addBindValue(uuid);
-  query.addBindValue(type);
-  query.addBindValue(name);
-  query.addBindValue(percent);
-  query.addBindValue(time);
-  query.addBindValue(status);
-  query.addBindValue(vad);
-  query.addBindValue(locked);
-
-  if (!query.execBatch()) {
-    qDebug() << query.executedQuery();
-    qDebug() << query.lastError();
-    return;
-  }
-#else
-
-#endif
 }
 
-void createConferencsTable() {
+void createConferenceTable() {
   if (QSqlDatabase::database().tables().contains(conferenceTableName)) {
     // The table already exists; we don't need to do anything.
     return;
@@ -109,62 +68,24 @@ void createConferencsTable() {
   QSqlQuery query;
   if (!query.exec("CREATE TABLE IF NOT EXISTS 'CONFERENCE' ("
                   "   'uuid' TEXT NOT NULL,"
-                  "   'type' TEXT NOT NULL,"
-                  "   'title' TEXT NOT NULL,"
-                  "   'content' TEXT NOT NULL,"
-                  "   'members' TEXT NOT NULL,"
-                  "   'userlist' TEXT NOT NULL,"
-                  "   'create_time' TEXT NOT NULL,"
-                  "   'update_time' TEXT NOT NULL,"
-                  "   'status' TEXT NOT NULL,"
-                  "   'downloaded' INTEGER DEFAULT '0',"
+                  "   'type' INTEGER DEFAULT '0',"
+                  "   'hostId' TEXT NOT NULL,"
+                  "   'hostName' TEXT DEFAULT '',"
+                  "   'hostGroup' TEXT DEFAULT 'ND',"
+                  "   'hostDevice' TEXT NOT NULL,"
+                  "   'title' TEXT DEFAULT '',"
+                  "   'content' TEXT DEFAULT '',"
+                  "   'members' TEXT DEFAULT '',"
+                  "   'gps' TEXT DEFAULT '',"
+                  "   'tag' TEXT DEFAULT '',"
+                  "   'createTime' TEXT DEFAULT '',"
+                  "   'updateTime' TEXT DEFAULT '',"
+                  "   'status' INTEGER DEFAULT '0',"
+                  "   'count' INTEGER DEFAULT '0',"
                   "   PRIMARY KEY(uuid)"
                   ")")) {
     qFatal("Failed to query database: %s",
            qPrintable(query.lastError().text()));
-  }
-
-  query.prepare("INSERT INTO Conferencs VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-  QVariantList uuid;
-  QVariantList type;
-  QVariantList title;
-  QVariantList content;
-  QVariantList members;
-  QVariantList userlist;
-  QVariantList create_time;
-  QVariantList update_time;
-  QVariantList status;
-  QVariantList downloaded;
-
-  for (int i = 0; i < 15; i++) {
-    uuid << QString("uuid %1").arg(i);
-    type << QString("type %1").arg(i);
-    title << QString("title %1").arg(i);
-    content << QString("content %1").arg(i);
-    members << QString("member %1").arg(i);
-    userlist << QString("userlist %1").arg(i);
-    create_time << QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-    update_time << QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-    status << QString("status %1").arg(i);
-    downloaded << (i % 2 ? 1 : 0);
-  }
-
-  query.addBindValue(uuid);
-  query.addBindValue(type);
-  query.addBindValue(title);
-  query.addBindValue(content);
-  query.addBindValue(members);
-  query.addBindValue(userlist);
-  query.addBindValue(create_time);
-  query.addBindValue(update_time);
-  query.addBindValue(status);
-  query.addBindValue(downloaded);
-
-  if (!query.execBatch()) {
-    qDebug() << query.executedQuery();
-    qDebug() << query.lastError();
-    return;
   }
 }
 

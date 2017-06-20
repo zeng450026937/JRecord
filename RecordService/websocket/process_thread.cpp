@@ -55,7 +55,8 @@ void ProcessThread::run() {
           if (protocol) {
             protocol->process(pkt);
           }
-          if (msg->action() != "heartBeat")
+          if (msg->action() != "heartBeat" &&
+              msg->action() != "notifyPersonRecordAdd")
             qDebug() << "received:" << msg->encode();
         }
       }
@@ -67,6 +68,7 @@ void ProcessThread::run() {
           if (protocol) {
             protocol->process(pkt);
           }
+          qDebug() << "received binary.";
         }
       }
     }

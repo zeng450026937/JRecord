@@ -53,7 +53,13 @@ SOURCES += \
     websocket/textmessage.cpp \
     websocket/textmessage_p.cpp \
     websocket/transport_thread.cpp \
-    websocket/transport_thread_p.cpp
+    websocket/transport_thread_p.cpp \
+    manager/conference_manager.cpp \
+    manager/conference_manager_p.cpp \
+    model/conference_model.cpp \
+    model/conference_model_p.cpp \
+    websocket/protocol/proto_person.cpp \
+    websocket/protocol/proto_person_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -102,7 +108,13 @@ HEADERS += \
     websocket/textmessage.h \
     websocket/textmessage_p.h \
     websocket/transport_thread.h \
-    websocket/transport_thread_p.h
+    websocket/transport_thread_p.h \
+    manager/conference_manager.h \
+    manager/conference_manager_p.h \
+    model/conference_model.h \
+    model/conference_model_p.h \
+    websocket/protocol/proto_person.h \
+    websocket/protocol/proto_person_p.h
 
 DISTFILES = qmldir
 

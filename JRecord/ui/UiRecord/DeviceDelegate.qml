@@ -6,7 +6,6 @@ import com.nd.recordservice 1.0
 CheckDelegate {
     id: delegate
     clip: true
-    text: qsTr(" ")
 
     checked: device.lock
     onClicked: {
@@ -21,9 +20,12 @@ CheckDelegate {
         spacing: 5
         anchors.left: delegate.indicator.right
         anchors.right: delegate.right
+        anchors.leftMargin: 10
+        anchors.rightMargin: 10
         Label {
             id: nameLabel
-            text: device.name
+            //text: device.name
+            text: device.owner.userName
             clip: true
         }
         Label {
@@ -51,7 +53,8 @@ CheckDelegate {
         }
         Label {
             id: timeLabel
-            text: qsTr(device.time / 60 + " m")
+            text: qsTr(Math.floor(
+                           device.time / 60) + " h " + device.time % 60 + " m")
             width: implicitWidth
             clip: true
             rightPadding: 10
@@ -59,7 +62,7 @@ CheckDelegate {
         Label {
             id: statusLabel
             text: device.status
-            width: implicitWidth
+            width: 80
             clip: true
             leftPadding: 10
             rightPadding: 10

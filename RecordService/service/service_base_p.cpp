@@ -41,20 +41,23 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
   main_thread->start();
   socket_thread->start();
 
-  QObject::connect(socket, &MessageSocket::connected, q_ptr, [this]() {
-    Q_Q(ServiceBase);
-    status = ServiceBase::Open;
-    active = true;
-    Q_EMIT q->activeChanged(active);
-    Q_EMIT q->statusChanged(status);
-  });
-  QObject::connect(socket, &MessageSocket::disconnected, q_ptr, [this]() {
-    Q_Q(ServiceBase);
-    status = ServiceBase::Closed;
-    active = false;
-    Q_EMIT q->activeChanged(active);
-    Q_EMIT q->statusChanged(status);
-  });
+  QObject::connect(q_ptr, &ServiceBase::activeChanged, socket,
+                   &MessageSocket::setActive);
+
+  QObject::connect(socket, &MessageSocket::activeChanged, q_ptr,
+                   [this](const bool active) {
+                     Q_Q(ServiceBase);
+                     if (active) {
+                       this->status = ServiceBase::Open;
+                       this->active = true;
+                     } else {
+                       this->status = ServiceBase::Closed;
+                       this->active = false;
+                     }
+                     Q_EMIT q->activeChanged(active);
+                     Q_EMIT q->statusChanged(status);
+                   });
+
   QObject::connect(socket, &MessageSocket::errorChanged, q_ptr,
                    [this](const QString error) {
                      Q_Q(ServiceBase);
@@ -65,12 +68,9 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
                      Q_EMIT q->statusChanged(status);
                    });
 
-  QObject::connect(q_ptr, &ServiceBase::activeChanged, socket,
-                   &MessageSocket::setActive);
-
-  QObject::connect(q_ptr, &ServiceBase::activeChanged, process_queue,
+  QObject::connect(socket, &MessageSocket::activeChanged, transport_queue,
                    &MessageQueue::setActive);
-  QObject::connect(q_ptr, &ServiceBase::activeChanged, transport_queue,
+  QObject::connect(socket, &MessageSocket::activeChanged, process_queue,
                    &MessageQueue::setActive);
 
   QObject::connect(transport_queue, &MessageQueue::activeChanged,

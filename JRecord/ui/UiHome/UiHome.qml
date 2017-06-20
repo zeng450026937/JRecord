@@ -6,18 +6,15 @@ import com.nd.recordservice 1.0
 
 ApplicationWindow {
     id: root
-    width: 800
-    height: 680
+    width: 1280
+    height: 800
     visible: true
 
     flags: Qt.FramelessWindowHint | Qt.Window
 
-    color: "black"
-
-    Page{
+    Page {
         id: page
         anchors.fill: parent
-        anchors.margins: 1
         clip: true
 
         header: ToolBar {
@@ -37,10 +34,12 @@ ApplicationWindow {
                     yMouse = mouse.y
                 }
                 onPositionChanged: {
-                    deltaX = mouse.x-xMouse
-                    deltaY = mouse.y-yMouse
-                    ApplicationWindow.window.setX(ApplicationWindow.window.x + deltaX)
-                    ApplicationWindow.window.setY(ApplicationWindow.window.y + deltaY)
+                    deltaX = mouse.x - xMouse
+                    deltaY = mouse.y - yMouse
+                    ApplicationWindow.window.setX(
+                                ApplicationWindow.window.x + deltaX)
+                    ApplicationWindow.window.setY(
+                                ApplicationWindow.window.y + deltaY)
                 }
             }
 
@@ -102,9 +101,15 @@ ApplicationWindow {
 
             ListModel {
                 id: viewModel
-                ListElement{ sourceUri: "../UiRecord/UiRecord.qml" }
-                ListElement{ sourceUri: "../UiFile/UiFile.qml" }
-                ListElement{ sourceUri: "../UiSetting/UiSetting.qml" }
+                ListElement {
+                    sourceUri: "../UiRecord/UiRecord.qml"
+                }
+                ListElement {
+                    sourceUri: "../UiFile/UiFile.qml"
+                }
+                ListElement {
+                    sourceUri: "../UiSetting/UiSetting.qml"
+                }
             }
 
             Repeater {
@@ -130,7 +135,7 @@ ApplicationWindow {
                 color: "lightgray"
                 clip: true
 
-                Column{
+                Column {
                     anchors.fill: parent
                     Image {
                         id: image
@@ -143,19 +148,19 @@ ApplicationWindow {
                         asynchronous: true
                         clip: true
 
-//                        layer.enabled: rounded
-//                        layer.effect: OpacityMask {
-//                            maskSource: Item {
-//                                width: image.width
-//                                height: image.height
-//                                Rectangle {
-//                                    anchors.centerIn: parent
-//                                    width: image.adapt ? image.width : Math.min(image.width, image.height)
-//                                    height: image.adapt ? image.height : width
-//                                    radius: Math.min(width, height)
-//                                }
-//                            }
-//                        }
+                        //                        layer.enabled: rounded
+                        //                        layer.effect: OpacityMask {
+                        //                            maskSource: Item {
+                        //                                width: image.width
+                        //                                height: image.height
+                        //                                Rectangle {
+                        //                                    anchors.centerIn: parent
+                        //                                    width: image.adapt ? image.width : Math.min(image.width, image.height)
+                        //                                    height: image.adapt ? image.height : width
+                        //                                    radius: Math.min(width, height)
+                        //                                }
+                        //                            }
+                        //                        }
                     }
                     Label {
                         clip: true

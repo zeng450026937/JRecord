@@ -10,5 +10,6 @@
         <file>ui/UiFile/UiFile.qml</file>
         <file>ui/UiSetting/UiSetting.qml</file>
         <file>ui/UiRecord/DeviceDelegate.qml</file>
+        <file>ui/UiFile/ConferenceDelegate.qml</file>
     </qresource>
 </RCC>

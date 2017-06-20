@@ -11,7 +11,7 @@ static const QString downloadTableName = QStringLiteral("DOWNLOAD");
 void connectToDatabase();
 
 void createDeviceTable();
-void createConferencTable();
+void createConferenceTable();
 void createFileTable();
 void createDownloadTable();
 

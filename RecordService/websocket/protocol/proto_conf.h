@@ -4,7 +4,6 @@
 #include <QJsonValue>
 #include "proto_base.h"
 
-class User;
 class ProtoConfPrivate;
 
 class ProtoConf : public ProtoBase {
@@ -33,7 +32,7 @@ class ProtoConf : public ProtoBase {
   Q_ENUM(Actions)
 
  Q_SIGNALS:
-  void actionRecived(Actions action, const QJsonValue &data);
+  void actionRecived(const int action, const QJsonValue &data);
 
  public Q_SLOTS:
   void lock();

@@ -35,6 +35,7 @@ class ServiceBasePrivate {
   QString uuid;
 
   DeviceManager *deviceManager;
+  ConferenceManager *conferenceManager;
 };
 
 #endif  // SERVICE_BASE_P_H
