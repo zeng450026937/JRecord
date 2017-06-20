@@ -17,8 +17,8 @@ ConferenceManager::ConferenceManager(QObject *parent)
   Q_D(ConferenceManager);
   QObject::connect(
       this, &ConferenceManager::serviceChanged, [this, d](ServiceBase *servie) {
-        d->conf_protocol =
-            (ProtoConf *)servie->protocol(QStringLiteral("conference"));
+        d->conf_protocol = dynamic_cast<ProtoConf *>(
+            servie->protocol(QStringLiteral("conference")));
 
         QObject::connect(d->conf_protocol, &ProtoConf::actionRecived, this,
                          [this, d](const int action, const QJsonValue &data) {
@@ -31,8 +31,8 @@ ConferenceManager::ConferenceManager(QObject *parent)
                            }
                          });
 
-        d->person_protocol =
-            (ProtoPerson *)servie->protocol(QStringLiteral("personal"));
+        d->person_protocol = dynamic_cast<ProtoPerson *>(
+            servie->protocol(QStringLiteral("personal")));
 
         QObject::connect(
             d->person_protocol, &ProtoPerson::actionRecived, this,

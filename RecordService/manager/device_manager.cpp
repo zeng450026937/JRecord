@@ -14,7 +14,8 @@ DeviceManager::DeviceManager(QObject *parent)
   Q_D(DeviceManager);
   QObject::connect(
       this, &DeviceManager::serviceChanged, [this, d](ServiceBase *servie) {
-        d->protocol = (ProtoInfo *)servie->protocol(QStringLiteral("info"));
+        d->protocol =
+            dynamic_cast<ProtoInfo *>(servie->protocol(QStringLiteral("info")));
 
         QObject::connect(
             d->protocol, &ProtoInfo::actionRecived, this,
