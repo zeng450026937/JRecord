@@ -56,7 +56,9 @@ void ProcessThread::run() {
             protocol->process(pkt);
           }
           if (msg->action() != "heartBeat" &&
-              msg->action() != "notifyPersonRecordAdd")
+              msg->action() != "notifyPersonRecordAdd" &&
+              msg->action() != "getConferenceList" &&
+              msg->action() != "getPersonalList")
             qDebug() << "received:" << msg->encode();
         }
       }

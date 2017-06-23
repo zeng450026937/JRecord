@@ -1,6 +1,7 @@
 #include "proto_conf.h"
 #include <QDebug>
-#include <QMetaEnum>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QMetaObject>
 #include "proto_conf_p.h"
 #include "service/service_base.h"
@@ -9,7 +10,7 @@
 ProtoConf::ProtoConf(QObject* parent)
     : ProtoBase(new ProtoConfPrivate(this), parent) {
   Q_D(ProtoConf);
-  d->mode = QStringLiteral("conference");
+  d->mode = ProtoBase::CONFERENCE_MODE;
   d->metaEnum = this->metaObject()->enumerator(
       this->metaObject()->indexOfEnumerator("Actions"));
 }
@@ -21,26 +22,39 @@ void ProtoConf::process(QSharedPointer<MessagePacket> pkt) {
     QMetaEnum MetaEnum =
         MetaObject->enumerator(MetaObject->indexOfEnumerator("Actions"));
 
+    QJsonValue data;
     Actions action;
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
-      case lockDevice:
+      case Actions::lockDevice:
         action = Actions::lockDevice;
+        data = msg->data();
         break;
-      case unlockDevice:
+      case Actions::unlockDevice:
         action = Actions::unlockDevice;
+        data = msg->data();
         break;
-      case createConference:
+      case Actions::createConference:
         action = Actions::createConference;
+        data = msg->data();
         break;
-      case startConference:
+      case Actions::startConference:
         action = Actions::startConference;
+        data = msg->data();
+        break;
+      case Actions::getConferenceList:
+        action = Actions::getConferenceList;
+        data = msg->data().value(QStringLiteral("list")).toArray();
+        break;
+      case Actions::getConferenceFiles:
+        action = Actions::getConferenceFiles;
+        data = msg->data();
         break;
       default:
         action = Actions::unknown;
         break;
     }
 
-    Q_EMIT actionRecived(action, msg->json());
+    Q_EMIT actionRecived(action, data);
   }
 }
 
@@ -52,7 +66,7 @@ void ProtoConf::create(const QString& title, const QString& content,
                        const QString& members, const QString& devices) {
   Q_D(ProtoConf);
 
-  QVariantMap data;
+  QJsonObject data;
   data.insert(QStringLiteral("title"), title);
   data.insert(QStringLiteral("content"), content);
   data.insert(QStringLiteral("members"), members);
@@ -65,7 +79,7 @@ void ProtoConf::create(const QString& title, const QString& content,
 void ProtoConf::start(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QVariantMap data;
+  QJsonObject data;
   data.insert(QStringLiteral("uuid"), uuid);
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
@@ -75,7 +89,7 @@ void ProtoConf::start(const QString& uuid) {
 void ProtoConf::pause(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QVariantMap data;
+  QJsonObject data;
   data.insert(QStringLiteral("uuid"), uuid);
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
@@ -85,7 +99,7 @@ void ProtoConf::pause(const QString& uuid) {
 void ProtoConf::resume(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QVariantMap data;
+  QJsonObject data;
   data.insert(QStringLiteral("uuid"), uuid);
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
@@ -95,7 +109,7 @@ void ProtoConf::resume(const QString& uuid) {
 void ProtoConf::stop(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QVariantMap data;
+  QJsonObject data;
   data.insert(QStringLiteral("uuid"), uuid);
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
@@ -112,12 +126,22 @@ void ProtoConf::query(const QString& uuid) {
   if (uuid.isEmpty()) {
     this->transport(QStringLiteral(""), QStringLiteral(""),
                     d->metaEnum.valueToKey(Actions::getConferenceList),
-                    QVariantMap());
+                    QJsonObject());
   } else {
-    QVariantMap data;
+    QJsonObject data;
     data.insert(QStringLiteral("uuid"), uuid);
 
     this->transport(QStringLiteral(""), QStringLiteral(""),
                     d->metaEnum.valueToKey(Actions::getConferenceInfo), data);
   }
+}
+
+void ProtoConf::files(const QString& uuid) {
+  Q_D(ProtoConf);
+
+  QJsonObject data;
+  data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+  this->transport(QStringLiteral(""), QStringLiteral(""),
+                  d->metaEnum.valueToKey(Actions::getConferenceFiles), data);
 }

@@ -11,7 +11,7 @@
 ProtoMobile::ProtoMobile(QObject* parent)
     : ProtoBase(new ProtoMobilePrivate(this), parent) {
   Q_D(ProtoMobile);
-  d->mode = QStringLiteral("mobile");
+  d->mode = ProtoBase::MOBILE_MODE;
   d->metaEnum = this->metaObject()->enumerator(
       this->metaObject()->indexOfEnumerator("Actions"));
 }
@@ -26,10 +26,9 @@ void ProtoMobile::process(QSharedPointer<MessagePacket> pkt) {
     QJsonValue data;
     Actions action;
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
-      case getMobileList:
-        action = Actions::getMobileList;
-        data = QJsonArray::fromVariantList(
-            msg->data().value(QStringLiteral("list")).toList());
+      case getConferences:
+        action = Actions::getConferences;
+        data = msg->data().value(QStringLiteral("list")).toArray();
         break;
       default:
         action = Actions::unknown;
@@ -40,12 +39,10 @@ void ProtoMobile::process(QSharedPointer<MessagePacket> pkt) {
   }
 }
 
-void ProtoMobile::query(const QString& userId) {
+void ProtoMobile::query() {
   Q_D(ProtoMobile);
 
-  QVariantMap data;
-  data.insert(QStringLiteral("userId"), userId);
-
   this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getMobileList), data);
+                  d->metaEnum.valueToKey(Actions::getConferences),
+                  QJsonObject());
 }

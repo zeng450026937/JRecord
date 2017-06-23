@@ -1,13 +1,13 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.7
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import QtGraphicalEffects 1.0
 import com.nd.recordservice 1.0
 
 ApplicationWindow {
     id: root
-    width: 1280
-    height: 800
+    width: 800
+    height: 680
     visible: true
 
     flags: Qt.FramelessWindowHint | Qt.Window

@@ -103,7 +103,7 @@ ApplicationWindow {
         id: pc
         owner: User {
             id: user
-            userId: NdAccount.userId
+            userId: "311715"
             userName: NdAccount.userName
             userGroup: qsTr("ND")
         }

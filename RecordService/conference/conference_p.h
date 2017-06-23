@@ -1,7 +1,7 @@
 #ifndef CONFERENCE_P_H
 #define CONFERENCE_P_H
 
-#include <QDate>
+#include <QDateTime>
 #include "client/client_p.h"
 #include "conference.h"
 
@@ -21,11 +21,13 @@ class ConferencePrivate : public ClientPrivate {
   QString member;
   QString gps;
   QString tag;
-  QDate createTime;
-  QDate updateTime;
+  QDateTime createTime;
+  QDateTime updateTime;
   Conference::Status status;
   int count;
   QString errorString;
+
+  ProtoConf *conf_protocol;
 
   QList<Device *> devicelist;
 };

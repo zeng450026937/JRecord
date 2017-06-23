@@ -19,6 +19,7 @@ class ProtoConf : public ProtoBase {
     createConference,
     getConferenceInfo,
     getConferenceList,
+    getConferenceFiles,
     joinConference,
     leveaveConference,
     startConference,
@@ -46,6 +47,7 @@ class ProtoConf : public ProtoBase {
   void join(const QString &uuid);
   void leave(const QString &uuid);
   void query(const QString &uuid = "");
+  void files(const QString &uuid);
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

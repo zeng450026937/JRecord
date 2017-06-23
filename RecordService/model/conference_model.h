@@ -20,6 +20,7 @@ class ConferenceModel : public QSqlTableModel {
     HostIdRole,
     HostNameRole,
     HostGroupRole,
+    HostDeviceRole,
     TitleRole,
     ContentRole,
     MembersRole,
@@ -28,7 +29,6 @@ class ConferenceModel : public QSqlTableModel {
     CreateTimeRole,
     UpdateTimeRole,
     StatusRole,
-    CountRole,
     RoleCount
   };
 
@@ -38,7 +38,6 @@ class ConferenceModel : public QSqlTableModel {
   QHash<int, QByteArray> roleNames() const override;
 
   Q_INVOKABLE void addConference(Conference *conference);
-  Q_INVOKABLE void clearAll();
 
  Q_SIGNALS:
 

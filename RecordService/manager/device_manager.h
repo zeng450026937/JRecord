@@ -16,9 +16,9 @@ class DeviceManager : public Client {
   explicit DeviceManager(QObject *parent = 0);
 
   Q_INVOKABLE Device *device(const QString &uuid) const;
+  Q_INVOKABLE DeviceModel *model() const;
 
   Q_INVOKABLE void refresh();
-  Q_INVOKABLE DeviceModel *model() const;
 
  public Q_SLOTS:
 

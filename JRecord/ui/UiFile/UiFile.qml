@@ -1,5 +1,5 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.3
 import com.nd.recordservice 1.0
 
@@ -24,7 +24,7 @@ Item {
                 clip: true
 
                 //boundsBehavior: Flickable.StopAtBounds
-                width: recordUi.width * 2 / 5
+                width: recordUi.width * 3 / 5
                 height: recordUi.height
 
                 header: Rectangle {

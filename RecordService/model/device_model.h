@@ -32,7 +32,6 @@ class DeviceModel : public QSqlTableModel {
   QHash<int, QByteArray> roleNames() const override;
 
   Q_INVOKABLE void addDevice(Device *device);
-  Q_INVOKABLE void clearAll();
 
  Q_SIGNALS:
 

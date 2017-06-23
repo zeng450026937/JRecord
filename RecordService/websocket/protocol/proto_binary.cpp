@@ -7,7 +7,7 @@
 ProtoBinary::ProtoBinary(QObject *parent)
     : ProtoBase(new ProtoBinaryPrivate(this), parent) {
   Q_D(ProtoBinary);
-  d->mode = QStringLiteral("binary");
+  d->mode = ProtoBase::BINARY_MODE;
 }
 
 void ProtoBinary::process(QSharedPointer<MessagePacket> pkt) {

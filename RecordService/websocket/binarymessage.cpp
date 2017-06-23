@@ -6,7 +6,7 @@
 BinaryMessage::BinaryMessage(QObject *parent)
     : QObject(parent), d_ptr(new BinaryMessagePrivate(this)) {}
 
-BinaryMessage::BinaryMessage(QByteArray message, QObject *parent)
+BinaryMessage::BinaryMessage(const QByteArray &message, QObject *parent)
     : QObject(parent), d_ptr(new BinaryMessagePrivate(this)) {
   this->parse(message);
 }

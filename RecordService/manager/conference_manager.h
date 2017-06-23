@@ -16,9 +16,9 @@ class ConferenceManager : public Client {
   explicit ConferenceManager(QObject *parent = 0);
 
   Q_INVOKABLE Conference *conference(const QString &uuid) const;
+  Q_INVOKABLE ConferenceModel *model() const;
 
   Q_INVOKABLE void refresh();
-  Q_INVOKABLE ConferenceModel *model() const;
 
  public Q_SLOTS:
 

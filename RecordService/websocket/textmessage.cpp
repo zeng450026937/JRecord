@@ -2,7 +2,6 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
-#include <QJsonObject>
 #include "textmessage_p.h"
 
 TextMessage::TextMessage(QObject *parent)
@@ -11,20 +10,20 @@ TextMessage::TextMessage(QObject *parent)
 TextMessage::TextMessage(TextMessagePrivate *d, QObject *parent)
     : QObject(parent), d_ptr(d) {}
 
-TextMessage::TextMessage(QString string, QObject *parent)
+TextMessage::TextMessage(const QString &string, QObject *parent)
     : QObject(parent), d_ptr(new TextMessagePrivate(this)) {
   this->decode(string);
 }
 
 TextMessage::TextMessage(QString from, QString to, QString mode, QString action,
-                         QVariantMap data, QObject *parent)
+                         const QJsonObject &data, QObject *parent)
     : QObject(parent), d_ptr(new TextMessagePrivate(this)) {
   Q_D(TextMessage);
   d->from = from;
   d->to = to;
   d->command.insert("mode", QJsonValue(mode));
   d->command.insert("action", QJsonValue(action));
-  d->data = QJsonObject::fromVariantMap(data);
+  d->data = data;
 }
 
 TextMessage::~TextMessage() {}
@@ -43,11 +42,9 @@ QString TextMessage::action() const {
   return d_func()->command.value("action").toString();
 }
 
-QVariantMap TextMessage::data() const { return d_func()->data.toVariantMap(); }
+QJsonObject TextMessage::data() const { return d_func()->data; }
 
 bool TextMessage::result() const { return d_func()->result; }
-
-QJsonValue TextMessage::json() const { return d_func()->json; }
 
 void TextMessage::decode(const QString &message) {
   QJsonParseError error;
@@ -57,16 +54,15 @@ void TextMessage::decode(const QString &message) {
   if (error.error == QJsonParseError::NoError) {
     Q_D(TextMessage);
     if (jsonDocument.isObject()) {
-      d->json = jsonDocument.object();
+      QJsonObject json = jsonDocument.object();
 
-      d->version = d->json.value(QStringLiteral("version")).toString();
-      d->authorization =
-          d->json.value(QStringLiteral("authorization")).toString();
-      d->from = d->json.value(QStringLiteral("from")).toString();
-      d->to = d->json.value(QStringLiteral("to")).toString();
-      d->command = d->json.value(QStringLiteral("command")).toObject();
-      d->data = d->json.value(QStringLiteral("data")).toObject();
-      d->result = d->json.value(QStringLiteral("result")).toBool();
+      d->version = json.value(QStringLiteral("version")).toString();
+      d->authorization = json.value(QStringLiteral("authorization")).toString();
+      d->from = json.value(QStringLiteral("from")).toString();
+      d->to = json.value(QStringLiteral("to")).toString();
+      d->command = json.value(QStringLiteral("command")).toObject();
+      d->data = json.value(QStringLiteral("data")).toObject();
+      d->result = json.value(QStringLiteral("result")).toBool();
     } else if (jsonDocument.isArray()) {
       qDebug() << "unsupported json string format, json object is prefered.";
     }
@@ -78,16 +74,17 @@ void TextMessage::decode(const QString &message) {
 QString TextMessage::encode() {
   Q_D(TextMessage);
 
-  d->json.insert("version", QJsonValue(d->version));
-  d->json.insert("authorization", QJsonValue(d->authorization));
-  d->json.insert("from", QJsonValue(d->from));
-  d->json.insert("to", QJsonValue(d->to));
-  d->json.insert("command", QJsonValue(d->command));
-  d->json.insert("data", QJsonValue(d->data));
-  d->json.insert("result", QJsonValue(d->result));
+  QJsonObject json;
+  json.insert("version", QJsonValue(d->version));
+  json.insert("authorization", QJsonValue(d->authorization));
+  json.insert("from", QJsonValue(d->from));
+  json.insert("to", QJsonValue(d->to));
+  json.insert("command", QJsonValue(d->command));
+  json.insert("data", QJsonValue(d->data));
+  json.insert("result", QJsonValue(d->result));
 
   QJsonDocument document;
-  document.setObject(d->json);
+  document.setObject(json);
 
   return document.toJson(QJsonDocument::Compact);
 }
@@ -132,10 +129,12 @@ void TextMessage::setAction(const QString &action) {
   }
 }
 
-void TextMessage::setData(const QVariantMap &data) {
+void TextMessage::setData(const QJsonObject &data) {
   Q_D(TextMessage);
-  d->data = QJsonObject::fromVariantMap(data);
-  Q_EMIT dataChanged();
+  if (data != d->data) {
+    d->data = data;
+    Q_EMIT dataChanged(d->data);
+  }
 }
 
 void TextMessage::setResult(const bool &result) {

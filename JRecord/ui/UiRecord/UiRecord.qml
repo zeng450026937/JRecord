@@ -24,7 +24,7 @@ Item {
                 clip: true
 
                 //boundsBehavior: Flickable.StopAtBounds
-                width: recordUi.width * 2 / 5
+                width: recordUi.width * 3 / 5
                 height: recordUi.height
 
                 header: Rectangle {

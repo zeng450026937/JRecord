@@ -7,21 +7,48 @@ Device::Device(QObject *parent) : Client(new DevicePrivate(this), parent) {
   d->owner = new User(this);
 }
 
-void Device::fromVariant(const QVariantMap &data) {
+Device::Device(const QJsonObject &json, QObject *parent)
+    : Client(new DevicePrivate(this), parent) {
+  Q_D(Device);
+  d->owner = new User(this);
+  this->fromJson(json);
+}
+
+void Device::fromJson(const QJsonObject &json) {
   Q_D(Device);
   if (d->owner) {
-    d->owner->setUserId(data.value(QStringLiteral("userId")).toString());
-    d->owner->setUserName(data.value(QStringLiteral("userName")).toString());
-    d->owner->setUserGroup(data.value(QStringLiteral("userGroup")).toString());
+    d->owner->setUserId(json.value(QStringLiteral("userId")).toString());
+    d->owner->setUserName(json.value(QStringLiteral("userName")).toString());
+    d->owner->setUserGroup(json.value(QStringLiteral("userGroup")).toString());
   }
 
-  this->setUuid(data.value(QStringLiteral("deviceUuid")).toString());
-  this->setName(data.value(QStringLiteral("deviceName")).toString());
-  this->setType(data.value(QStringLiteral("deviceType")).toString());
-  this->setStatus(data.value(QStringLiteral("status")).toString());
-  this->setPercent(data.value(QStringLiteral("batteryPercent")).toInt());
-  this->setTime(data.value(QStringLiteral("batteryTime")).toInt());
-  this->setVad(data.value(QStringLiteral("vad")).toString());
+  this->setUuid(json.value(QStringLiteral("deviceUuid")).toString());
+  this->setName(json.value(QStringLiteral("deviceName")).toString());
+  this->setType(json.value(QStringLiteral("deviceType")).toString());
+  this->setStatus(json.value(QStringLiteral("status")).toString());
+  this->setPercent(json.value(QStringLiteral("batteryPercent")).toInt());
+  this->setTime(json.value(QStringLiteral("batteryTime")).toInt());
+  this->setVad(json.value(QStringLiteral("vad")).toString());
+}
+
+QJsonObject Device::toJson() {
+  QJsonObject json;
+  Q_D(Device);
+
+  if (d->owner) {
+    json.insert(QStringLiteral("userId"), d->owner->userId());
+    json.insert(QStringLiteral("userName"), d->owner->userName());
+    json.insert(QStringLiteral("userGroup"), d->owner->userGroup());
+  }
+  json.insert(QStringLiteral("deviceUuid"), d->uuid);
+  json.insert(QStringLiteral("deviceName"), d->name);
+  json.insert(QStringLiteral("deviceType"), d->type);
+  json.insert(QStringLiteral("status"), d->status);
+  json.insert(QStringLiteral("batteryPercent"), d->percent);
+  json.insert(QStringLiteral("batteryTime"), d->time);
+  json.insert(QStringLiteral("vad"), d->vad);
+
+  return json;
 }
 
 QString Device::type() const { return d_func()->type; }
@@ -138,14 +165,6 @@ void Device::setOwner(User *owner) {
 
     Q_EMIT ownerChanged(d->owner);
   }
-}
-
-Device::Device(const QVariantMap &data, QObject *parent)
-    : Client(new DevicePrivate(this), parent) {
-  Q_D(Device);
-  d->owner = new User(this);
-
-  this->fromVariant(data);
 }
 
 Device::Device(DevicePrivate *d, QObject *parent) : Client(d, parent) {}

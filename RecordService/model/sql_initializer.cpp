@@ -25,8 +25,8 @@ void connectToDatabase() {
            qPrintable(writeDir.absolutePath()));
 
   // Ensure that we have a writable location on all devices.
-  // const QString fileName = writeDir.absolutePath() + "/private.db";
-  const QString fileName = ":memory:";
+  const QString fileName = writeDir.absolutePath() + "/private.db";
+  // const QString fileName = ":memory:";
   // When using the SQLite driver, open() will create the SQLite database if it
   // doesn't exist.
   database.setDatabaseName(fileName);
@@ -69,10 +69,10 @@ void createConferenceTable() {
   if (!query.exec("CREATE TABLE IF NOT EXISTS 'CONFERENCE' ("
                   "   'uuid' TEXT NOT NULL,"
                   "   'type' INTEGER DEFAULT '0',"
-                  "   'hostId' TEXT NOT NULL,"
+                  "   'hostId' TEXT DEFAULT '',"
                   "   'hostName' TEXT DEFAULT '',"
                   "   'hostGroup' TEXT DEFAULT 'ND',"
-                  "   'hostDevice' TEXT NOT NULL,"
+                  "   'hostDevice' TEXT DEFAULT '',"
                   "   'title' TEXT DEFAULT '',"
                   "   'content' TEXT DEFAULT '',"
                   "   'members' TEXT DEFAULT '',"
@@ -81,7 +81,6 @@ void createConferenceTable() {
                   "   'createTime' TEXT DEFAULT '',"
                   "   'updateTime' TEXT DEFAULT '',"
                   "   'status' INTEGER DEFAULT '0',"
-                  "   'count' INTEGER DEFAULT '0',"
                   "   PRIMARY KEY(uuid)"
                   ")")) {
     qFatal("Failed to query database: %s",
@@ -96,7 +95,7 @@ void createFilesTable() {
   }
 
   QSqlQuery query;
-  if (!query.exec("CREATE TABLE IF NOT EXISTS 'Files' ("
+  if (!query.exec("CREATE TABLE IF NOT EXISTS 'FILE' ("
                   "   'path' TEXT NOT NULL,"
                   "   'type' TEXT NOT NULL,"
                   "   'suffix' TEXT NOT NULL,"
@@ -152,7 +151,7 @@ void createDownloadsTable() {
   }
 
   QSqlQuery query;
-  if (!query.exec("CREATE TABLE IF NOT EXISTS 'Downloads' ("
+  if (!query.exec("CREATE TABLE IF NOT EXISTS 'DOWNLOAD' ("
                   "   'id' INTEGER NOT NULL,"
                   "   'conference' TEXT NOT NULL,"
                   "   'owner' TEXT NOT NULL,"

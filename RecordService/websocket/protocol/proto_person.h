@@ -20,7 +20,7 @@ class ProtoPerson : public ProtoBase {
   void actionRecived(const int action, const QJsonValue &data);
 
  public Q_SLOTS:
-  void query(const QString &userId);
+  void query();
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

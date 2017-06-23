@@ -13,14 +13,14 @@ class ProtoMobile : public ProtoBase {
  public:
   explicit ProtoMobile(QObject *parent = nullptr);
 
-  enum Actions { getMobileList, unknown };
+  enum Actions { getConferences, unknown };
   Q_ENUM(Actions)
 
  Q_SIGNALS:
   void actionRecived(const int action, const QJsonValue &data);
 
  public Q_SLOTS:
-  void query(const QString &userId);
+  void query();
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

@@ -56,10 +56,7 @@ void DeviceModel::addDevice(Device *device) {
   newRecord.setValue(LockRole - Qt::UserRole, device->lock());
 
   this->insertRecord(-1, newRecord);
-  this->submitAll();
 }
-
-void DeviceModel::clearAll() { this->removeRows(0, this->rowCount()); }
 
 DeviceModel::DeviceModel(DeviceModelPrivate *d, QSqlTableModel *parent)
     : QSqlTableModel(parent), d_ptr(d) {}

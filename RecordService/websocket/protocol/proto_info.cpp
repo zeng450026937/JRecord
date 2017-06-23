@@ -12,7 +12,7 @@
 ProtoInfo::ProtoInfo(QObject *parent)
     : ProtoBase(new ProtoInfoPrivate(this), parent) {
   Q_D(ProtoInfo);
-  d->mode = QStringLiteral("info");
+  d->mode = ProtoBase::INFO_MODE;
   d->metaEnum = this->metaObject()->enumerator(
       this->metaObject()->indexOfEnumerator("Actions"));
 }
@@ -31,16 +31,15 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case updateDeviceInfo:
         action = Actions::updateDeviceInfo;
-        data = QJsonObject::fromVariantMap(msg->data());
+        data = msg->data();
         break;
       case notifyDeviceInfoChange:
         action = Actions::notifyDeviceInfoChange;
-        data = QJsonObject::fromVariantMap(msg->data());
+        data = msg->data();
         break;
       case getDeviceList:
         action = Actions::getDeviceList;
-        data = QJsonArray::fromVariantList(
-            msg->data().value(QStringLiteral("list")).toList());
+        data = msg->data().value(QStringLiteral("list")).toArray();
         break;
       default:
         action = Actions::ActionCount;
@@ -55,26 +54,15 @@ void ProtoInfo::beat() {
   Q_D(ProtoInfo);
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::heartBeat), QVariantMap());
+                  d->metaEnum.valueToKey(Actions::heartBeat), QJsonObject());
 }
 
 void ProtoInfo::push(Device *device) {
   Q_D(ProtoInfo);
 
-  QVariantMap data;
-  data.insert(QStringLiteral("deviceUuid"), device->uuid());
-  data.insert(QStringLiteral("deviceName"), device->name());
-  data.insert(QStringLiteral("deviceType"), device->type());
-  data.insert(QStringLiteral("batteryPercent"), device->percent());
-  data.insert(QStringLiteral("batteryTime"), device->time());
-  data.insert(QStringLiteral("status"), device->status());
-  data.insert(QStringLiteral("vad"), device->vad());
-  data.insert(QStringLiteral("userId"), device->owner()->userId());
-  data.insert(QStringLiteral("userName"), device->owner()->userName());
-  data.insert(QStringLiteral("userGroup"), device->owner()->userGroup());
-
   this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::updateDeviceInfo), data);
+                  d->metaEnum.valueToKey(Actions::updateDeviceInfo),
+                  device->toJson());
 }
 
 void ProtoInfo::pull() {
@@ -82,5 +70,5 @@ void ProtoInfo::pull() {
 
   this->transport(QStringLiteral(""), QStringLiteral(""),
                   d->metaEnum.valueToKey(Actions::getDeviceList),
-                  QVariantMap());
+                  QJsonObject());
 }

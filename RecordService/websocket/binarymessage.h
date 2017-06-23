@@ -24,7 +24,7 @@ class BinaryMessage : public QObject, public MessagePacket {
 
  public:
   explicit BinaryMessage(QObject* parent = 0);
-  BinaryMessage(QByteArray message, QObject* parent = 0);
+  BinaryMessage(const QByteArray& message, QObject* parent = 0);
   ~BinaryMessage() override;
 
   MessageType type() { return Binary; }

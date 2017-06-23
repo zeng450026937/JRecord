@@ -28,6 +28,7 @@ ConferenceModel::ConferenceModel(QObject *parent)
   d->roleNames[HostIdRole] = "hostId";
   d->roleNames[HostNameRole] = "hostName";
   d->roleNames[HostGroupRole] = "hostGroup";
+  d->roleNames[HostDeviceRole] = "hostDevice";
   d->roleNames[TitleRole] = "title";
   d->roleNames[ContentRole] = "content";
   d->roleNames[MembersRole] = "member";
@@ -36,7 +37,6 @@ ConferenceModel::ConferenceModel(QObject *parent)
   d->roleNames[CreateTimeRole] = "createTime";
   d->roleNames[UpdateTimeRole] = "updateTime";
   d->roleNames[StatusRole] = "status";
-  d->roleNames[CountRole] = "count";
 }
 
 QVariant ConferenceModel::data(const QModelIndex &index, int role) const {
@@ -62,6 +62,7 @@ void ConferenceModel::addConference(Conference *conference) {
                      conference->host()->owner()->userName());
   newRecord.setValue(HostGroupRole - Qt::UserRole,
                      conference->host()->owner()->userGroup());
+  newRecord.setValue(HostDeviceRole - Qt::UserRole, conference->host()->uuid());
   newRecord.setValue(TitleRole - Qt::UserRole, conference->title());
   newRecord.setValue(ContentRole - Qt::UserRole, conference->content());
   newRecord.setValue(MembersRole - Qt::UserRole, conference->member());
@@ -70,14 +71,11 @@ void ConferenceModel::addConference(Conference *conference) {
                      conference->createTime().toString(Qt::ISODate));
   newRecord.setValue(UpdateTimeRole - Qt::UserRole,
                      conference->updateTime().toString(Qt::ISODate));
-  newRecord.setValue(StatusRole - Qt::UserRole, (int)conference->status());
-  newRecord.setValue(CountRole - Qt::UserRole, conference->count());
+  newRecord.setValue(StatusRole - Qt::UserRole,
+                     static_cast<int>(conference->status()));
 
   this->insertRecord(-1, newRecord);
-  this->submitAll();
 }
-
-void ConferenceModel::clearAll() { this->removeRows(0, this->rowCount()); }
 
 ConferenceModel::ConferenceModel(ConferenceModelPrivate *d,
                                  QSqlTableModel *parent)

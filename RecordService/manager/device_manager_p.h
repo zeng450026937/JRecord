@@ -1,6 +1,9 @@
 #ifndef DEVICE_MANAGER_P_H
 #define DEVICE_MANAGER_P_H
 
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QMap>
 #include "client/client_p.h"
 #include "manager/device_manager.h"
@@ -14,8 +17,10 @@ class DeviceManagerPrivate : public ClientPrivate {
   DeviceManagerPrivate(DeviceManager* q);
 
   QMap<QString, Device*> deviceMap;
-  ProtoInfo* protocol;
+  ProtoInfo* info_protocol;
   DeviceModel* model;
+
+  void updateDevice(const QJsonObject& data);
 };
 
 #endif  // DEVICE_MANAGER_P_H

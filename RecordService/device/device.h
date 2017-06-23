@@ -1,7 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include <QVariantMap>
+#include <QJsonObject>
 #include "client/client.h"
 
 class User;
@@ -23,8 +23,10 @@ class Device : public Client {
   Q_PROPERTY(User *owner READ owner WRITE setOwner NOTIFY ownerChanged)
  public:
   explicit Device(QObject *parent = 0);
+  Device(const QJsonObject &data, QObject *parent = 0);
 
-  void fromVariant(const QVariantMap &data);
+  void fromJson(const QJsonObject &json);
+  QJsonObject toJson();
 
   QString type() const;
   QString uuid() const;
@@ -59,9 +61,7 @@ class Device : public Client {
   void setOwner(User *owner);
 
  protected:
-  Device(const QVariantMap &data, QObject *parent = 0);
   Device(DevicePrivate *d, QObject *parent = 0);
-  friend class DeviceManager;
 };
 
 #endif  // DEVICE_H

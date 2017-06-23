@@ -14,7 +14,6 @@ class TextMessagePrivate {
 
   TextMessage* q_ptr;
 
-  QJsonObject json;
   QString version;
   QString authorization;  // reserved
   QString from;

@@ -1,7 +1,8 @@
 #ifndef CONFERENCE_H
 #define CONFERENCE_H
 
-#include <QDate>
+#include <QDateTime>
+#include <QJsonObject>
 #include "client/client.h"
 
 class Device;
@@ -21,17 +22,17 @@ class Conference : public Client {
   Q_PROPERTY(QString member READ member WRITE setMember NOTIFY memberChanged)
   Q_PROPERTY(QString gps READ gps WRITE setGps NOTIFY gpsChanged)
   Q_PROPERTY(QString tag READ tag WRITE setTag NOTIFY tagChanged)
-  Q_PROPERTY(QDate createTime READ createTime WRITE setCreateTime NOTIFY
+  Q_PROPERTY(QDateTime createTime READ createTime WRITE setCreateTime NOTIFY
                  createTimeChanged)
-  Q_PROPERTY(QDate updateTime READ updateTime WRITE setUpdateTime NOTIFY
+  Q_PROPERTY(QDateTime updateTime READ updateTime WRITE setUpdateTime NOTIFY
                  updateTimeChanged)
   Q_PROPERTY(Status status READ status WRITE setStatus NOTIFY statusChanged)
-  Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
   Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY
                  errorStringChanged)
 
  public:
   explicit Conference(QObject *parent = 0);
+  Conference(const QJsonObject &json, QObject *parent = 0);
 
   enum Status { Comfirming, Created, Recording, Pausing, Finished, Error };
   Q_ENUM(Status)
@@ -39,7 +40,8 @@ class Conference : public Client {
   enum Type { Normal, Personal, Mobile, Unknown };
   Q_ENUM(Type)
 
-  void fromVariant(const QVariantMap &data);
+  void fromJson(const QJsonObject &json);
+  QJsonObject toJson();
 
   Q_INVOKABLE void create();
   Q_INVOKABLE void start();
@@ -56,10 +58,9 @@ class Conference : public Client {
   QString member() const;
   QString gps() const;
   QString tag() const;
-  QDate createTime() const;
-  QDate updateTime() const;
+  QDateTime createTime() const;
+  QDateTime updateTime() const;
   Status status() const;
-  int count() const;
   QString errorString() const;
 
  Q_SIGNALS:
@@ -71,10 +72,9 @@ class Conference : public Client {
   void memberChanged(const QString &member);
   void gpsChanged(const QString &gps);
   void tagChanged(const QString &tag);
-  void createTimeChanged(const QDate &createTime);
-  void updateTimeChanged(const QDate &updateTime);
+  void createTimeChanged(const QDateTime &createTime);
+  void updateTimeChanged(const QDateTime &updateTime);
   void statusChanged(const Status status);
-  void countChanged(const int count);
   void errorStringChanged(const QString &errorString);
 
  public Q_SLOTS:
@@ -86,14 +86,12 @@ class Conference : public Client {
   void setMember(const QString &member);
   void setGps(const QString &gps);
   void setTag(const QString &tag);
-  void setCreateTime(const QDate &createTime);
-  void setUpdateTime(const QDate &updateTime);
+  void setCreateTime(const QDateTime &createTime);
+  void setUpdateTime(const QDateTime &updateTime);
   void setStatus(const Status status);
-  void setCount(const int count);
   void setErrorString(const QString &errorString);
 
  protected:
-  Conference(Type type, const QVariantMap &data, QObject *parent = 0);
   Conference(ConferencePrivate *d, QObject *parent = 0);
   friend class ConferenceManager;
 };

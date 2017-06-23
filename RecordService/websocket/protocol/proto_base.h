@@ -16,8 +16,11 @@ class ProtoBase : public QObject {
  public:
   explicit ProtoBase(QObject *parent = nullptr);
 
-  enum MODE { InfoMode, ConfMode, BinaryMode };
-  Q_ENUMS(MODE)
+  static const QString INFO_MODE;
+  static const QString CONFERENCE_MODE;
+  static const QString PERSONAL_MODE;
+  static const QString MOBILE_MODE;
+  static const QString BINARY_MODE;
 
   QString mode() const;
 
@@ -29,7 +32,7 @@ class ProtoBase : public QObject {
   virtual void process(QSharedPointer<MessagePacket> pkt);
 
   virtual void transport(QString from, QString to, QString action,
-                         const QVariantMap &data);
+                         const QJsonObject &data);
 
   ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
   QScopedPointer<ProtoBasePrivate> d_ptr;

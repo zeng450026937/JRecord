@@ -89,17 +89,10 @@ void ServiceBase::setActive(bool active) {
       d->status = ServiceBase::Connecting;
       Q_EMIT statusChanged(d->status);
 
-      QVariantMap data;
-      data.insert(QStringLiteral("userId"), d->device->owner()->userId());
-      data.insert(QStringLiteral("userGroup"), d->device->owner()->userGroup());
-      data.insert(QStringLiteral("userName"), d->device->owner()->userName());
-      data.insert(QStringLiteral("deviceType"), d->device->type());
-      data.insert(QStringLiteral("deviceUuid"), d->device->uuid());
-
       QScopedPointer<TextMessage> auth(new TextMessage);
       auth->setMode(QStringLiteral("auth"));
       auth->setAction(QStringLiteral("login"));
-      auth->setData(data);
+      auth->setData(d->device->toJson());
 
       QNetworkRequest request(d->url);
       request.setRawHeader("Accept", "application/json");

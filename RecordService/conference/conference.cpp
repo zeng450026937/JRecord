@@ -11,25 +11,42 @@ Conference::Conference(QObject *parent)
   d->host = new Device(this);
 }
 
-void Conference::fromVariant(const QVariantMap &data) {
+Conference::Conference(const QJsonObject &json, QObject *parent)
+    : Client(new ConferencePrivate(this), parent) {
+  Q_D(Conference);
+  d->host = new Device(this);
+  this->fromJson(json);
+}
+
+void Conference::fromJson(const QJsonObject &json) {
   Q_D(Conference);
 
-  if (d->type == Personal) {
-    if (d->host) {
-      d->host->owner()->setUserId(
-          data.value(QStringLiteral("userId")).toString());
-      d->host->owner()->setUserName(
-          data.value(QStringLiteral("username")).toString());
-      d->host->owner()->setUserGroup(
-          data.value(QStringLiteral("userGroup")).toString());
-      d->host->setUuid(data.value(QStringLiteral("deviceUuid")).toString());
-      d->host->setName(data.value(QStringLiteral("deviceName")).toString());
-    }
-
-    this->setUuid(data.value(QStringLiteral("conferenceUuid")).toString());
-    this->setGps(data.value(QStringLiteral("gpsAddress")).toString());
-    this->setTag(data.value(QStringLiteral("tag")).toString());
+  if (d->host) {
+    d->host->owner()->setUserId(
+        json.value(QStringLiteral("userId")).toString());
+    d->host->owner()->setUserName(
+        json.value(QStringLiteral("username")).toString());
+    d->host->owner()->setUserGroup(
+        json.value(QStringLiteral("userGroup")).toString());
+    d->host->setUuid(json.value(QStringLiteral("deviceUuid")).toString());
+    d->host->setName(json.value(QStringLiteral("deviceName")).toString());
   }
+
+  this->setUuid(json.value(QStringLiteral("conferenceUuid")).toString());
+  this->setGps(json.value(QStringLiteral("gpsAddress")).toString());
+  this->setTag(json.value(QStringLiteral("tag")).toString());
+  this->setCreateTime(QDateTime::fromString(
+      json.value(QStringLiteral("createTime")).toString(), Qt::ISODate));
+  this->setUpdateTime(QDateTime::fromString(
+      json.value(QStringLiteral("updateTime")).toString(), Qt::ISODate));
+  this->setTitle(json.value(QStringLiteral("title")).toString());
+  this->setContent(json.value(QStringLiteral("content")).toString());
+  this->setMember(json.value(QStringLiteral("members")).toString());
+}
+
+QJsonObject Conference::toJson() {
+  QJsonObject json;
+  return json;
 }
 
 void Conference::create() {
@@ -72,13 +89,11 @@ QString Conference::gps() const { return d_func()->gps; }
 
 QString Conference::tag() const { return d_func()->tag; }
 
-QDate Conference::createTime() const { return d_func()->createTime; }
+QDateTime Conference::createTime() const { return d_func()->createTime; }
 
-QDate Conference::updateTime() const { return d_func()->updateTime; }
+QDateTime Conference::updateTime() const { return d_func()->updateTime; }
 
 Conference::Status Conference::status() const { return d_func()->status; }
-
-int Conference::count() const { return d_func()->count; }
 
 QString Conference::errorString() const { return d_func()->errorString; }
 
@@ -159,7 +174,7 @@ void Conference::setTag(const QString &tag) {
   }
 }
 
-void Conference::setCreateTime(const QDate &createTime) {
+void Conference::setCreateTime(const QDateTime &createTime) {
   Q_D(Conference);
   if (createTime != d->createTime) {
     d->createTime = createTime;
@@ -167,7 +182,7 @@ void Conference::setCreateTime(const QDate &createTime) {
   }
 }
 
-void Conference::setUpdateTime(const QDate &updateTime) {
+void Conference::setUpdateTime(const QDateTime &updateTime) {
   Q_D(Conference);
   if (updateTime != d->updateTime) {
     d->updateTime = updateTime;
@@ -183,30 +198,12 @@ void Conference::setStatus(const Conference::Status status) {
   }
 }
 
-void Conference::setCount(const int count) {
-  Q_D(Conference);
-  if (count < 0) return;
-  if (count != d->count) {
-    d->count = count;
-    Q_EMIT countChanged(d->count);
-  }
-}
-
 void Conference::setErrorString(const QString &errorString) {
   Q_D(Conference);
   if (errorString != d->errorString) {
     d->errorString = errorString;
     Q_EMIT errorStringChanged(d->errorString);
   }
-}
-
-Conference::Conference(Type type, const QVariantMap &data, QObject *parent)
-    : Client(new ConferencePrivate(this), parent) {
-  Q_D(Conference);
-  d->host = new Device(this);
-  this->setType(type);
-
-  this->fromVariant(data);
 }
 
 Conference::Conference(ConferencePrivate *d, QObject *parent)

@@ -11,7 +11,7 @@
 ProtoPerson::ProtoPerson(QObject* parent)
     : ProtoBase(new ProtoPersonPrivate(this), parent) {
   Q_D(ProtoPerson);
-  d->mode = QStringLiteral("personal");
+  d->mode = ProtoBase::PERSONAL_MODE;
   d->metaEnum = this->metaObject()->enumerator(
       this->metaObject()->indexOfEnumerator("Actions"));
 }
@@ -28,8 +28,7 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
       case getPersonalList:
         action = Actions::getPersonalList;
-        data = QJsonArray::fromVariantList(
-            msg->data().value(QStringLiteral("list")).toList());
+        data = msg->data().value(QStringLiteral("list")).toArray();
         break;
       default:
         action = Actions::unknown;
@@ -40,12 +39,10 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
   }
 }
 
-void ProtoPerson::query(const QString& userId) {
+void ProtoPerson::query() {
   Q_D(ProtoPerson);
 
-  QVariantMap data;
-  data.insert(QStringLiteral("userId"), userId);
-
   this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getPersonalList), data);
+                  d->metaEnum.valueToKey(Actions::getPersonalList),
+                  QJsonObject());
 }

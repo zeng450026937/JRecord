@@ -1,8 +1,12 @@
 #ifndef CONFERENCE_MANAGER_P_H
 #define CONFERENCE_MANAGER_P_H
 
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
 #include <QMap>
 #include "client/client_p.h"
+#include "conference/conference.h"
 #include "manager/conference_manager.h"
 
 class ProtoConf;
@@ -20,6 +24,8 @@ class ConferenceManagerPrivate : public ClientPrivate {
   ProtoPerson* person_protocol;
   ProtoMobile* mobile_protocol;
   ConferenceModel* model;
+
+  void updateConference(Conference::Type type, const QJsonObject& data);
 };
 
 #endif  // CONFERENCE_MANAGER_P_H
