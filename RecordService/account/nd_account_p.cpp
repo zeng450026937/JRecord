@@ -33,18 +33,18 @@ void NdAccountPrivate::doRequest(NdAccountPrivate::COMMAND command) {
     case SignOut:
       method = DELETE;
       path = QString("/v0.93/tokens/%1")
-                 .arg(userMap.value(QStringLiteral("access_token")).toString());
+                 .arg(userMap.value(QLatin1String("access_token")).toString());
       break;
     case QueryInfo:
       method = GET;
       path = QString("/v0.93/users/%1?realm=%2")
-                 .arg(userMap.value(QStringLiteral("user_id")).toString(),
+                 .arg(userMap.value(QLatin1String("user_id")).toString(),
                       QStringLiteral("uc.sdp.nd"));
 
       authorization = this->encryptAuthorization(
           GET, url.host(), path,
-          userMap.value(QStringLiteral("access_token")).toString(),
-          userMap.value(QStringLiteral("mac_key")).toString());
+          userMap.value(QLatin1String("access_token")).toString(),
+          userMap.value(QLatin1String("mac_key")).toString());
       break;
     default:
       break;

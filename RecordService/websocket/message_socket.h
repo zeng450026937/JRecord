@@ -27,9 +27,6 @@ class MessageSocket : public QObject {
   void requestChanged(const QNetworkRequest &request);
   void errorChanged(const QString error);
 
-  void connected();
-  void disconnected();
-
   void textReceived(const QString &message);
   void binaryReceived(const QByteArray &message);
 

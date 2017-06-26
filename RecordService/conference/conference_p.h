@@ -29,7 +29,7 @@ class ConferencePrivate : public ClientPrivate {
 
   ProtoConf *conf_protocol;
 
-  QList<Device *> devicelist;
+  QHash<QString, Device *> deviceHash;
 };
 
 #endif  // CONFERENCE_P_H

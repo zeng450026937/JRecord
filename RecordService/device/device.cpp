@@ -17,18 +17,18 @@ Device::Device(const QJsonObject &json, QObject *parent)
 void Device::fromJson(const QJsonObject &json) {
   Q_D(Device);
   if (d->owner) {
-    d->owner->setUserId(json.value(QStringLiteral("userId")).toString());
-    d->owner->setUserName(json.value(QStringLiteral("userName")).toString());
-    d->owner->setUserGroup(json.value(QStringLiteral("userGroup")).toString());
+    d->owner->setUserId(json.value(QLatin1String("userId")).toString());
+    d->owner->setUserName(json.value(QLatin1String("userName")).toString());
+    d->owner->setUserGroup(json.value(QLatin1String("userGroup")).toString());
   }
 
-  this->setUuid(json.value(QStringLiteral("deviceUuid")).toString());
-  this->setName(json.value(QStringLiteral("deviceName")).toString());
-  this->setType(json.value(QStringLiteral("deviceType")).toString());
-  this->setStatus(json.value(QStringLiteral("status")).toString());
-  this->setPercent(json.value(QStringLiteral("batteryPercent")).toInt());
-  this->setTime(json.value(QStringLiteral("batteryTime")).toInt());
-  this->setVad(json.value(QStringLiteral("vad")).toString());
+  this->setUuid(json.value(QLatin1String("deviceUuid")).toString());
+  this->setName(json.value(QLatin1String("deviceName")).toString());
+  this->setType(json.value(QLatin1String("deviceType")).toString());
+  this->setStatus(json.value(QLatin1String("status")).toString());
+  this->setPercent(json.value(QLatin1String("batteryPercent")).toInt());
+  this->setTime(json.value(QLatin1String("batteryTime")).toInt());
+  this->setVad(json.value(QLatin1String("vad")).toString());
 }
 
 QJsonObject Device::toJson() {
@@ -36,17 +36,17 @@ QJsonObject Device::toJson() {
   Q_D(Device);
 
   if (d->owner) {
-    json.insert(QStringLiteral("userId"), d->owner->userId());
-    json.insert(QStringLiteral("userName"), d->owner->userName());
-    json.insert(QStringLiteral("userGroup"), d->owner->userGroup());
+    json.insert(QLatin1String("userId"), d->owner->userId());
+    json.insert(QLatin1String("userName"), d->owner->userName());
+    json.insert(QLatin1String("userGroup"), d->owner->userGroup());
   }
-  json.insert(QStringLiteral("deviceUuid"), d->uuid);
-  json.insert(QStringLiteral("deviceName"), d->name);
-  json.insert(QStringLiteral("deviceType"), d->type);
-  json.insert(QStringLiteral("status"), d->status);
-  json.insert(QStringLiteral("batteryPercent"), d->percent);
-  json.insert(QStringLiteral("batteryTime"), d->time);
-  json.insert(QStringLiteral("vad"), d->vad);
+  json.insert(QLatin1String("deviceUuid"), d->uuid);
+  json.insert(QLatin1String("deviceName"), d->name);
+  json.insert(QLatin1String("deviceType"), d->type);
+  json.insert(QLatin1String("status"), d->status);
+  json.insert(QLatin1String("batteryPercent"), d->percent);
+  json.insert(QLatin1String("batteryTime"), d->time);
+  json.insert(QLatin1String("vad"), d->vad);
 
   return json;
 }

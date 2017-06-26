@@ -8,7 +8,7 @@ DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *q)
 void DeviceManagerPrivate::updateDevice(const QJsonObject &data) {
   Device *device(Q_NULLPTR);
 
-  device = deviceMap.value(data.value(QStringLiteral("deviceUuid")).toString(),
+  device = deviceMap.value(data.value(QLatin1String("deviceUuid")).toString(),
                            Q_NULLPTR);
   if (device) {
     device->fromJson(data);

@@ -38,7 +38,7 @@ NdAccount::NdAccount(QObject *parent)
                 case NdAccountPrivate::SignIn:
                   d->userMap = document.object().toVariantMap();
                   d->userId =
-                      d->userMap.value(QStringLiteral("user_id")).toString();
+                      d->userMap.value(QLatin1String("user_id")).toString();
                   Q_EMIT userIdChanged(d->userId);
                   d->active = true;
                   Q_EMIT activeChanged(d->active);
@@ -54,11 +54,11 @@ NdAccount::NdAccount(QObject *parent)
                   break;
                 case NdAccountPrivate::QueryInfo:
                   d->userInfoMap = document.object().toVariantMap();
-                  d->userId = d->userInfoMap.value(QStringLiteral("user_id"))
+                  d->userId = d->userInfoMap.value(QLatin1String("user_id"))
                                   .toString();
                   Q_EMIT userIdChanged(d->userId);
                   d->userName =
-                      d->userInfoMap.value(QStringLiteral("org_exinfo"))
+                      d->userInfoMap.value(QLatin1String("org_exinfo"))
                           .toMap()
                           .value("username")
                           .toString();
@@ -69,7 +69,7 @@ NdAccount::NdAccount(QObject *parent)
                                  .arg(d->userId);
                   Q_EMIT imageChanged(d->image);
                   d->signature =
-                      d->userInfoMap.value(QStringLiteral("realm_exinfo"))
+                      d->userInfoMap.value(QLatin1String("realm_exinfo"))
                           .toMap()
                           .value("uc.sdp.nd.signature")
                           .toString();
@@ -80,7 +80,7 @@ NdAccount::NdAccount(QObject *parent)
               }
             } else {
               d->errorString =
-                  document.object().value(QStringLiteral("message")).toString();
+                  document.object().value(QLatin1String("message")).toString();
               Q_EMIT errorStringChanged(d->errorString);
               d->status = NdAccount::Error;
               Q_EMIT statusChanged(d->status);

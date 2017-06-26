@@ -12,7 +12,7 @@ void ConferenceManagerPrivate::updateConference(Conference::Type type,
   Conference *conference(Q_NULLPTR);
 
   conference = confMap.value(
-      data.value(QStringLiteral("conferenceUuid")).toString(), Q_NULLPTR);
+      data.value(QLatin1String("conferenceUuid")).toString(), Q_NULLPTR);
   if (conference) {
     conference->fromJson(data);
   } else {

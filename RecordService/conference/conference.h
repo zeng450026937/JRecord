@@ -43,6 +43,9 @@ class Conference : public Client {
   void fromJson(const QJsonObject &json);
   QJsonObject toJson();
 
+  Q_INVOKABLE void insertDevice(Device *device);
+  Q_INVOKABLE void removeDevice(Device *device);
+
   Q_INVOKABLE void create();
   Q_INVOKABLE void start();
   Q_INVOKABLE void pause();

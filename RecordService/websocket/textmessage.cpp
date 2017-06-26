@@ -35,11 +35,11 @@ QString TextMessage::from() const { return d_func()->from; }
 QString TextMessage::to() const { return d_func()->to; }
 
 QString TextMessage::mode() const {
-  return d_func()->command.value("mode").toString();
+  return d_func()->command.value(QLatin1String("mode")).toString();
 }
 
 QString TextMessage::action() const {
-  return d_func()->command.value("action").toString();
+  return d_func()->command.value(QLatin1String("action")).toString();
 }
 
 QJsonObject TextMessage::data() const { return d_func()->data; }
@@ -56,13 +56,13 @@ void TextMessage::decode(const QString &message) {
     if (jsonDocument.isObject()) {
       QJsonObject json = jsonDocument.object();
 
-      d->version = json.value(QStringLiteral("version")).toString();
-      d->authorization = json.value(QStringLiteral("authorization")).toString();
-      d->from = json.value(QStringLiteral("from")).toString();
-      d->to = json.value(QStringLiteral("to")).toString();
-      d->command = json.value(QStringLiteral("command")).toObject();
-      d->data = json.value(QStringLiteral("data")).toObject();
-      d->result = json.value(QStringLiteral("result")).toBool();
+      d->version = json.value(QLatin1String("version")).toString();
+      d->authorization = json.value(QLatin1String("authorization")).toString();
+      d->from = json.value(QLatin1String("from")).toString();
+      d->to = json.value(QLatin1String("to")).toString();
+      d->command = json.value(QLatin1String("command")).toObject();
+      d->data = json.value(QLatin1String("data")).toObject();
+      d->result = json.value(QLatin1String("result")).toBool();
     } else if (jsonDocument.isArray()) {
       qDebug() << "unsupported json string format, json object is prefered.";
     }
@@ -75,13 +75,13 @@ QString TextMessage::encode() {
   Q_D(TextMessage);
 
   QJsonObject json;
-  json.insert("version", QJsonValue(d->version));
-  json.insert("authorization", QJsonValue(d->authorization));
-  json.insert("from", QJsonValue(d->from));
-  json.insert("to", QJsonValue(d->to));
-  json.insert("command", QJsonValue(d->command));
-  json.insert("data", QJsonValue(d->data));
-  json.insert("result", QJsonValue(d->result));
+  json.insert(QStringLiteral("version"), QJsonValue(d->version));
+  json.insert(QStringLiteral("authorization"), QJsonValue(d->authorization));
+  json.insert(QStringLiteral("from"), QJsonValue(d->from));
+  json.insert(QStringLiteral("to"), QJsonValue(d->to));
+  json.insert(QStringLiteral("command"), QJsonValue(d->command));
+  json.insert(QStringLiteral("data"), QJsonValue(d->data));
+  json.insert(QStringLiteral("result"), QJsonValue(d->result));
 
   QJsonDocument document;
   document.setObject(json);
@@ -115,17 +115,17 @@ void TextMessage::setTo(const QString &to) {
 
 void TextMessage::setMode(const QString &mode) {
   Q_D(TextMessage);
-  if (mode != d->command.value("mode").toString()) {
-    d->command.insert("mode", QJsonValue(mode));
-    Q_EMIT modeChanged(d->command.value("mode").toString());
+  if (mode != d->command.value(QLatin1String("mode")).toString()) {
+    d->command.insert(QStringLiteral("mode"), QJsonValue(mode));
+    Q_EMIT modeChanged(d->command.value(QLatin1String("mode")).toString());
   }
 }
 
 void TextMessage::setAction(const QString &action) {
   Q_D(TextMessage);
-  if (action != d->command.value("action").toString()) {
-    d->command.insert("action", QJsonValue(action));
-    Q_EMIT modeChanged(d->command.value("action").toString());
+  if (action != d->command.value(QLatin1String("action")).toString()) {
+    d->command.insert(QStringLiteral("action"), QJsonValue(action));
+    Q_EMIT modeChanged(d->command.value(QLatin1String("action")).toString());
   }
 }
 

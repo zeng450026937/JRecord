@@ -23,30 +23,62 @@ void Conference::fromJson(const QJsonObject &json) {
 
   if (d->host) {
     d->host->owner()->setUserId(
-        json.value(QStringLiteral("userId")).toString());
+        json.value(QLatin1String("userId")).toString());
     d->host->owner()->setUserName(
-        json.value(QStringLiteral("username")).toString());
+        json.value(QLatin1String("username")).toString());
     d->host->owner()->setUserGroup(
-        json.value(QStringLiteral("userGroup")).toString());
-    d->host->setUuid(json.value(QStringLiteral("deviceUuid")).toString());
-    d->host->setName(json.value(QStringLiteral("deviceName")).toString());
+        json.value(QLatin1String("userGroup")).toString());
+    d->host->setUuid(json.value(QLatin1String("deviceUuid")).toString());
+    d->host->setName(json.value(QLatin1String("deviceName")).toString());
   }
 
-  this->setUuid(json.value(QStringLiteral("conferenceUuid")).toString());
-  this->setGps(json.value(QStringLiteral("gpsAddress")).toString());
-  this->setTag(json.value(QStringLiteral("tag")).toString());
+  this->setUuid(json.value(QLatin1String("conferenceUuid")).toString());
+  this->setGps(json.value(QLatin1String("gpsAddress")).toString());
+  this->setTag(json.value(QLatin1String("tag")).toString());
   this->setCreateTime(QDateTime::fromString(
-      json.value(QStringLiteral("createTime")).toString(), Qt::ISODate));
+      json.value(QLatin1String("createTime")).toString(), Qt::ISODate));
   this->setUpdateTime(QDateTime::fromString(
-      json.value(QStringLiteral("updateTime")).toString(), Qt::ISODate));
-  this->setTitle(json.value(QStringLiteral("title")).toString());
-  this->setContent(json.value(QStringLiteral("content")).toString());
-  this->setMember(json.value(QStringLiteral("members")).toString());
+      json.value(QLatin1String("updateTime")).toString(), Qt::ISODate));
+  this->setTitle(json.value(QLatin1String("title")).toString());
+  this->setContent(json.value(QLatin1String("content")).toString());
+  this->setMember(json.value(QLatin1String("members")).toString());
 }
 
 QJsonObject Conference::toJson() {
+  Q_D(Conference);
+
   QJsonObject json;
+
+  if (d->host) {
+    json.insert(QLatin1String("userId"), d->host->owner()->userId());
+    json.insert(QLatin1String("username"), d->host->owner()->userId());
+    json.insert(QLatin1String("userGroup"), d->host->owner()->userId());
+    json.insert(QLatin1String("deviceUuid"), d->host->uuid());
+    json.insert(QLatin1String("deviceName"), d->host->name());
+  }
+
+  json.insert(QLatin1String("conferenceUuid"), d->uuid);
+  json.insert(QLatin1String("gpsAddress"), d->gps);
+  json.insert(QLatin1String("tag"), d->tag);
+  json.insert(QLatin1String("createTime"),
+              d->createTime.toString(Qt::ISODate));
+  json.insert(QLatin1String("updateTime"),
+              d->updateTime.toString(Qt::ISODate));
+  json.insert(QLatin1String("title"), d->title);
+  json.insert(QLatin1String("content"), d->content);
+  json.insert(QLatin1String("members"), d->member);
+
   return json;
+}
+
+void Conference::insertDevice(Device *device) {
+  Q_D(Conference);
+  if (device) d->deviceHash.insert(device->uuid(), device);
+}
+
+void Conference::removeDevice(Device *device) {
+  Q_D(Conference);
+  if (device) d->deviceHash.remove(device->uuid());
 }
 
 void Conference::create() {
