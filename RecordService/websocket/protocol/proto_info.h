@@ -14,20 +14,13 @@ class ProtoInfo : public ProtoBase {
  public:
   explicit ProtoInfo(QObject* parent = nullptr);
 
-  enum Actions {
-    heartBeat,
-    updateDeviceInfo,
-    notifyDeviceInfoChange,
-    getDeviceList,
-    ActionCount
-  };
+  enum Actions { heartBeat, updateDeviceInfo, getDeviceList, ActionCount };
   Q_ENUM(Actions)
 
  Q_SIGNALS:
   void actionRecived(const int action, const QJsonValue& data);
 
  public Q_SLOTS:
-  void beat();
   void push(Device* device);
   void pull();
 

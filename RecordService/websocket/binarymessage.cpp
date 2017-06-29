@@ -4,14 +4,12 @@
 #include "binarymessage_p.h"
 
 BinaryMessage::BinaryMessage(QObject *parent)
-    : QObject(parent), d_ptr(new BinaryMessagePrivate(this)) {}
+    : MessagePacket(new BinaryMessagePrivate(this), parent) {}
 
 BinaryMessage::BinaryMessage(const QByteArray &message, QObject *parent)
-    : QObject(parent), d_ptr(new BinaryMessagePrivate(this)) {
+    : MessagePacket(new BinaryMessagePrivate(this), parent) {
   this->parse(message);
 }
-
-BinaryMessage::~BinaryMessage() {}
 
 qint32 BinaryMessage::mode() const { return d_func()->mode; }
 
@@ -169,3 +167,6 @@ void BinaryMessage::setData(const QByteArray &data) {
     Q_EMIT dataChanged(d->data);
   }
 }
+
+BinaryMessage::BinaryMessage(BinaryMessagePrivate *d, QObject *parent)
+    : MessagePacket(d, parent) {}

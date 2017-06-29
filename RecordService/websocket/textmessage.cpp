@@ -5,28 +5,26 @@
 #include "textmessage_p.h"
 
 TextMessage::TextMessage(QObject *parent)
-    : QObject(parent), d_ptr(new TextMessagePrivate(this)) {}
+    : MessagePacket(new TextMessagePrivate(this), parent) {}
 
 TextMessage::TextMessage(TextMessagePrivate *d, QObject *parent)
-    : QObject(parent), d_ptr(d) {}
+    : MessagePacket(d, parent) {}
 
 TextMessage::TextMessage(const QString &string, QObject *parent)
-    : QObject(parent), d_ptr(new TextMessagePrivate(this)) {
+    : MessagePacket(new TextMessagePrivate(this), parent) {
   this->decode(string);
 }
 
 TextMessage::TextMessage(QString from, QString to, QString mode, QString action,
                          const QJsonObject &data, QObject *parent)
-    : QObject(parent), d_ptr(new TextMessagePrivate(this)) {
+    : MessagePacket(new TextMessagePrivate(this), parent) {
   Q_D(TextMessage);
   d->from = from;
   d->to = to;
-  d->command.insert("mode", QJsonValue(mode));
-  d->command.insert("action", QJsonValue(action));
+  d->command.insert(QStringLiteral("mode"), QJsonValue(mode));
+  d->command.insert(QStringLiteral("action"), QJsonValue(action));
   d->data = data;
 }
-
-TextMessage::~TextMessage() {}
 
 QString TextMessage::version() const { return d_func()->version; }
 

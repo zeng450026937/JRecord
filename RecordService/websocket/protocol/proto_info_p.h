@@ -4,8 +4,6 @@
 #include "proto_base_p.h"
 #include "proto_info.h"
 
-class ProtoInfo;
-
 class ProtoInfoPrivate : public ProtoBasePrivate {
   Q_DISABLE_COPY(ProtoInfoPrivate)
   Q_DECLARE_PUBLIC(ProtoInfo)

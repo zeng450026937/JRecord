@@ -1,18 +1,14 @@
 #ifndef TEXTMESSAGE_P_H
 #define TEXTMESSAGE_P_H
 
-#include <QJsonObject>
-#include <QObject>
+#include "message_packet_p.h"
+#include "textmessage.h"
 
-class TextMessage;
-
-class TextMessagePrivate {
+class TextMessagePrivate : public MessagePacketPrivate {
   Q_DISABLE_COPY(TextMessagePrivate)
   Q_DECLARE_PUBLIC(TextMessage)
  public:
   TextMessagePrivate(TextMessage* q);
-
-  TextMessage* q_ptr;
 
   QString version;
   QString authorization;  // reserved

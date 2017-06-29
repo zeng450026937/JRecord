@@ -1,17 +1,14 @@
 #ifndef BINARYMESSAGE_P_H
 #define BINARYMESSAGE_P_H
 
-#include <QObject>
+#include "binarymessage.h"
+#include "message_packet_p.h"
 
-class BinaryMessage;
-
-class BinaryMessagePrivate {
+class BinaryMessagePrivate : public MessagePacketPrivate {
   Q_DISABLE_COPY(BinaryMessagePrivate)
   Q_DECLARE_PUBLIC(BinaryMessage)
  public:
   BinaryMessagePrivate(BinaryMessage* q);
-
-  BinaryMessage* q_ptr;
 
   qint32 mode;
   QString userId;

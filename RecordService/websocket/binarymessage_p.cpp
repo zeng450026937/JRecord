@@ -1,7 +1,7 @@
 #include "binarymessage_p.h"
 
 BinaryMessagePrivate::BinaryMessagePrivate(BinaryMessage *q)
-    : q_ptr(q),
+    : MessagePacketPrivate(q),
       mode(0),
       mode_size(4),
       userId(""),
@@ -20,4 +20,6 @@ BinaryMessagePrivate::BinaryMessagePrivate(BinaryMessage *q)
       size_size(4) {
   total_size = mode_size + userId_size + deviceUuid_size + uuid_size +
                timestamp_size + startpos_size + status_size + size_size;
+
+  type = MessagePacket::Binary;
 }

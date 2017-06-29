@@ -6,7 +6,7 @@
 
 class TextMessagePrivate;
 
-class TextMessage : public QObject, public MessagePacket {
+class TextMessage : public MessagePacket {
   Q_OBJECT
   Q_DISABLE_COPY(TextMessage)
   Q_DECLARE_PRIVATE(TextMessage)
@@ -25,7 +25,6 @@ class TextMessage : public QObject, public MessagePacket {
   TextMessage(const QString &string, QObject *parent = 0);
   TextMessage(QString from, QString to, QString mode, QString action,
               const QJsonObject &data, QObject *parent = 0);
-  ~TextMessage() override;
 
   MessageType type() { return Text; }
 
@@ -60,7 +59,6 @@ class TextMessage : public QObject, public MessagePacket {
 
  protected:
   TextMessage(TextMessagePrivate *d, QObject *parent = 0);
-  QScopedPointer<TextMessagePrivate> d_ptr;
 };
 
 #endif  // TEXTMESSAGE_H

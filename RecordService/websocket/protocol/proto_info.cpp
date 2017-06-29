@@ -27,14 +27,12 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
     switch (d->metaEnum.keysToValue(msg->action().toUtf8())) {
       case heartBeat:
         action = Actions::heartBeat;
-        this->beat();
+        this->transport(QStringLiteral(""), QStringLiteral(""),
+                        d->metaEnum.valueToKey(Actions::heartBeat),
+                        QJsonObject());
         break;
       case updateDeviceInfo:
         action = Actions::updateDeviceInfo;
-        data = msg->data();
-        break;
-      case notifyDeviceInfoChange:
-        action = Actions::notifyDeviceInfoChange;
         data = msg->data();
         break;
       case getDeviceList:
@@ -48,13 +46,6 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
 
     Q_EMIT actionRecived(action, data);
   }
-}
-
-void ProtoInfo::beat() {
-  Q_D(ProtoInfo);
-
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::heartBeat), QJsonObject());
 }
 
 void ProtoInfo::push(Device *device) {

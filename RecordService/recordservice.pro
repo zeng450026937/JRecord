@@ -61,7 +61,14 @@ SOURCES += \
     websocket/protocol/proto_person.cpp \
     websocket/protocol/proto_person_p.cpp \
     websocket/protocol/proto_mobile.cpp \
-    websocket/protocol/proto_mobile_p.cpp
+    websocket/protocol/proto_mobile_p.cpp \
+    websocket/task/task_p.cpp \
+    websocket/task/task.cpp \
+    websocket/task/task_manager.cpp \
+    websocket/task/task_manager_p.cpp \
+    websocket/task/task_info.cpp \
+    websocket/message_packet.cpp \
+    websocket/message_packet_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -118,7 +125,13 @@ HEADERS += \
     websocket/protocol/proto_person.h \
     websocket/protocol/proto_person_p.h \
     websocket/protocol/proto_mobile.h \
-    websocket/protocol/proto_mobile_p.h
+    websocket/protocol/proto_mobile_p.h \
+    websocket/task/task.h \
+    websocket/task/task_p.h \
+    websocket/task/task_manager.h \
+    websocket/task/task_manager_p.h \
+    websocket/task/task_info.h \
+    websocket/message_packet_p.h
 
 DISTFILES = qmldir
 

@@ -5,7 +5,7 @@
 
 class BinaryMessagePrivate;
 
-class BinaryMessage : public QObject, public MessagePacket {
+class BinaryMessage : public MessagePacket {
   Q_OBJECT
   Q_DISABLE_COPY(BinaryMessage)
   Q_DECLARE_PRIVATE(BinaryMessage)
@@ -25,9 +25,6 @@ class BinaryMessage : public QObject, public MessagePacket {
  public:
   explicit BinaryMessage(QObject* parent = 0);
   BinaryMessage(const QByteArray& message, QObject* parent = 0);
-  ~BinaryMessage() override;
-
-  MessageType type() { return Binary; }
 
   qint32 mode() const;
   QString userId() const;
