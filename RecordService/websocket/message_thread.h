@@ -1,6 +1,7 @@
 #ifndef MESSAGE_THREAD_H
 #define MESSAGE_THREAD_H
 
+#include <QSharedPointer>
 #include <QThread>
 
 class ProtoBase;
@@ -39,6 +40,7 @@ class MessageThread : public QThread {
   void setActive(bool active);
 
   void pushMessage(MessagePacket *message);
+  void pushMessage(QSharedPointer<MessagePacket> message);
 
  protected:
   MessageThread(MessageThreadPrivate *d, QObject *parent = 0);

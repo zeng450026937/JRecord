@@ -1,4 +1,5 @@
 #include "proto_base.h"
+#include <QSharedPointer>
 #include "proto_base_p.h"
 #include "service/service_base.h"
 #include "websocket/textmessage.h"
@@ -21,7 +22,9 @@ void ProtoBase::transport(QString from, QString to, QString action,
                           const QJsonObject &data) {
   Q_D(ProtoBase);
   if (d->transport) {
-    d->transport->pushMessage(new TextMessage(from, to, d->mode, action, data));
+    QSharedPointer<MessagePacket> pkt(
+        new TextMessage(from, to, d->mode, action, data));
+    d->transport->pushMessage(pkt);
   }
 }
 

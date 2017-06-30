@@ -65,5 +65,12 @@ void MessageThread::pushMessage(MessagePacket *message) {
   }
 }
 
+void MessageThread::pushMessage(QSharedPointer<MessagePacket> message) {
+  Q_D(MessageThread);
+  if (d->queue) {
+    d->queue->push(message);
+  }
+}
+
 MessageThread::MessageThread(MessageThreadPrivate *d, QObject *parent)
     : QThread(parent), d_ptr(d) {}

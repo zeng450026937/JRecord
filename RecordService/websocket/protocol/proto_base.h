@@ -1,9 +1,11 @@
 #ifndef PROTO_BASE_H
 #define PROTO_BASE_H
 
+#include <QJsonValue>
 #include <QObject>
 #include <QSharedPointer>
-#include <QVariantMap>
+#include <QTimerEvent>
+#include <functional>
 
 class MessagePacket;
 class ProtoBasePrivate;

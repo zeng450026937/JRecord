@@ -1,7 +1,6 @@
 #ifndef PROTO_MOBILE_H
 #define PROTO_MOBILE_H
 
-#include <QJsonValue>
 #include "proto_base.h"
 
 class ProtoMobilePrivate;

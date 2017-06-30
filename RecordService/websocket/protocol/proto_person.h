@@ -1,7 +1,6 @@
 #ifndef PROTO_PERSON_H
 #define PROTO_PERSON_H
 
-#include <QJsonValue>
 #include "proto_base.h"
 
 class ProtoPersonPrivate;

@@ -1,7 +1,6 @@
 #ifndef PROTO_INFO_H
 #define PROTO_INFO_H
 
-#include <QJsonValue>
 #include "proto_base.h"
 
 class Device;

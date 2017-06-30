@@ -1,7 +1,6 @@
 #ifndef PROTO_CONF_H
 #define PROTO_CONF_H
 
-#include <QJsonValue>
 #include "proto_base.h"
 
 class ProtoConfPrivate;
