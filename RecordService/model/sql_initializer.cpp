@@ -25,8 +25,8 @@ void connectToDatabase() {
            qPrintable(writeDir.absolutePath()));
 
   // Ensure that we have a writable location on all devices.
-  const QString fileName = writeDir.absolutePath() + "/private.db";
-  // const QString fileName = ":memory:";
+  // const QString fileName = writeDir.absolutePath() + "/private.db";
+  const QString fileName = ":memory:";
   // When using the SQLite driver, open() will create the SQLite database if it
   // doesn't exist.
   database.setDatabaseName(fileName);

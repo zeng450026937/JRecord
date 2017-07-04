@@ -64,12 +64,14 @@ SOURCES += \
     websocket/protocol/proto_mobile_p.cpp \
     websocket/message_packet.cpp \
     websocket/message_packet_p.cpp \
-    websocket/task/task_info.cpp \
+    websocket/task/task_reply.cpp \
+    websocket/task/task_request.cpp \
     websocket/task/task_manager.cpp \
+    websocket/task/task_backend.cpp \
+    websocket/task/task_backend_p.cpp \
     websocket/task/task_manager_p.cpp \
-    websocket/task/task_info_p.cpp \
-    websocket/task/task_base.cpp \
-    websocket/task/task_base_p.cpp
+    websocket/task/task_request_p.cpp \
+    websocket/task/task_reply_p.cpp
 
 HEADERS += \
     recordservice_plugin.h \
@@ -128,12 +130,14 @@ HEADERS += \
     websocket/protocol/proto_mobile.h \
     websocket/protocol/proto_mobile_p.h \
     websocket/message_packet_p.h \
-    websocket/task/task_info.h \
+    websocket/task/task_reply.h \
+    websocket/task/task_request.h \
     websocket/task/task_manager.h \
+    websocket/task/task_backend.h \
+    websocket/task/task_backend_p.h \
     websocket/task/task_manager_p.h \
-    websocket/task/task_info_p.h \
-    websocket/task/task_base.h \
-    websocket/task/task_base_p.h
+    websocket/task/task_request_p.h \
+    websocket/task/task_reply_p.h
 
 DISTFILES = qmldir
 

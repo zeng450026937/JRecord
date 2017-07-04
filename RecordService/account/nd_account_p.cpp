@@ -1,6 +1,7 @@
 #include "nd_account_p.h"
 
 #include <QCryptographicHash>
+#include <QDateTime>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>

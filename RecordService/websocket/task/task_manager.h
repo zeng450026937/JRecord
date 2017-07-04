@@ -1,11 +1,11 @@
 #ifndef TASK_MANAGER_H
 #define TASK_MANAGER_H
 
-#include <QJsonObject>
 #include <QObject>
 
-class Task;
 class TaskManagerPrivate;
+class TaskRequest;
+class TaskReply;
 
 class TaskManager : public QObject {
   Q_OBJECT
@@ -14,11 +14,11 @@ class TaskManager : public QObject {
  public:
   explicit TaskManager(QObject *parent = nullptr);
 
-  Q_INVOKABLE void pushTask(Task *task);
+  TaskReply *post(const TaskRequest &request);
 
  Q_SIGNALS:
-  void broadcast(const QString &mode, const int action,
-                 const QJsonObject &data);
+
+ public Q_SLOTS:
 
  protected:
   TaskManager(TaskManagerPrivate *d, QObject *parent = nullptr);

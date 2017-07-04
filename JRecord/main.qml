@@ -113,7 +113,7 @@ ApplicationWindow {
     Component.onCompleted: {
         sceneLoader.state = "LOGIN"
 
-        ServiceBase.url = qsTr("ws://192.168.85.31:9008")
+        ServiceBase.url = qsTr("ws://192.168.85.31:9007")
         ServiceBase.device = pc
     }
 }

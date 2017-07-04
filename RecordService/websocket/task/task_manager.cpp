@@ -4,9 +4,8 @@
 TaskManager::TaskManager(QObject *parent)
     : QObject(parent), d_ptr(new TaskManagerPrivate(this)) {}
 
-void TaskManager::pushTask(Task *task) {
-  Q_D(TaskManager);
-  if (task) d->taskList.append(task);
+TaskReply *TaskManager::post(const TaskRequest &request) {
+
 }
 
 TaskManager::TaskManager(TaskManagerPrivate *d, QObject *parent)

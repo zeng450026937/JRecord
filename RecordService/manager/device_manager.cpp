@@ -22,7 +22,6 @@ DeviceManager::DeviceManager(QObject *parent)
                                }
                                break;
                              case ProtoInfo::updateDeviceInfo:
-                             case ProtoInfo::notifyDeviceInfoChange:
                                d->updateDevice(data.toObject());
                                break;
                              default:
