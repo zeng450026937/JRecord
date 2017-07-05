@@ -15,8 +15,9 @@ class TextMessagePrivate : public MessagePacketPrivate {
   QString from;
   QString to;
   QJsonObject command;
-  QJsonObject data;
+  QJsonValue data;
   bool result;
+  TextMessage::NotificationFunc notificationFunc;
 };
 
 #endif  // TEXTMESSAGE_P_H

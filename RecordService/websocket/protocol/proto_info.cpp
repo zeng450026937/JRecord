@@ -27,9 +27,11 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
     switch (d->metaEnum.keysToValue(msg->action().toUtf8())) {
       case heartBeat:
         action = Actions::heartBeat;
-        this->transport(QStringLiteral(""), QStringLiteral(""),
-                        d->metaEnum.valueToKey(Actions::heartBeat),
-                        QJsonObject());
+
+        //        this->transport(QSharedPointer<MessagePacket>(new TextMessage(
+        //            QStringLiteral(""), QStringLiteral(""), d->mode,
+        //            d->metaEnum.valueToKey(Actions::heartBeat),
+        //            QJsonObject())));
         break;
       case updateDeviceInfo:
         action = Actions::updateDeviceInfo;
@@ -37,7 +39,8 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case getDeviceList:
         action = Actions::getDeviceList;
-        data = msg->data().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
+        msg->setData(data);
         break;
       default:
         action = Actions::ActionCount;
@@ -45,21 +48,41 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
     }
 
     Q_EMIT actionRecived(action, data);
+
+    QMutexLocker locker(&d->mutex);
+    if (d->taskQueue.count() > 0) {
+      if (msg->match(d->taskQueue.takeFirst().data())) {
+        msg->notify();
+        qDebug() << msg->command() << "notify message";
+      } else {
+        qDebug() << msg->command()
+                 << "message unmatch. it should be a notification from server.";
+      }
+    } else {
+      qDebug() << msg->command()
+               << "no queued message. it should be a notification from server.";
+    }
   }
 }
 
 void ProtoInfo::push(Device *device) {
   Q_D(ProtoInfo);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::updateDeviceInfo),
-                  device->toJson());
+  TextMessage *msg = new TextMessage(
+      QStringLiteral(""), QStringLiteral(""), d->mode,
+      d->metaEnum.valueToKey(Actions::updateDeviceInfo), device->toJson());
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
-void ProtoInfo::pull() {
+void ProtoInfo::pull(callbackFunc fp) {
   Q_D(ProtoInfo);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getDeviceList),
-                  QJsonObject());
+  TextMessage *msg = new TextMessage(
+      QStringLiteral(""), QStringLiteral(""), d->mode,
+      d->metaEnum.valueToKey(Actions::getDeviceList), QJsonObject());
+
+  msg->setNotification(fp);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }

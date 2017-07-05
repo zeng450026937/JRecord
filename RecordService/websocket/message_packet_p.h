@@ -11,6 +11,7 @@ class MessagePacketPrivate {
 
   MessagePacket *q_ptr;
   MessagePacket::MessageType type;
+  int id;
 };
 
 #endif  // MESSAGE_PACKET_P_H

@@ -43,7 +43,7 @@ void ProtoConf::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case Actions::getConferenceList:
         action = Actions::getConferenceList;
-        data = msg->data().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
         break;
       case Actions::getConferenceFiles:
         action = Actions::getConferenceFiles;
@@ -72,48 +72,63 @@ void ProtoConf::create(const QString& title, const QString& content,
   data.insert(QStringLiteral("members"), members);
   data.insert(QStringLiteral("devices"), devices);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::createConference), data);
+  TextMessage* msg =
+      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
+                      d->metaEnum.valueToKey(Actions::createConference), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
 void ProtoConf::start(const QString& uuid) {
   Q_D(ProtoConf);
 
   QJsonObject data;
-  data.insert(QStringLiteral("uuid"), uuid);
+  data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::startConference), data);
+  TextMessage* msg =
+      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
+                      d->metaEnum.valueToKey(Actions::startConference), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
 void ProtoConf::pause(const QString& uuid) {
   Q_D(ProtoConf);
 
   QJsonObject data;
-  data.insert(QStringLiteral("uuid"), uuid);
+  data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::pauseConference), data);
+  TextMessage* msg =
+      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
+                      d->metaEnum.valueToKey(Actions::pauseConference), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
 void ProtoConf::resume(const QString& uuid) {
   Q_D(ProtoConf);
 
   QJsonObject data;
-  data.insert(QStringLiteral("uuid"), uuid);
+  data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::resumeConference), data);
+  TextMessage* msg =
+      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
+                      d->metaEnum.valueToKey(Actions::resumeConference), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
 void ProtoConf::stop(const QString& uuid) {
   Q_D(ProtoConf);
 
   QJsonObject data;
-  data.insert(QStringLiteral("uuid"), uuid);
+  data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::stopConference), data);
+  TextMessage* msg =
+      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
+                      d->metaEnum.valueToKey(Actions::stopConference), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }
 
 void ProtoConf::join(const QString& uuid) {}
@@ -124,15 +139,20 @@ void ProtoConf::query(const QString& uuid) {
   Q_D(ProtoConf);
 
   if (uuid.isEmpty()) {
-    this->transport(QStringLiteral(""), QStringLiteral(""),
-                    d->metaEnum.valueToKey(Actions::getConferenceList),
-                    QJsonObject());
+    TextMessage* msg = new TextMessage(
+        QStringLiteral(""), QStringLiteral(""), d->mode,
+        d->metaEnum.valueToKey(Actions::getConferenceList), QJsonObject());
+
+    this->transport(QSharedPointer<MessagePacket>(msg));
   } else {
     QJsonObject data;
-    data.insert(QStringLiteral("uuid"), uuid);
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-    this->transport(QStringLiteral(""), QStringLiteral(""),
-                    d->metaEnum.valueToKey(Actions::getConferenceInfo), data);
+    TextMessage* msg = new TextMessage(
+        QStringLiteral(""), QStringLiteral(""), d->mode,
+        d->metaEnum.valueToKey(Actions::getConferenceInfo), data);
+
+    this->transport(QSharedPointer<MessagePacket>(msg));
   }
 }
 
@@ -142,6 +162,9 @@ void ProtoConf::files(const QString& uuid) {
   QJsonObject data;
   data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getConferenceFiles), data);
+  TextMessage* msg = new TextMessage(
+      QStringLiteral(""), QStringLiteral(""), d->mode,
+      d->metaEnum.valueToKey(Actions::getConferenceFiles), data);
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }

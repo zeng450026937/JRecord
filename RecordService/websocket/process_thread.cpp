@@ -51,15 +51,15 @@ void ProcessThread::run() {
       if (pkt->type() == MessagePacket::Text) {
         QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
         if (msg) {
+          //          if (msg->action() != "heartBeat" &&
+          //              msg->action() != "notifyPersonRecordAdd" &&
+          //              msg->action() != "getConferenceList" &&
+          //              msg->action() != "getPersonalList")
+          qDebug() << "received:" << msg->command();
           ProtoBase *protocol = d->protocols->value(msg->mode(), Q_NULLPTR);
           if (protocol) {
             protocol->process(pkt);
           }
-          if (msg->action() != "heartBeat" &&
-              msg->action() != "notifyPersonRecordAdd" &&
-              msg->action() != "getConferenceList" &&
-              msg->action() != "getPersonalList")
-            qDebug() << "received:" << msg->encode();
         }
       }
       if (pkt->type() == MessagePacket::Binary) {

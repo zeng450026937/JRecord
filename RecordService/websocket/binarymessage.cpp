@@ -104,6 +104,10 @@ QByteArray BinaryMessage::make() {
   return binary;
 }
 
+bool BinaryMessage::match(MessagePacket *pkt) { return false; }
+
+bool BinaryMessage::notify() { return false; }
+
 void BinaryMessage::setMode(qint32 mode) {
   Q_D(BinaryMessage);
   if (mode != d->mode) {

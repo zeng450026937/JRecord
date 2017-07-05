@@ -31,7 +31,7 @@ class MessageSocket : public QObject {
   void binaryReceived(const QByteArray &message);
 
  public Q_SLOTS:
-  void setActive(const bool active);
+  Q_INVOKABLE void setActive(const bool active);
   void setRequest(const QNetworkRequest &request);
 
   void sendText(const QString &message);

@@ -1,4 +1,5 @@
 #include "proto_base.h"
+#include <QDebug>
 #include <QSharedPointer>
 #include "proto_base_p.h"
 #include "service/service_base.h"
@@ -16,15 +17,19 @@ ProtoBase::ProtoBase(QObject *parent)
 
 QString ProtoBase::mode() const { return d_func()->mode; }
 
-void ProtoBase::process(QSharedPointer<MessagePacket> pkt) { Q_UNUSED(pkt); }
+void ProtoBase::process(QSharedPointer<MessagePacket> pkt) {
+  Q_UNUSED(pkt);
+  Q_D(ProtoBase);
+  QMutexLocker locker(&d->mutex);
+  d->taskQueue.takeFirst();
+}
 
-void ProtoBase::transport(QString from, QString to, QString action,
-                          const QJsonObject &data) {
+void ProtoBase::transport(QSharedPointer<MessagePacket> pkt) {
   Q_D(ProtoBase);
   if (d->transport) {
-    QSharedPointer<MessagePacket> pkt(
-        new TextMessage(from, to, d->mode, action, data));
+    QMutexLocker locker(&d->mutex);
     d->transport->pushMessage(pkt);
+    d->taskQueue.append(pkt);
   }
 }
 

@@ -21,7 +21,7 @@ class ProtoInfo : public ProtoBase {
 
  public Q_SLOTS:
   void push(Device* device);
-  void pull();
+  void pull(callbackFunc fp = Q_NULLPTR);
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

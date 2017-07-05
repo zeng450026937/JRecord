@@ -50,8 +50,8 @@ void TransportThread::run() {
         QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
         if (msg) {
           Q_EMIT textTransported(msg->encode());
-          if (msg->action() != "heartBeat")
-            qDebug() << "send:" << msg->encode();
+          // if (msg->action() != "heartBeat")
+          qDebug() << "send:" << msg->command();
         }
       }
       if (pkt->type() == MessagePacket::Binary) {

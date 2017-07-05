@@ -1,11 +1,15 @@
 #ifndef PROTO_BASE_P_H
 #define PROTO_BASE_P_H
 
+#include <QList>
 #include <QMetaEnum>
+#include <QMutex>
 #include <QObject>
+#include <QSharedPointer>
 
-class TransportThread;
 class ProtoBase;
+class MessagePacket;
+class TransportThread;
 
 class ProtoBasePrivate {
  public:
@@ -18,6 +22,8 @@ class ProtoBasePrivate {
   QString mode;
   TransportThread *transport;
   QMetaEnum metaEnum;
+  QMutex mutex;
+  QList<QSharedPointer<MessagePacket>> taskQueue;
 };
 
 #endif  // PROTO_BASE_P_H

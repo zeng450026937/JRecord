@@ -19,3 +19,9 @@ void DeviceManagerPrivate::updateDevice(const QJsonObject &data) {
     model->addDevice(device);
   }
 }
+
+void DeviceManagerPrivate::updateDeviceList(const QJsonValue &data) {
+  foreach (QJsonValue value, data.toArray()) {
+    this->updateDevice(value.toObject());
+  }
+}

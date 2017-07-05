@@ -41,9 +41,6 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
   main_thread->start();
   socket_thread->start();
 
-  QObject::connect(q_ptr, &ServiceBase::activeChanged, socket,
-                   &MessageSocket::setActive);
-
   QObject::connect(socket, &MessageSocket::activeChanged, q_ptr,
                    [this](const bool active) {
                      Q_Q(ServiceBase);
@@ -54,8 +51,8 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
                        this->status = ServiceBase::Closed;
                        this->active = false;
                      }
-                     Q_EMIT q->activeChanged(active);
                      Q_EMIT q->statusChanged(status);
+                     Q_EMIT q->activeChanged(active);
                    });
 
   QObject::connect(socket, &MessageSocket::errorChanged, q_ptr,

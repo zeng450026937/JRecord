@@ -9,6 +9,7 @@ class MessagePacket : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(MessagePacket)
   Q_DECLARE_PRIVATE(MessagePacket)
+  Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
   Q_PROPERTY(MessageType type READ type WRITE setType NOTIFY typeChanged)
 
  public:
@@ -17,12 +18,19 @@ class MessagePacket : public QObject {
   enum MessageType { Text, Binary, Unknow };
   Q_ENUMS(MessageType)
 
+  int id() const;
   MessageType type() const;
 
+  virtual bool match(MessagePacket* pkt);
+  virtual bool hasNotification();
+  virtual bool notify();
+
  Q_SIGNALS:
+  void idChanged(int id);
   void typeChanged(MessageType type);
 
  public Q_SLOTS:
+  void setId(int id);
   void setType(MessageType type);
 
  protected:

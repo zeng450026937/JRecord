@@ -28,7 +28,7 @@ void ProtoMobile::process(QSharedPointer<MessagePacket> pkt) {
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
       case getConferences:
         action = Actions::getConferences;
-        data = msg->data().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
         break;
       default:
         action = Actions::unknown;
@@ -42,7 +42,9 @@ void ProtoMobile::process(QSharedPointer<MessagePacket> pkt) {
 void ProtoMobile::query() {
   Q_D(ProtoMobile);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getConferences),
-                  QJsonObject());
+  TextMessage* msg = new TextMessage(
+      QStringLiteral(""), QStringLiteral(""), d->mode,
+      d->metaEnum.valueToKey(Actions::getConferences), QJsonObject());
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }

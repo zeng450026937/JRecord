@@ -2,6 +2,7 @@
 #define TEXTMESSAGE_H
 
 #include <QJsonObject>
+#include <functional>
 #include "message_packet.h"
 
 class TextMessagePrivate;
@@ -17,7 +18,7 @@ class TextMessage : public MessagePacket {
   Q_PROPERTY(QString to READ to WRITE setTo NOTIFY toChanged)
   Q_PROPERTY(QString mode READ mode WRITE setMode NOTIFY modeChanged)
   Q_PROPERTY(QString action READ action WRITE setAction NOTIFY actionChanged)
-  Q_PROPERTY(QJsonObject data READ data WRITE setData NOTIFY dataChanged)
+  Q_PROPERTY(QJsonValue data READ data WRITE setData NOTIFY dataChanged)
   Q_PROPERTY(bool result READ result WRITE setResult NOTIFY resultChanged)
 
  public:
@@ -33,11 +34,21 @@ class TextMessage : public MessagePacket {
   QString to() const;
   QString mode() const;
   QString action() const;
-  QJsonObject data() const;
+  QJsonValue data() const;
   bool result() const;
+
+  QJsonObject command() const;
 
   Q_INVOKABLE void decode(const QString &message);
   Q_INVOKABLE QString encode();
+
+  bool match(MessagePacket *pkt) override;
+  bool hasNotification() override;
+  bool notify() override;
+
+  typedef std::function<void(const QJsonValue &resultData)> NotificationFunc;
+  void setNotification(NotificationFunc fp);
+  NotificationFunc notification();
 
  Q_SIGNALS:
   void versionChanged(const QString &version);
@@ -45,7 +56,7 @@ class TextMessage : public MessagePacket {
   void toChanged(const QString &to);
   void modeChanged(const QString &mode);
   void actionChanged(const QString &action);
-  void dataChanged(const QJsonObject &data);
+  void dataChanged(const QJsonValue &data);
   void resultChanged(const bool result);
 
  public Q_SLOTS:
@@ -54,7 +65,7 @@ class TextMessage : public MessagePacket {
   void setTo(const QString &to);
   void setMode(const QString &mode);
   void setAction(const QString &action);
-  void setData(const QJsonObject &data);
+  void setData(const QJsonValue &data);
   void setResult(const bool &result);
 
  protected:

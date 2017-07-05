@@ -106,8 +106,9 @@ void ServiceBase::setActive(bool active) {
       Q_EMIT statusChanged(d->status);
     }
 
-    d->active = active;
-    Q_EMIT activeChanged(d->active);
+    QMetaObject::invokeMethod(d->socket, "setActive", Qt::QueuedConnection,
+                              QGenericReturnArgument(Q_NULLPTR),
+                              Q_ARG(const bool, active));
   }
 }
 

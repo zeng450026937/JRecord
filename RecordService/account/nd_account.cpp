@@ -40,22 +40,22 @@ NdAccount::NdAccount(QObject *parent)
                   d->userId =
                       d->userMap.value(QLatin1String("user_id")).toString();
                   Q_EMIT userIdChanged(d->userId);
-                  d->active = true;
-                  Q_EMIT activeChanged(d->active);
                   d->status = NdAccount::Login;
                   Q_EMIT statusChanged(d->status);
+                  d->active = true;
+                  Q_EMIT activeChanged(d->active);
                   d->doRequest(NdAccountPrivate::QueryInfo);
                   break;
                 case NdAccountPrivate::SignOut:
-                  d->active = false;
-                  Q_EMIT activeChanged(d->active);
                   d->status = NdAccount::Logout;
                   Q_EMIT statusChanged(d->status);
+                  d->active = false;
+                  Q_EMIT activeChanged(d->active);
                   break;
                 case NdAccountPrivate::QueryInfo:
                   d->userInfoMap = document.object().toVariantMap();
-                  d->userId = d->userInfoMap.value(QLatin1String("user_id"))
-                                  .toString();
+                  d->userId =
+                      d->userInfoMap.value(QLatin1String("user_id")).toString();
                   Q_EMIT userIdChanged(d->userId);
                   d->userName =
                       d->userInfoMap.value(QLatin1String("org_exinfo"))

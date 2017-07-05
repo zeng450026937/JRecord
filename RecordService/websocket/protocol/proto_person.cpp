@@ -28,7 +28,7 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
       case getPersonalList:
         action = Actions::getPersonalList;
-        data = msg->data().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
         break;
       default:
         action = Actions::unknown;
@@ -42,7 +42,9 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
 void ProtoPerson::query() {
   Q_D(ProtoPerson);
 
-  this->transport(QStringLiteral(""), QStringLiteral(""),
-                  d->metaEnum.valueToKey(Actions::getPersonalList),
-                  QJsonObject());
+  TextMessage* msg = new TextMessage(
+      QStringLiteral(""), QStringLiteral(""), d->mode,
+      d->metaEnum.valueToKey(Actions::getPersonalList), QJsonObject());
+
+  this->transport(QSharedPointer<MessagePacket>(msg));
 }

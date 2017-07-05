@@ -40,9 +40,11 @@ QString TextMessage::action() const {
   return d_func()->command.value(QLatin1String("action")).toString();
 }
 
-QJsonObject TextMessage::data() const { return d_func()->data; }
+QJsonValue TextMessage::data() const { return d_func()->data; }
 
 bool TextMessage::result() const { return d_func()->result; }
+
+QJsonObject TextMessage::command() const { return d_func()->command; }
 
 void TextMessage::decode(const QString &message) {
   QJsonParseError error;
@@ -59,7 +61,7 @@ void TextMessage::decode(const QString &message) {
       d->from = json.value(QLatin1String("from")).toString();
       d->to = json.value(QLatin1String("to")).toString();
       d->command = json.value(QLatin1String("command")).toObject();
-      d->data = json.value(QLatin1String("data")).toObject();
+      d->data = json.value(QLatin1String("data"));
       d->result = json.value(QLatin1String("result")).toBool();
     } else if (jsonDocument.isArray()) {
       qDebug() << "unsupported json string format, json object is prefered.";
@@ -85,6 +87,39 @@ QString TextMessage::encode() {
   document.setObject(json);
 
   return document.toJson(QJsonDocument::Compact);
+}
+
+bool TextMessage::match(MessagePacket *pkt) {
+  TextMessage *msg = dynamic_cast<TextMessage *>(pkt);
+  if (msg && msg->command() == this->command()) {
+    this->setNotification(msg->notification());
+    return true;
+  }
+  return false;
+}
+
+bool TextMessage::hasNotification() {
+  Q_D(TextMessage);
+  return !!d->notificationFunc;
+}
+
+bool TextMessage::notify() {
+  Q_D(TextMessage);
+  if (d->notificationFunc) {
+    d->notificationFunc(d->data);
+    qDebug() << "callback";
+    return true;
+  }
+  return false;
+}
+
+void TextMessage::setNotification(TextMessage::NotificationFunc fp) {
+  Q_D(TextMessage);
+  d->notificationFunc = fp;
+}
+
+TextMessage::NotificationFunc TextMessage::notification() {
+  return d_func()->notificationFunc;
 }
 
 void TextMessage::setVersion(const QString &version) {
@@ -127,7 +162,7 @@ void TextMessage::setAction(const QString &action) {
   }
 }
 
-void TextMessage::setData(const QJsonObject &data) {
+void TextMessage::setData(const QJsonValue &data) {
   Q_D(TextMessage);
   if (data != d->data) {
     d->data = data;
