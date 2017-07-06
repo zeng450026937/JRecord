@@ -9,8 +9,9 @@ class MessagePacket : public QObject {
   Q_OBJECT
   Q_DISABLE_COPY(MessagePacket)
   Q_DECLARE_PRIVATE(MessagePacket)
-  Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
   Q_PROPERTY(MessageType type READ type WRITE setType NOTIFY typeChanged)
+  Q_PROPERTY(bool notification READ notification WRITE setNotification NOTIFY
+                 notificationChanged)
 
  public:
   explicit MessagePacket(QObject* parent = 0);
@@ -18,20 +19,16 @@ class MessagePacket : public QObject {
   enum MessageType { Text, Binary, Unknow };
   Q_ENUMS(MessageType)
 
-  int id() const;
   MessageType type() const;
-
-  virtual bool match(MessagePacket* pkt);
-  virtual bool hasNotification();
-  virtual bool notify();
+  bool notification() const;
 
  Q_SIGNALS:
-  void idChanged(int id);
   void typeChanged(MessageType type);
+  void notificationChanged(bool notification);
 
  public Q_SLOTS:
-  void setId(int id);
   void setType(MessageType type);
+  void setNotification(bool notification);
 
  protected:
   MessagePacket(MessagePacketPrivate* d, QObject* parent = 0);

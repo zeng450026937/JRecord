@@ -89,39 +89,6 @@ QString TextMessage::encode() {
   return document.toJson(QJsonDocument::Compact);
 }
 
-bool TextMessage::match(MessagePacket *pkt) {
-  TextMessage *msg = dynamic_cast<TextMessage *>(pkt);
-  if (msg && msg->command() == this->command()) {
-    this->setNotification(msg->notification());
-    return true;
-  }
-  return false;
-}
-
-bool TextMessage::hasNotification() {
-  Q_D(TextMessage);
-  return !!d->notificationFunc;
-}
-
-bool TextMessage::notify() {
-  Q_D(TextMessage);
-  if (d->notificationFunc) {
-    d->notificationFunc(d->data);
-    qDebug() << "callback";
-    return true;
-  }
-  return false;
-}
-
-void TextMessage::setNotification(TextMessage::NotificationFunc fp) {
-  Q_D(TextMessage);
-  d->notificationFunc = fp;
-}
-
-TextMessage::NotificationFunc TextMessage::notification() {
-  return d_func()->notificationFunc;
-}
-
 void TextMessage::setVersion(const QString &version) {
   Q_D(TextMessage);
   if (version != d->version) {

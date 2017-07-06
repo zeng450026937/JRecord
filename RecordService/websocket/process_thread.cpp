@@ -5,6 +5,7 @@
 #include "message_socket.h"
 #include "process_thread_p.h"
 #include "protocol/proto_base.h"
+#include "task/task_manager.h"
 #include "textmessage.h"
 
 ProcessThread::ProcessThread(QObject *parent)
@@ -15,16 +16,18 @@ ProcessThread::ProcessThread(QObject *parent)
         QObject::disconnect(d->textConnection);
         QObject::disconnect(d->binaryConnection);
 
-        d->textConnection =
-            QObject::connect(socket, &MessageSocket::textReceived,
-                             [this](const QString &message) {
-                               pushMessage(new TextMessage(message));
-                             });
-        d->binaryConnection =
-            QObject::connect(socket, &MessageSocket::binaryReceived,
-                             [this](const QByteArray &message) {
-                               pushMessage(new BinaryMessage(message));
-                             });
+        d->textConnection = QObject::connect(
+            socket, &MessageSocket::textReceived,
+            [this](const QString &message) {
+              pushMessage(
+                  QSharedPointer<MessagePacket>(new TextMessage(message)));
+            });
+        d->binaryConnection = QObject::connect(
+            socket, &MessageSocket::binaryReceived,
+            [this](const QByteArray &message) {
+              pushMessage(
+                  QSharedPointer<MessagePacket>(new BinaryMessage(message)));
+            });
       });
 }
 
@@ -47,6 +50,8 @@ void ProcessThread::run() {
           d->queue->pop();  // block until new data arrived
 
       if (pkt.isNull()) return;
+
+      Q_EMIT beforeProcess(pkt);
 
       if (pkt->type() == MessagePacket::Text) {
         QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
@@ -73,6 +78,8 @@ void ProcessThread::run() {
           qDebug() << "received binary.";
         }
       }
+
+      Q_EMIT afterProcess(pkt);
     }
 
   } while (d->queue->active());

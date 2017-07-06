@@ -1,9 +1,9 @@
 #ifndef TASK_REPLY_P_H
 #define TASK_REPLY_P_H
 
-#include <QObject>
+#include "task_reply.h"
 
-class TaskReply;
+class MessagePacket;
 
 class TaskReplyPrivate {
   Q_DISABLE_COPY(TaskReplyPrivate)
@@ -12,6 +12,8 @@ class TaskReplyPrivate {
   TaskReplyPrivate(TaskReply *q);
 
   TaskReply *q_ptr;
+  QJsonValue data;
+  TaskReply::Status status;
 };
 
 #endif  // TASK_REPLY_P_H

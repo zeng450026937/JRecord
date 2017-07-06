@@ -58,13 +58,6 @@ void MessageThread::setActive(bool active) {
   }
 }
 
-void MessageThread::pushMessage(MessagePacket *message) {
-  Q_D(MessageThread);
-  if (d->queue) {
-    d->queue->push(QSharedPointer<MessagePacket>(message));
-  }
-}
-
 void MessageThread::pushMessage(QSharedPointer<MessagePacket> message) {
   Q_D(MessageThread);
   if (d->queue) {

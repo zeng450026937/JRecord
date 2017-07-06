@@ -6,6 +6,9 @@
 #include <QMetaObject>
 #include "proto_mobile_p.h"
 #include "service/service_base.h"
+#include "websocket/task/task_manager.h"
+#include "websocket/task/task_reply.h"
+#include "websocket/task/task_request.h"
 #include "websocket/textmessage.h"
 
 ProtoMobile::ProtoMobile(QObject* parent)
@@ -28,23 +31,27 @@ void ProtoMobile::process(QSharedPointer<MessagePacket> pkt) {
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
       case getConferences:
         action = Actions::getConferences;
-        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list"));
+        msg->setData(data);
         break;
       default:
         action = Actions::unknown;
         break;
     }
-
-    Q_EMIT actionRecived(action, data);
   }
 }
 
-void ProtoMobile::query() {
+TaskReply* ProtoMobile::query() {
   Q_D(ProtoMobile);
+  TaskReply* reply(Q_NULLPTR);
 
-  TextMessage* msg = new TextMessage(
-      QStringLiteral(""), QStringLiteral(""), d->mode,
-      d->metaEnum.valueToKey(Actions::getConferences), QJsonObject());
+  if (d->taskManager) {
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::getConferences));
+    request->setData(QJsonValue());
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+    reply = d->taskManager->post(request);
+  }
+  return reply;
 }

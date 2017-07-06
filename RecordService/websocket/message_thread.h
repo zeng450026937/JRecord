@@ -30,16 +30,14 @@ class MessageThread : public QThread {
 
  Q_SIGNALS:
   void activeChanged(bool active);
-
   void queueChanged(MessageQueue *queue);
   void socketChanged(MessageSocket *socket);
 
  public Q_SLOTS:
+  void setActive(bool active);
   void setQueue(MessageQueue *queue);
   void setSocket(MessageSocket *socket);
-  void setActive(bool active);
 
-  void pushMessage(MessagePacket *message);
   void pushMessage(QSharedPointer<MessagePacket> message);
 
  protected:

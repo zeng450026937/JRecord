@@ -6,6 +6,9 @@
 #include <QMetaObject>
 #include "proto_person_p.h"
 #include "service/service_base.h"
+#include "websocket/task/task_manager.h"
+#include "websocket/task/task_reply.h"
+#include "websocket/task/task_request.h"
 #include "websocket/textmessage.h"
 
 ProtoPerson::ProtoPerson(QObject* parent)
@@ -28,23 +31,27 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
     switch (MetaEnum.keysToValue(msg->action().toUtf8())) {
       case getPersonalList:
         action = Actions::getPersonalList;
-        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list"));
+        msg->setData(data);
         break;
       default:
         action = Actions::unknown;
         break;
     }
-
-    Q_EMIT actionRecived(action, data);
   }
 }
 
-void ProtoPerson::query() {
+TaskReply* ProtoPerson::query() {
   Q_D(ProtoPerson);
+  TaskReply* reply(Q_NULLPTR);
 
-  TextMessage* msg = new TextMessage(
-      QStringLiteral(""), QStringLiteral(""), d->mode,
-      d->metaEnum.valueToKey(Actions::getPersonalList), QJsonObject());
+  if (d->taskManager) {
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::getPersonalList));
+    request->setData(QJsonValue());
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+    reply = d->taskManager->post(request);
+  }
+  return reply;
 }

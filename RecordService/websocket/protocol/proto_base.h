@@ -1,12 +1,9 @@
 #ifndef PROTO_BASE_H
 #define PROTO_BASE_H
 
-#include <QHash>
 #include <QJsonValue>
-#include <QMutex>
 #include <QObject>
-#include <QVector>
-#include <functional>
+#include <QSharedPointer>
 
 class MessagePacket;
 class ProtoBasePrivate;
@@ -27,15 +24,9 @@ class ProtoBase : public QObject {
 
   QString mode() const;
 
-  typedef std::function<void(const QJsonValue &data)> callbackFunc;
-
  protected:
-  /*
-   * it is called in process thread
-   * put heavy work in process function
-   */
+  // process pkt data
   virtual void process(QSharedPointer<MessagePacket> pkt);
-  virtual void transport(QSharedPointer<MessagePacket> pkt);
 
   ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
   QScopedPointer<ProtoBasePrivate> d_ptr;

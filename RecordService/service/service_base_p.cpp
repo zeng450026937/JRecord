@@ -11,8 +11,9 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
     : q_ptr(q),
       active(false),
       device(Q_NULLPTR),
+      taskManager(Q_NULLPTR),
+      conferenceManager(Q_NULLPTR),
       deviceManager(Q_NULLPTR),
-      main_thread(new QThread),
       socket_thread(new QThread),
       socket(new MessageSocket),
       transport_thread(new TransportThread),
@@ -24,21 +25,20 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
   uuid.replace(QStringLiteral("{"), "");
   uuid.replace(QStringLiteral("}"), "");
 
+  socket->moveToThread(socket_thread);
+
+  transport_queue->moveToThread(socket_thread);
+  process_queue->moveToThread(socket_thread);
+
+  transport_thread->moveToThread(socket_thread);
+  process_thread->moveToThread(socket_thread);
+
   transport_thread->setSocket(socket);
   process_thread->setSocket(socket);
-
-  transport_queue->moveToThread(main_thread);
-  process_queue->moveToThread(main_thread);
-
-  transport_thread->moveToThread(main_thread);
-  process_thread->moveToThread(main_thread);
-
-  socket->moveToThread(socket_thread);
 
   transport_thread->setQueue(transport_queue);
   process_thread->setQueue(process_queue);
 
-  main_thread->start();
   socket_thread->start();
 
   QObject::connect(socket, &MessageSocket::activeChanged, q_ptr,
@@ -76,12 +76,9 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
 }
 
 ServiceBasePrivate::~ServiceBasePrivate() {
-  main_thread->quit();
-  main_thread->wait(3000);
   socket_thread->quit();
   socket_thread->wait(3000);
 
-  main_thread->deleteLater();
   socket_thread->deleteLater();
 
   transport_queue->deleteLater();

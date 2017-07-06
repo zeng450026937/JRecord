@@ -5,6 +5,9 @@
 #include <QMetaObject>
 #include "proto_conf_p.h"
 #include "service/service_base.h"
+#include "websocket/task/task_manager.h"
+#include "websocket/task/task_reply.h"
+#include "websocket/task/task_request.h"
 #include "websocket/textmessage.h"
 
 ProtoConf::ProtoConf(QObject* parent)
@@ -43,7 +46,8 @@ void ProtoConf::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case Actions::getConferenceList:
         action = Actions::getConferenceList;
-        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list"));
+        msg->setData(data);
         break;
       case Actions::getConferenceFiles:
         action = Actions::getConferenceFiles;
@@ -53,118 +57,199 @@ void ProtoConf::process(QSharedPointer<MessagePacket> pkt) {
         action = Actions::unknown;
         break;
     }
-
-    Q_EMIT actionRecived(action, data);
   }
 }
 
-void ProtoConf::lock() {}
-
-void ProtoConf::unlock() {}
-
-void ProtoConf::create(const QString& title, const QString& content,
-                       const QString& members, const QString& devices) {
-  Q_D(ProtoConf);
-
-  QJsonObject data;
-  data.insert(QStringLiteral("title"), title);
-  data.insert(QStringLiteral("content"), content);
-  data.insert(QStringLiteral("members"), members);
-  data.insert(QStringLiteral("devices"), devices);
-
-  TextMessage* msg =
-      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
-                      d->metaEnum.valueToKey(Actions::createConference), data);
-
-  this->transport(QSharedPointer<MessagePacket>(msg));
+TaskReply* ProtoConf::lock() {
+  TaskReply* reply(Q_NULLPTR);
+  return reply;
 }
 
-void ProtoConf::start(const QString& uuid) {
-  Q_D(ProtoConf);
-
-  QJsonObject data;
-  data.insert(QStringLiteral("conferenceUuid"), uuid);
-
-  TextMessage* msg =
-      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
-                      d->metaEnum.valueToKey(Actions::startConference), data);
-
-  this->transport(QSharedPointer<MessagePacket>(msg));
+TaskReply* ProtoConf::unlock() {
+  TaskReply* reply(Q_NULLPTR);
+  return reply;
 }
 
-void ProtoConf::pause(const QString& uuid) {
+TaskReply* ProtoConf::create(const QString& title, const QString& content,
+                             const QString& members, const QString& devices) {
   Q_D(ProtoConf);
 
-  QJsonObject data;
-  data.insert(QStringLiteral("conferenceUuid"), uuid);
+  TaskReply* reply(Q_NULLPTR);
 
-  TextMessage* msg =
-      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
-                      d->metaEnum.valueToKey(Actions::pauseConference), data);
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("title"), title);
+    data.insert(QStringLiteral("content"), content);
+    data.insert(QStringLiteral("members"), members);
+    data.insert(QStringLiteral("devices"), devices);
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::createConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
 }
 
-void ProtoConf::resume(const QString& uuid) {
+TaskReply* ProtoConf::start(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QJsonObject data;
-  data.insert(QStringLiteral("conferenceUuid"), uuid);
+  TaskReply* reply(Q_NULLPTR);
 
-  TextMessage* msg =
-      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
-                      d->metaEnum.valueToKey(Actions::resumeConference), data);
-
-  this->transport(QSharedPointer<MessagePacket>(msg));
-}
-
-void ProtoConf::stop(const QString& uuid) {
-  Q_D(ProtoConf);
-
-  QJsonObject data;
-  data.insert(QStringLiteral("conferenceUuid"), uuid);
-
-  TextMessage* msg =
-      new TextMessage(QStringLiteral(""), QStringLiteral(""), d->mode,
-                      d->metaEnum.valueToKey(Actions::stopConference), data);
-
-  this->transport(QSharedPointer<MessagePacket>(msg));
-}
-
-void ProtoConf::join(const QString& uuid) {}
-
-void ProtoConf::leave(const QString& uuid) {}
-
-void ProtoConf::query(const QString& uuid) {
-  Q_D(ProtoConf);
-
-  if (uuid.isEmpty()) {
-    TextMessage* msg = new TextMessage(
-        QStringLiteral(""), QStringLiteral(""), d->mode,
-        d->metaEnum.valueToKey(Actions::getConferenceList), QJsonObject());
-
-    this->transport(QSharedPointer<MessagePacket>(msg));
-  } else {
+  if (d->taskManager) {
     QJsonObject data;
     data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-    TextMessage* msg = new TextMessage(
-        QStringLiteral(""), QStringLiteral(""), d->mode,
-        d->metaEnum.valueToKey(Actions::getConferenceInfo), data);
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::startConference));
+    request->setData(data);
 
-    this->transport(QSharedPointer<MessagePacket>(msg));
+    reply = d->taskManager->post(request);
   }
+  return reply;
 }
 
-void ProtoConf::files(const QString& uuid) {
+TaskReply* ProtoConf::pause(const QString& uuid) {
   Q_D(ProtoConf);
 
-  QJsonObject data;
-  data.insert(QStringLiteral("conferenceUuid"), uuid);
+  TaskReply* reply(Q_NULLPTR);
 
-  TextMessage* msg = new TextMessage(
-      QStringLiteral(""), QStringLiteral(""), d->mode,
-      d->metaEnum.valueToKey(Actions::getConferenceFiles), data);
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::pauseConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::resume(const QString& uuid) {
+  Q_D(ProtoConf);
+
+  TaskReply* reply(Q_NULLPTR);
+
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::resumeConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::stop(const QString& uuid) {
+  Q_D(ProtoConf);
+
+  TaskReply* reply(Q_NULLPTR);
+
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::stopConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::join(const QString& uuid) {
+  Q_D(ProtoConf);
+  TaskReply* reply(Q_NULLPTR);
+
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::stopConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::leave(const QString& uuid) {
+  Q_D(ProtoConf);
+  TaskReply* reply(Q_NULLPTR);
+
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::stopConference));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::query(const QString& uuid) {
+  Q_D(ProtoConf);
+
+  TaskReply* reply(Q_NULLPTR);
+  if (uuid.isEmpty()) {
+    if (d->taskManager) {
+      QSharedPointer<TaskRequest> request(new TaskRequest);
+      request->setMode(d->mode);
+      request->setAction(d->metaEnum.valueToKey(Actions::getConferenceList));
+      request->setData(QJsonValue());
+
+      reply = d->taskManager->post(request);
+    }
+
+  } else {
+    if (d->taskManager) {
+      QJsonObject data;
+      data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+      QSharedPointer<TaskRequest> request(new TaskRequest);
+      request->setMode(d->mode);
+      request->setAction(d->metaEnum.valueToKey(Actions::getConferenceInfo));
+      request->setData(data);
+
+      reply = d->taskManager->post(request);
+    }
+  }
+  return reply;
+}
+
+TaskReply* ProtoConf::files(const QString& uuid) {
+  Q_D(ProtoConf);
+
+  TaskReply* reply(Q_NULLPTR);
+
+  if (d->taskManager) {
+    QJsonObject data;
+    data.insert(QStringLiteral("conferenceUuid"), uuid);
+
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::getConferenceFiles));
+    request->setData(data);
+
+    reply = d->taskManager->post(request);
+  }
+  return reply;
 }

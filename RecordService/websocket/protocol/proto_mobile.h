@@ -4,22 +4,20 @@
 #include "proto_base.h"
 
 class ProtoMobilePrivate;
+class TaskReply;
 
 class ProtoMobile : public ProtoBase {
   Q_OBJECT
   Q_DISABLE_COPY(ProtoMobile)
   Q_DECLARE_PRIVATE(ProtoMobile)
  public:
-  explicit ProtoMobile(QObject *parent = nullptr);
+  explicit ProtoMobile(QObject* parent = nullptr);
 
   enum Actions { getConferences, unknown };
   Q_ENUM(Actions)
 
- Q_SIGNALS:
-  void actionRecived(const int action, const QJsonValue &data);
-
  public Q_SLOTS:
-  void query();
+  TaskReply* query();
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

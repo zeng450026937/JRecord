@@ -17,6 +17,9 @@ class TransportThread : public MessageThread {
   void textTransported(const QString &message);
   void binaryTransported(const QByteArray &message);
 
+  void beforeTransport(QSharedPointer<MessagePacket> pkt);
+  void afterTransport(QSharedPointer<MessagePacket> pkt);
+
  protected:
   void run() override;
 };

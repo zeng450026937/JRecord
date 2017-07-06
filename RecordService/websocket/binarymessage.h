@@ -38,9 +38,6 @@ class BinaryMessage : public MessagePacket {
   Q_INVOKABLE void parse(QByteArray message);
   Q_INVOKABLE QByteArray make();
 
-  bool match(MessagePacket* pkt) override;
-  bool notify() override;
-
  Q_SIGNALS:
   void modeChanged(qint32 mode);
   void userIdChanged(const QString& userId);

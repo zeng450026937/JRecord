@@ -8,6 +8,7 @@ class ProtoBase;
 class MessageThread;
 class MessageQueue;
 class MessageSocket;
+class TaskManager;
 
 class MessageThreadPrivate {
   Q_DISABLE_COPY(MessageThreadPrivate)
@@ -20,6 +21,7 @@ class MessageThreadPrivate {
   MessageSocket *socket;
   bool active;
   QHash<QString, ProtoBase *> *protocols;
+  TaskManager *manager;
 };
 
 #endif  // MESSAGE_THREAD_P_H

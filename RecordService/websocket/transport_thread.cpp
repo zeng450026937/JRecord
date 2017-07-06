@@ -3,6 +3,7 @@
 #include "binarymessage.h"
 #include "message_queue.h"
 #include "message_socket.h"
+#include "task/task_manager.h"
 #include "textmessage.h"
 #include "transport_thread_p.h"
 
@@ -46,6 +47,8 @@ void TransportThread::run() {
 
       if (pkt.isNull()) return;
 
+      Q_EMIT beforeTransport(pkt);
+
       if (pkt->type() == MessagePacket::Text) {
         QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
         if (msg) {
@@ -60,6 +63,8 @@ void TransportThread::run() {
           Q_EMIT binaryTransported(msg->make());
         }
       }
+
+      Q_EMIT afterTransport(pkt);
     }
 
   } while (d->queue->active());

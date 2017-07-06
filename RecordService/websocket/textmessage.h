@@ -2,7 +2,6 @@
 #define TEXTMESSAGE_H
 
 #include <QJsonObject>
-#include <functional>
 #include "message_packet.h"
 
 class TextMessagePrivate;
@@ -41,14 +40,6 @@ class TextMessage : public MessagePacket {
 
   Q_INVOKABLE void decode(const QString &message);
   Q_INVOKABLE QString encode();
-
-  bool match(MessagePacket *pkt) override;
-  bool hasNotification() override;
-  bool notify() override;
-
-  typedef std::function<void(const QJsonValue &resultData)> NotificationFunc;
-  void setNotification(NotificationFunc fp);
-  NotificationFunc notification();
 
  Q_SIGNALS:
   void versionChanged(const QString &version);

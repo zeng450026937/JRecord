@@ -3,8 +3,9 @@
 
 #include "proto_base.h"
 
-class Device;
 class ProtoInfoPrivate;
+class Device;
+class TaskReply;
 
 class ProtoInfo : public ProtoBase {
   Q_OBJECT
@@ -16,12 +17,9 @@ class ProtoInfo : public ProtoBase {
   enum Actions { heartBeat, updateDeviceInfo, getDeviceList, ActionCount };
   Q_ENUM(Actions)
 
- Q_SIGNALS:
-  void actionRecived(const int action, const QJsonValue& data);
-
  public Q_SLOTS:
-  void push(Device* device);
-  void pull(callbackFunc fp = Q_NULLPTR);
+  TaskReply* push(Device* device);
+  TaskReply* pull();
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

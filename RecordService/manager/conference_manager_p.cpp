@@ -24,3 +24,10 @@ void ConferenceManagerPrivate::updateConference(Conference::Type type,
     model->addConference(conference);
   }
 }
+
+void ConferenceManagerPrivate::updateConferenceList(Conference::Type type,
+                                                    const QJsonValue &data) {
+  foreach (QJsonValue value, data.toArray()) {
+    this->updateConference(type, value.toObject());
+  }
+}

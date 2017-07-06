@@ -3,13 +3,10 @@
 
 #include <QList>
 #include <QMetaEnum>
-#include <QMutex>
 #include <QObject>
-#include <QSharedPointer>
 
 class ProtoBase;
-class MessagePacket;
-class TransportThread;
+class TaskManager;
 
 class ProtoBasePrivate {
  public:
@@ -20,10 +17,8 @@ class ProtoBasePrivate {
 
   ProtoBase *q_ptr;
   QString mode;
-  TransportThread *transport;
   QMetaEnum metaEnum;
-  QMutex mutex;
-  QList<QSharedPointer<MessagePacket>> taskQueue;
+  TaskManager *taskManager;
 };
 
 #endif  // PROTO_BASE_P_H

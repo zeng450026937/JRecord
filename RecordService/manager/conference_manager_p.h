@@ -26,6 +26,7 @@ class ConferenceManagerPrivate : public ClientPrivate {
   ConferenceModel* model;
 
   void updateConference(Conference::Type type, const QJsonObject& data);
+  void updateConferenceList(Conference::Type type, const QJsonValue& data);
 };
 
 #endif  // CONFERENCE_MANAGER_P_H

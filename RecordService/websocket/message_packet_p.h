@@ -11,7 +11,7 @@ class MessagePacketPrivate {
 
   MessagePacket *q_ptr;
   MessagePacket::MessageType type;
-  int id;
+  bool notification;
 };
 
 #endif  // MESSAGE_PACKET_P_H

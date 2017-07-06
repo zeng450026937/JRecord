@@ -13,6 +13,10 @@ class ProcessThread : public MessageThread {
   explicit ProcessThread(QObject *parent = 0);
   ~ProcessThread();
 
+ Q_SIGNALS:
+  void beforeProcess(QSharedPointer<MessagePacket> pkt);
+  void afterProcess(QSharedPointer<MessagePacket> pkt);
+
  protected:
   void run() override;
 };

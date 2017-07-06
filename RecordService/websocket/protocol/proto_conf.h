@@ -4,6 +4,7 @@
 #include "proto_base.h"
 
 class ProtoConfPrivate;
+class TaskReply;
 
 class ProtoConf : public ProtoBase {
   Q_OBJECT
@@ -31,22 +32,19 @@ class ProtoConf : public ProtoBase {
   };
   Q_ENUM(Actions)
 
- Q_SIGNALS:
-  void actionRecived(const int action, const QJsonValue &data);
-
  public Q_SLOTS:
-  void lock();
-  void unlock();
-  void create(const QString &title, const QString &content,
-              const QString &members, const QString &devices);
-  void start(const QString &uuid);
-  void pause(const QString &uuid);
-  void resume(const QString &uuid);
-  void stop(const QString &uuid);
-  void join(const QString &uuid);
-  void leave(const QString &uuid);
-  void query(const QString &uuid = "");
-  void files(const QString &uuid);
+  TaskReply *lock();
+  TaskReply *unlock();
+  TaskReply *create(const QString &title, const QString &content,
+                    const QString &members, const QString &devices);
+  TaskReply *start(const QString &uuid);
+  TaskReply *pause(const QString &uuid);
+  TaskReply *resume(const QString &uuid);
+  TaskReply *stop(const QString &uuid);
+  TaskReply *join(const QString &uuid);
+  TaskReply *leave(const QString &uuid);
+  TaskReply *query(const QString &uuid = "");
+  TaskReply *files(const QString &uuid);
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

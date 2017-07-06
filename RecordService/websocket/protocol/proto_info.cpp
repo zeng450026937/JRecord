@@ -7,6 +7,9 @@
 #include "device/device.h"
 #include "proto_info_p.h"
 #include "user/user.h"
+#include "websocket/task/task_manager.h"
+#include "websocket/task/task_reply.h"
+#include "websocket/task/task_request.h"
 #include "websocket/textmessage.h"
 
 ProtoInfo::ProtoInfo(QObject *parent)
@@ -27,11 +30,6 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
     switch (d->metaEnum.keysToValue(msg->action().toUtf8())) {
       case heartBeat:
         action = Actions::heartBeat;
-
-        //        this->transport(QSharedPointer<MessagePacket>(new TextMessage(
-        //            QStringLiteral(""), QStringLiteral(""), d->mode,
-        //            d->metaEnum.valueToKey(Actions::heartBeat),
-        //            QJsonObject())));
         break;
       case updateDeviceInfo:
         action = Actions::updateDeviceInfo;
@@ -39,50 +37,46 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
         break;
       case getDeviceList:
         action = Actions::getDeviceList;
-        data = msg->data().toObject().value(QStringLiteral("list")).toArray();
+        data = msg->data().toObject().value(QStringLiteral("list"));
         msg->setData(data);
         break;
       default:
         action = Actions::ActionCount;
         break;
     }
-
-    Q_EMIT actionRecived(action, data);
-
-    QMutexLocker locker(&d->mutex);
-    if (d->taskQueue.count() > 0) {
-      if (msg->match(d->taskQueue.takeFirst().data())) {
-        msg->notify();
-        qDebug() << msg->command() << "notify message";
-      } else {
-        qDebug() << msg->command()
-                 << "message unmatch. it should be a notification from server.";
-      }
-    } else {
-      qDebug() << msg->command()
-               << "no queued message. it should be a notification from server.";
-    }
   }
 }
 
-void ProtoInfo::push(Device *device) {
+TaskReply *ProtoInfo::push(Device *device) {
   Q_D(ProtoInfo);
 
-  TextMessage *msg = new TextMessage(
-      QStringLiteral(""), QStringLiteral(""), d->mode,
-      d->metaEnum.valueToKey(Actions::updateDeviceInfo), device->toJson());
+  TaskReply *reply(Q_NULLPTR);
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+  if (d->taskManager) {
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::updateDeviceInfo));
+    request->setData(device->toJson());
+
+    reply = d->taskManager->post(request);
+  }
+
+  return reply;
 }
 
-void ProtoInfo::pull(callbackFunc fp) {
+TaskReply *ProtoInfo::pull() {
   Q_D(ProtoInfo);
 
-  TextMessage *msg = new TextMessage(
-      QStringLiteral(""), QStringLiteral(""), d->mode,
-      d->metaEnum.valueToKey(Actions::getDeviceList), QJsonObject());
+  TaskReply *reply(Q_NULLPTR);
 
-  msg->setNotification(fp);
+  if (d->taskManager) {
+    QSharedPointer<TaskRequest> request(new TaskRequest);
+    request->setMode(d->mode);
+    request->setAction(d->metaEnum.valueToKey(Actions::getDeviceList));
+    request->setData(QJsonValue());
 
-  this->transport(QSharedPointer<MessagePacket>(msg));
+    reply = d->taskManager->post(request);
+  }
+
+  return reply;
 }
