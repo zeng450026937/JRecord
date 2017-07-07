@@ -12,6 +12,13 @@ ProtoBase::ProtoBase(QObject *parent)
 
 QString ProtoBase::mode() const { return d_func()->mode; }
 
+QSharedPointer<TaskRequest> ProtoBase::makeRequest(int action,
+                                                   const QJsonValue &data) {
+  Q_UNUSED(action);
+  Q_UNUSED(data);
+  return Q_NULLPTR;
+}
+
 void ProtoBase::process(QSharedPointer<MessagePacket> pkt) { Q_UNUSED(pkt); }
 
 ProtoBase::ProtoBase(ProtoBasePrivate *d, QObject *parent)

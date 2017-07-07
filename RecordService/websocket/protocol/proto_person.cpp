@@ -38,20 +38,18 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
         action = Actions::unknown;
         break;
     }
+    Q_EMIT actionReceived(action, data);
   }
 }
 
-TaskReply* ProtoPerson::query() {
+QSharedPointer<TaskRequest> ProtoPerson::makeRequest(int action,
+                                                     const QJsonValue& data) {
   Q_D(ProtoPerson);
-  TaskReply* reply(Q_NULLPTR);
+  QSharedPointer<TaskRequest> request(new TaskRequest,
+                                      TaskRequest::doDeleteLater);
+  request->setMode(d->mode);
+  request->setAction(d->metaEnum.valueToKey(action));
+  request->setData(data);
 
-  if (d->taskManager) {
-    QSharedPointer<TaskRequest> request(new TaskRequest);
-    request->setMode(d->mode);
-    request->setAction(d->metaEnum.valueToKey(Actions::getPersonalList));
-    request->setData(QJsonValue());
-
-    reply = d->taskManager->post(request);
-  }
-  return reply;
+  return request;
 }

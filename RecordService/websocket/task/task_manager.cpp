@@ -12,19 +12,25 @@
 TaskManager::TaskManager(QObject *parent)
     : QObject(parent), d_ptr(new TaskManagerPrivate(this)) {}
 
-TaskReply *TaskManager::post(QSharedPointer<TaskRequest> request) {
+TaskReply *TaskManager::postRequest(QSharedPointer<TaskRequest> request) {
   Q_D(TaskManager);
 
   TaskReply *reply = new TaskReply(this);
-
   request->setReply(reply);
 
-  QMutexLocker locker(&d->mutex);
-  d->requestQueue.append(request);
+  {
+    QMutexLocker locker(&d->mutex);
+    d->requestQueue.append(request);
+  }
 
   d->transportThread->pushMessage(request);
 
   return reply;
+}
+
+void TaskManager::postMessage(QSharedPointer<TaskRequest> msg) {
+  Q_D(TaskManager);
+  d->transportThread->pushMessage(msg);
 }
 
 TransportThread *TaskManager::transportThread() const {
@@ -77,7 +83,13 @@ TaskManager::TaskManager(TaskManagerPrivate *d, QObject *parent)
     : QObject(parent), d_ptr(d) {}
 
 void TaskManagerPrivate::q_beforeTransport(QSharedPointer<MessagePacket> pkt) {
-  Q_UNUSED(pkt);
+  QSharedPointer<TaskRequest> request = pkt.dynamicCast<TaskRequest>();
+  if (request) {
+    TaskReply *reply = request->reply();
+    if (reply) {
+      reply->setStatus(TaskReply::Executing);
+    }
+  }
 }
 void TaskManagerPrivate::q_afterTransport(QSharedPointer<MessagePacket> pkt) {
   Q_UNUSED(pkt);
@@ -85,16 +97,26 @@ void TaskManagerPrivate::q_afterTransport(QSharedPointer<MessagePacket> pkt) {
 
 void TaskManagerPrivate::q_beforeProcess(QSharedPointer<MessagePacket> pkt) {
   QMutexLocker locker(&mutex);
-  if (requestQueue.count() > 0) {
-    requestQueue.first()->match(pkt.data());
+  pkt->setNotification(true);
+  if (requestQueue.count() > 0 && requestQueue.first()->match(pkt.data())) {
+    pkt->setNotification(false);
   }
 }
 void TaskManagerPrivate::q_afterProcess(QSharedPointer<MessagePacket> pkt) {
   QMutexLocker locker(&mutex);
   if (!pkt->notification() && requestQueue.count() > 0) {
-    requestQueue.takeFirst()->processed(pkt.data());
+    QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
+    if (msg) {
+      TaskReply *reply = requestQueue.takeFirst()->reply();
+      if (reply) {
+        reply->setData(msg->data());
+        reply->setStatus(TaskReply::Completed);
+        qDebug() << "request processed.";
+      }
+    }
   } else {
-    qDebug() << "it should be a notification from server.";
+    qDebug() << "it's a notification from server or not supportted by current "
+                "protocols.";
   }
 }
 

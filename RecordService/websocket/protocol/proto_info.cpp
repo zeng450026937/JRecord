@@ -44,39 +44,18 @@ void ProtoInfo::process(QSharedPointer<MessagePacket> pkt) {
         action = Actions::ActionCount;
         break;
     }
+    Q_EMIT actionReceived(action, data);
   }
 }
 
-TaskReply *ProtoInfo::push(Device *device) {
+QSharedPointer<TaskRequest> ProtoInfo::makeRequest(int action,
+                                                   const QJsonValue &data) {
   Q_D(ProtoInfo);
+  QSharedPointer<TaskRequest> request(new TaskRequest,
+                                      TaskRequest::doDeleteLater);
+  request->setMode(d->mode);
+  request->setAction(d->metaEnum.valueToKey(action));
+  request->setData(data);
 
-  TaskReply *reply(Q_NULLPTR);
-
-  if (d->taskManager) {
-    QSharedPointer<TaskRequest> request(new TaskRequest);
-    request->setMode(d->mode);
-    request->setAction(d->metaEnum.valueToKey(Actions::updateDeviceInfo));
-    request->setData(device->toJson());
-
-    reply = d->taskManager->post(request);
-  }
-
-  return reply;
-}
-
-TaskReply *ProtoInfo::pull() {
-  Q_D(ProtoInfo);
-
-  TaskReply *reply(Q_NULLPTR);
-
-  if (d->taskManager) {
-    QSharedPointer<TaskRequest> request(new TaskRequest);
-    request->setMode(d->mode);
-    request->setAction(d->metaEnum.valueToKey(Actions::getDeviceList));
-    request->setData(QJsonValue());
-
-    reply = d->taskManager->post(request);
-  }
-
-  return reply;
+  return request;
 }

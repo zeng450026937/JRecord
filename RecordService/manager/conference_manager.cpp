@@ -33,25 +33,7 @@ Conference *ConferenceManager::conference(const QString &uuid) const {
   return d_func()->confMap.value(uuid, Q_NULLPTR);
 }
 
-void ConferenceManager::refresh() {
-  Q_D(ConferenceManager);
-
-  TaskReply *reply(Q_NULLPTR);
-  reply = d->person_protocol->query();
-  if (reply) {
-    QObject::connect(reply, &TaskReply::finished, this, [=]() {
-      d->updateConferenceList(Conference::Personal, reply->data());
-      reply->deleteLater();
-    });
-  }
-  reply = d->conf_protocol->query();
-  if (reply) {
-    QObject::connect(reply, &TaskReply::finished, this, [=]() {
-      d->updateConferenceList(Conference::Normal, reply->data());
-      reply->deleteLater();
-    });
-  }
-}
+void ConferenceManager::refresh() { Q_D(ConferenceManager); }
 
 ConferenceModel *ConferenceManager::model() const { return d_func()->model; }
 

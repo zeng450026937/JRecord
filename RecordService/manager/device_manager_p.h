@@ -20,7 +20,7 @@ class DeviceManagerPrivate : public ClientPrivate {
   ProtoInfo* info_protocol;
   DeviceModel* model;
 
-  void updateDevice(const QJsonObject& data);
+  void updateDevice(const QJsonValue& data);
   void updateDeviceList(const QJsonValue& data);
 };
 

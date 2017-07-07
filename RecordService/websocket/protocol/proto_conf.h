@@ -32,19 +32,8 @@ class ProtoConf : public ProtoBase {
   };
   Q_ENUM(Actions)
 
- public Q_SLOTS:
-  TaskReply *lock();
-  TaskReply *unlock();
-  TaskReply *create(const QString &title, const QString &content,
-                    const QString &members, const QString &devices);
-  TaskReply *start(const QString &uuid);
-  TaskReply *pause(const QString &uuid);
-  TaskReply *resume(const QString &uuid);
-  TaskReply *stop(const QString &uuid);
-  TaskReply *join(const QString &uuid);
-  TaskReply *leave(const QString &uuid);
-  TaskReply *query(const QString &uuid = "");
-  TaskReply *files(const QString &uuid);
+  QSharedPointer<TaskRequest> makeRequest(int action,
+                                          const QJsonValue &data) override;
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

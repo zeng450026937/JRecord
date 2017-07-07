@@ -5,8 +5,9 @@
 #include <QObject>
 #include <QSharedPointer>
 
-class MessagePacket;
 class ProtoBasePrivate;
+class MessagePacket;
+class TaskRequest;
 
 class ProtoBase : public QObject {
   Q_OBJECT
@@ -24,6 +25,13 @@ class ProtoBase : public QObject {
 
   QString mode() const;
 
+  virtual QSharedPointer<TaskRequest> makeRequest(int action,
+                                                  const QJsonValue &data);
+
+ Q_SIGNALS:
+  // notification from server.
+  void actionReceived(int action, const QJsonValue &data);
+
  protected:
   // process pkt data
   virtual void process(QSharedPointer<MessagePacket> pkt);
@@ -31,7 +39,6 @@ class ProtoBase : public QObject {
   ProtoBase(ProtoBasePrivate *d, QObject *parent = nullptr);
   QScopedPointer<ProtoBasePrivate> d_ptr;
   friend class ProcessThread;
-  friend class ServiceBase;
 };
 
 #endif  // PROTO_BASE_H

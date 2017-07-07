@@ -21,7 +21,8 @@ class TaskManager : public QObject {
  public:
   explicit TaskManager(QObject *parent = nullptr);
 
-  TaskReply *post(QSharedPointer<TaskRequest> request);
+  TaskReply *postRequest(QSharedPointer<TaskRequest> request);
+  void postMessage(QSharedPointer<TaskRequest> msg);
 
   TransportThread *transportThread() const;
   ProcessThread *processThread() const;

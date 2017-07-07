@@ -52,6 +52,7 @@ void createDeviceTable() {
                   "   'status' TEXT DEFAULT '',"
                   "   'vad' TEXT DEFAULT '',"
                   "   'lock' INTEGER DEFAULT '0',"
+                  "   'ownerId' TEXT DEFAULT '',"
                   "   PRIMARY KEY(uuid)"
                   ")")) {
     qFatal("Failed to query database: %s",

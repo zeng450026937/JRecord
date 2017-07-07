@@ -17,9 +17,8 @@ class ProtoInfo : public ProtoBase {
   enum Actions { heartBeat, updateDeviceInfo, getDeviceList, ActionCount };
   Q_ENUM(Actions)
 
- public Q_SLOTS:
-  TaskReply* push(Device* device);
-  TaskReply* pull();
+  QSharedPointer<TaskRequest> makeRequest(int action,
+                                          const QJsonValue& data) override;
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;

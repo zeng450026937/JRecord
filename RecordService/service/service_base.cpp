@@ -15,7 +15,6 @@
 #include "websocket/protocol/proto_mobile.h"
 #include "websocket/protocol/proto_person.h"
 #include "websocket/task/task_manager.h"
-#include "websocket/task/task_manager.h"
 #include "websocket/textmessage.h"
 #include "websocket/transport_thread.h"
 
@@ -26,9 +25,6 @@ ServiceBase::ServiceBase(QObject *parent)
   d->taskManager = new TaskManager(this);
   d->taskManager->setTransportThread(d->transport_thread);
   d->taskManager->setProcessThread(d->process_thread);
-
-  d->process_thread->setProtocols(&d->protocols);
-  d->transport_thread->setProtocols(&d->protocols);
 
   this->registerProtocol(new ProtoBinary(this));
   this->registerProtocol(new ProtoInfo(this));
@@ -57,10 +53,11 @@ QUrl ServiceBase::url() const { return d_func()->url; }
 
 Device *ServiceBase::device() const { return d_func()->device; }
 
+TaskManager *ServiceBase::taskManager() const { return d_func()->taskManager; }
+
 void ServiceBase::registerProtocol(ProtoBase *protocol) {
   Q_D(ServiceBase);
   this->removeProtocol(protocol->mode());
-  protocol->d_func()->taskManager = d->taskManager;
   d->protocols.insert(protocol->mode(), protocol);
   Q_EMIT protocolChanged(protocol->mode());
 }

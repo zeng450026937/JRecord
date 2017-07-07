@@ -14,6 +14,7 @@ class TaskReplyPrivate {
   TaskReply *q_ptr;
   QJsonValue data;
   TaskReply::Status status;
+  int timer;
 };
 
 #endif  // TASK_REPLY_P_H

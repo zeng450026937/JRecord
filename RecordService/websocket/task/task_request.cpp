@@ -5,32 +5,33 @@
 
 TaskRequest::TaskRequest(QObject *parent)
     : TextMessage(new TaskRequestPrivate(this), parent) {}
+// static
+void TaskRequest::doDeleteLater(TaskRequest *request) {
+  request->deleteLater();
+}
 
 void TaskRequest::setReply(TaskReply *reply) {
   Q_D(TaskRequest);
   if (reply) {
+    if (d->reply) d->reply->deleteLater();
     d->reply = reply;
   }
 }
 
-void TaskRequest::match(MessagePacket *pkt) {
-  if (!pkt) return;
+TaskReply *TaskRequest::reply() {
+  Q_D(TaskRequest);
+  return d->reply;
+}
+
+bool TaskRequest::match(MessagePacket *pkt) {
+  if (!pkt) return false;
 
   TextMessage *msg = dynamic_cast<TextMessage *>(pkt);
 
   if (msg && msg->command() == this->command()) {
-    pkt->setNotification(false);
+    return true;
   } else {
-    pkt->setNotification(true);
-  }
-}
-
-void TaskRequest::processed(MessagePacket *pkt) {
-  Q_D(TaskRequest);
-  TextMessage *msg = dynamic_cast<TextMessage *>(pkt);
-  if (msg && d->reply) {
-    d->reply->setData(msg->data());
-    Q_EMIT d->reply->finished();
+    return false;
   }
 }
 

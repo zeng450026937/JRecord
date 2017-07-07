@@ -19,22 +19,24 @@ class TaskReply : public QObject {
   Q_ENUM(Status)
 
   QJsonValue data() const;
-  Status status() const;
+  TaskReply::Status status() const;
 
  Q_SIGNALS:
   void dataChanged(const QJsonValue &data);
-  void statusChanged(Status status);
+  void statusChanged(TaskReply::Status status);
 
+  // use deleteLater() when reply is finished() or timeout().
   void finished();
   void timeout();
 
  public Q_SLOTS:
   void setData(const QJsonValue &data);
-  void setStatus(Status status);
+  void setStatus(TaskReply::Status status);
 
  protected:
   TaskReply(TaskReplyPrivate *d, QObject *parent = nullptr);
   QScopedPointer<TaskReplyPrivate> d_ptr;
-  friend class TaskRequest;
+
+  void timerEvent(QTimerEvent *event) override;
 };
 #endif  // TASK_REPLY_H

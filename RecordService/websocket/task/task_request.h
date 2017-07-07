@@ -13,13 +13,15 @@ class TaskRequest : public TextMessage {
  public:
   explicit TaskRequest(QObject *parent = 0);
 
+  static void doDeleteLater(TaskRequest *request);
+
  protected:
   TaskRequest(TaskRequestPrivate *d, QObject *parent = 0);
   friend class TaskManager;
   friend class TaskManagerPrivate;
   void setReply(TaskReply *reply);
-  void match(MessagePacket *pkt);
-  void processed(MessagePacket *pkt);
+  TaskReply *reply();
+  bool match(MessagePacket *pkt);
 };
 
 #endif  // TASK_REQUEST_H

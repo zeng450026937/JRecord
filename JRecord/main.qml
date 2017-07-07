@@ -88,7 +88,7 @@ ApplicationWindow {
             if (active) {
                 sceneLoader.state = "HOME"
                 var dm = ServiceBase.deviceManager()
-                dm.refresh()
+                dm.getDeviceList()
 
                 var cm = ServiceBase.conferenceManager()
                 cm.refresh()

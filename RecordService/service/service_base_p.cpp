@@ -36,6 +36,9 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
   transport_thread->setSocket(socket);
   process_thread->setSocket(socket);
 
+  transport_thread->setProtocols(&protocols);
+  process_thread->setProtocols(&protocols);
+
   transport_thread->setQueue(transport_queue);
   process_thread->setQueue(process_queue);
 

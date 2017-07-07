@@ -6,7 +6,6 @@
 #include <QObject>
 
 class ProtoBase;
-class TaskManager;
 
 class ProtoBasePrivate {
  public:
@@ -18,7 +17,6 @@ class ProtoBasePrivate {
   ProtoBase *q_ptr;
   QString mode;
   QMetaEnum metaEnum;
-  TaskManager *taskManager;
 };
 
 #endif  // PROTO_BASE_P_H

@@ -16,8 +16,8 @@ class ProtoMobile : public ProtoBase {
   enum Actions { getConferences, unknown };
   Q_ENUM(Actions)
 
- public Q_SLOTS:
-  TaskReply* query();
+  QSharedPointer<TaskRequest> makeRequest(int action,
+                                          const QJsonValue& data) override;
 
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;
