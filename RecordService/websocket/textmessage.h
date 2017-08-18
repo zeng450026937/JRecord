@@ -37,6 +37,7 @@ class TextMessage : public MessagePacket {
   bool result() const;
 
   QJsonObject command() const;
+  bool equals(MessagePacket *msg) override;
 
   Q_INVOKABLE void decode(const QString &message);
   Q_INVOKABLE QString encode();

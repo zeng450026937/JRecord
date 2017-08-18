@@ -46,6 +46,18 @@ bool TextMessage::result() const { return d_func()->result; }
 
 QJsonObject TextMessage::command() const { return d_func()->command; }
 
+bool TextMessage::equals(MessagePacket *msg) {
+  if (!msg) return false;
+  Q_D(TextMessage);
+
+  if (d->uuid == msg->uuid()) return true;
+
+  TextMessage *textMsg = dynamic_cast<TextMessage *>(msg);
+  if (textMsg && textMsg->command() == this->command()) return true;
+
+  return false;
+}
+
 void TextMessage::decode(const QString &message) {
   QJsonParseError error;
   QJsonDocument jsonDocument =

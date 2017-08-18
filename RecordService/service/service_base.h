@@ -7,7 +7,7 @@
 class Device;
 class DeviceManager;
 class ConferenceManager;
-class TaskManager;
+class MessageManager;
 class ProtoBase;
 class ServiceBasePrivate;
 
@@ -34,7 +34,7 @@ class ServiceBase : public QObject {
 
   Device *device() const;
 
-  TaskManager *taskManager() const;
+  MessageManager *messageManager() const;
 
   // protocol which register by registerProtocol(), will be deleted when
   // removeProtocol() is called.

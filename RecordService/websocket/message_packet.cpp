@@ -4,11 +4,20 @@
 MessagePacket::MessagePacket(QObject *parent)
     : QObject(parent), d_ptr(new MessagePacketPrivate(this)) {}
 
+bool MessagePacket::equals(MessagePacket *msg) {
+  if (!msg) return false;
+  Q_D(MessagePacket);
+  if (d->uuid == msg->uuid()) return true;
+  return false;
+}
+
 MessagePacket::MessageType MessagePacket::type() const {
   return d_func()->type;
 }
 
-bool MessagePacket::notification() const { return d_func()->notification; }
+QUuid MessagePacket::uuid() const { return d_func()->uuid; }
+
+MessageReply *MessagePacket::reply() const { return d_func()->reply; }
 
 void MessagePacket::setType(MessagePacket::MessageType type) {
   Q_D(MessagePacket);
@@ -18,11 +27,19 @@ void MessagePacket::setType(MessagePacket::MessageType type) {
   }
 }
 
-void MessagePacket::setNotification(bool notification) {
+void MessagePacket::setUuid(const QUuid &uuid) {
   Q_D(MessagePacket);
-  if (notification != d->notification) {
-    d->notification = notification;
-    Q_EMIT notificationChanged(d->notification);
+  if (uuid != d->uuid) {
+    d->uuid = uuid;
+    Q_EMIT uuidChanged(d->uuid);
+  }
+}
+
+void MessagePacket::setReply(MessageReply *reply) {
+  Q_D(MessagePacket);
+  if (reply != d->reply) {
+    d->reply = reply;
+    Q_EMIT replyChanged(d->reply);
   }
 }
 

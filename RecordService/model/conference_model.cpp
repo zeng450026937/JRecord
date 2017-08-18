@@ -74,7 +74,7 @@ void ConferenceModel::addConference(Conference *conference) {
   newRecord.setValue(StatusRole - Qt::UserRole,
                      static_cast<int>(conference->status()));
 
-  this->insertRecord(-1, newRecord);
+  if (!this->insertRecord(-1, newRecord)) qDebug() << "insert record failed.";
 }
 
 ConferenceModel::ConferenceModel(ConferenceModelPrivate *d,

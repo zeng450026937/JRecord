@@ -1,26 +1,26 @@
-#ifndef TASK_MANAGER_H
-#define TASK_MANAGER_H
+#ifndef MESSAGE_MANAGER_H
+#define MESSAGE_MANAGER_H
 
 #include <QObject>
 
-class TaskManagerPrivate;
-class TaskReply;
+class MessageManagerPrivate;
+class MessageReply;
 class MessagePacket;
 class TransportThread;
 class ProcessThread;
 
-class TaskManager : public QObject {
+class MessageManager : public QObject {
   Q_OBJECT
-  Q_DISABLE_COPY(TaskManager)
-  Q_DECLARE_PRIVATE(TaskManager)
+  Q_DISABLE_COPY(MessageManager)
+  Q_DECLARE_PRIVATE(MessageManager)
   Q_PROPERTY(TransportThread *transportThread READ transportThread WRITE
                  setTransportThread NOTIFY transportThreadChanged)
   Q_PROPERTY(ProcessThread *processThread READ processThread WRITE
                  setProcessThread NOTIFY processThreadChanged)
  public:
-  explicit TaskManager(QObject *parent = nullptr);
+  explicit MessageManager(QObject *parent = nullptr);
 
-  TaskReply *postRequest(QSharedPointer<MessagePacket> msg);
+  MessageReply *postRequest(QSharedPointer<MessagePacket> msg);
   void postMessage(QSharedPointer<MessagePacket> msg);
 
   TransportThread *transportThread() const;
@@ -35,8 +35,8 @@ class TaskManager : public QObject {
   void setProcessThread(ProcessThread *processThread);
 
  protected:
-  TaskManager(TaskManagerPrivate *d, QObject *parent = nullptr);
-  QScopedPointer<TaskManagerPrivate> d_ptr;
+  MessageManager(MessageManagerPrivate *d, QObject *parent = nullptr);
+  QScopedPointer<MessageManagerPrivate> d_ptr;
 
   Q_PRIVATE_SLOT(d_func(),
                  void q_beforeTransport(QSharedPointer<MessagePacket> pkt))
@@ -48,4 +48,4 @@ class TaskManager : public QObject {
                  void q_afterProcess(QSharedPointer<MessagePacket> pkt))
 };
 
-#endif  // TASK_MANAGER_H
+#endif  // MESSAGE_MANAGER_H

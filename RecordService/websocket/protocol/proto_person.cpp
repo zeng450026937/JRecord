@@ -41,15 +41,3 @@ void ProtoPerson::process(QSharedPointer<MessagePacket> pkt) {
     Q_EMIT actionReceived(action, data);
   }
 }
-
-QSharedPointer<TaskRequest> ProtoPerson::makeRequest(int action,
-                                                     const QJsonValue& data) {
-  Q_D(ProtoPerson);
-  QSharedPointer<TaskRequest> request(new TaskRequest,
-                                      TaskRequest::doDeleteLater);
-  request->setMode(d->mode);
-  request->setAction(d->metaEnum.valueToKey(action));
-  request->setData(data);
-
-  return request;
-}

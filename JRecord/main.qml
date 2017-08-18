@@ -91,7 +91,7 @@ ApplicationWindow {
                 dm.getDeviceList()
 
                 var cm = ServiceBase.conferenceManager()
-                cm.refresh()
+                cm.getConferenceList()
             } else {
                 sceneLoader.state = "LOGIN"
             }
@@ -103,7 +103,7 @@ ApplicationWindow {
         id: pc
         owner: User {
             id: user
-            userId: "311715"
+            userId: "198800"
             userName: NdAccount.userName
             userGroup: qsTr("ND")
         }
@@ -113,7 +113,7 @@ ApplicationWindow {
     Component.onCompleted: {
         sceneLoader.state = "LOGIN"
 
-        ServiceBase.url = qsTr("ws://192.168.85.31:9007")
+        ServiceBase.url = qsTr("ws://118.191.2.215:12080")
         ServiceBase.device = pc
     }
 }

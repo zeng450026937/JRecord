@@ -4,6 +4,7 @@
 #include "manager/device_manager.h"
 #include "service/service_base_p.h"
 #include "user/user.h"
+#include "websocket/message_manager.h"
 #include "websocket/message_queue.h"
 #include "websocket/message_socket.h"
 #include "websocket/process_thread.h"
@@ -14,7 +15,6 @@
 #include "websocket/protocol/proto_info.h"
 #include "websocket/protocol/proto_mobile.h"
 #include "websocket/protocol/proto_person.h"
-#include "websocket/task/task_manager.h"
 #include "websocket/textmessage.h"
 #include "websocket/transport_thread.h"
 
@@ -22,9 +22,9 @@ ServiceBase::ServiceBase(QObject *parent)
     : QObject(parent), d_ptr(new ServiceBasePrivate(this)) {
   Q_D(ServiceBase);
 
-  d->taskManager = new TaskManager(this);
-  d->taskManager->setTransportThread(d->transport_thread);
-  d->taskManager->setProcessThread(d->process_thread);
+  d->messageManager = new MessageManager(this);
+  d->messageManager->setTransportThread(d->transport_thread);
+  d->messageManager->setProcessThread(d->process_thread);
 
   this->registerProtocol(new ProtoBinary(this));
   this->registerProtocol(new ProtoInfo(this));
@@ -53,7 +53,9 @@ QUrl ServiceBase::url() const { return d_func()->url; }
 
 Device *ServiceBase::device() const { return d_func()->device; }
 
-TaskManager *ServiceBase::taskManager() const { return d_func()->taskManager; }
+MessageManager *ServiceBase::messageManager() const {
+  return d_func()->messageManager;
+}
 
 void ServiceBase::registerProtocol(ProtoBase *protocol) {
   Q_D(ServiceBase);

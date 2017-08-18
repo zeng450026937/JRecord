@@ -1,47 +1,44 @@
-#include "task_manager.h"
+#include "message_manager.h"
 #include <QDebug>
-#include "task_manager_p.h"
-#include "task_reply.h"
-#include "task_request.h"
-#include "websocket/binarymessage.h"
-#include "websocket/process_thread.h"
-#include "websocket/textmessage.h"
-#include "websocket/transport_thread.h"
+#include "binarymessage.h"
+#include "message_manager_p.h"
+#include "message_reply.h"
+#include "process_thread.h"
+#include "textmessage.h"
+#include "transport_thread.h"
 
-TaskManager::TaskManager(QObject *parent)
-    : QObject(parent), d_ptr(new TaskManagerPrivate(this)) {}
+MessageManagerPrivate::MessageManagerPrivate(MessageManager *q)
+    : q_ptr(q), transportThread(Q_NULLPTR), processThread(Q_NULLPTR) {}
 
-TaskReply *TaskManager::postRequest(QSharedPointer<MessagePacket> msg) {
-  Q_D(TaskManager);
+MessageManager::MessageManager(QObject *parent)
+    : QObject(parent), d_ptr(new MessageManagerPrivate(this)) {}
 
-  TaskReply *reply = new TaskReply(this);
+MessageReply *MessageManager::postRequest(QSharedPointer<MessagePacket> msg) {
+  Q_D(MessageManager);
+
+  MessageReply *reply = new MessageReply(this);
   msg->setReply(reply);
-
-  {
-    QMutexLocker locker(&d->mutex);
-    d->requestQueue.append(msg);
-  }
 
   d->transportThread->pushMessage(msg);
 
   return reply;
 }
 
-void TaskManager::postMessage(QSharedPointer<MessagePacket> msg) {
-  Q_D(TaskManager);
+void MessageManager::postMessage(QSharedPointer<MessagePacket> msg) {
+  Q_D(MessageManager);
   d->transportThread->pushMessage(msg);
 }
 
-TransportThread *TaskManager::transportThread() const {
+TransportThread *MessageManager::transportThread() const {
   return d_func()->transportThread;
 }
 
-ProcessThread *TaskManager::processThread() const {
+ProcessThread *MessageManager::processThread() const {
   return d_func()->processThread;
 }
 
-void TaskManager::setTransportThread(TransportThread *transportThread) {
-  Q_D(TaskManager);
+void MessageManager::setTransportThread(TransportThread *transportThread) {
+  Q_D(MessageManager);
   if (d->transportThread != transportThread) {
     if (d->transportThread) this->disconnect(d->transportThread);
     d->transportThread = transportThread;
@@ -59,8 +56,8 @@ void TaskManager::setTransportThread(TransportThread *transportThread) {
   }
 }
 
-void TaskManager::setProcessThread(ProcessThread *processThread) {
-  Q_D(TaskManager);
+void MessageManager::setProcessThread(ProcessThread *processThread) {
+  Q_D(MessageManager);
   if (d->processThread != processThread) {
     if (d->processThread) this->disconnect(d->processThread);
     d->processThread = processThread;
@@ -78,38 +75,33 @@ void TaskManager::setProcessThread(ProcessThread *processThread) {
   }
 }
 
-TaskManager::TaskManager(TaskManagerPrivate *d, QObject *parent)
+MessageManager::MessageManager(MessageManagerPrivate *d, QObject *parent)
     : QObject(parent), d_ptr(d) {}
 
-void TaskManagerPrivate::q_beforeTransport(QSharedPointer<MessagePacket> pkt) {
-  QSharedPointer<TaskRequest> request = pkt.dynamicCast<TaskRequest>();
-  if (request) {
-    TaskReply *reply = request->reply();
-    if (reply) {
-      reply->setStatus(TaskReply::Executing);
-    }
+void MessageManagerPrivate::q_beforeTransport(
+    QSharedPointer<MessagePacket> pkt) {
+  MessageReply *reply = pkt->reply();
+  if (reply) {
+    reply->setStatus(MessageReply::Executing);
+    requestQueue.append(pkt);
   }
 }
-void TaskManagerPrivate::q_afterTransport(QSharedPointer<MessagePacket> pkt) {
+void MessageManagerPrivate::q_afterTransport(
+    QSharedPointer<MessagePacket> pkt) {
   Q_UNUSED(pkt);
 }
 
-void TaskManagerPrivate::q_beforeProcess(QSharedPointer<MessagePacket> pkt) {
-  QMutexLocker locker(&mutex);
-  pkt->setNotification(true);
-  if (requestQueue.count() > 0 && requestQueue.first()->match(pkt.data())) {
-    pkt->setNotification(false);
-  }
+void MessageManagerPrivate::q_beforeProcess(QSharedPointer<MessagePacket> pkt) {
+  Q_UNUSED(pkt);
 }
-void TaskManagerPrivate::q_afterProcess(QSharedPointer<MessagePacket> pkt) {
-  QMutexLocker locker(&mutex);
-  if (!pkt->notification() && requestQueue.count() > 0) {
+void MessageManagerPrivate::q_afterProcess(QSharedPointer<MessagePacket> pkt) {
+  if (requestQueue.count() > 0 && requestQueue.first()->equals(pkt.data())) {
     QSharedPointer<TextMessage> msg = pkt.dynamicCast<TextMessage>();
     if (msg) {
-      TaskReply *reply = requestQueue.takeFirst()->reply();
+      MessageReply *reply = requestQueue.takeFirst()->reply();
       if (reply) {
         reply->setData(msg->data());
-        reply->setStatus(TaskReply::Completed);
+        reply->setStatus(MessageReply::Completed);
         qDebug() << "request processed.";
       }
     }
@@ -119,4 +111,4 @@ void TaskManagerPrivate::q_afterProcess(QSharedPointer<MessagePacket> pkt) {
   }
 }
 
-#include "moc_task_manager.cpp"
+#include "moc_message_manager.cpp"

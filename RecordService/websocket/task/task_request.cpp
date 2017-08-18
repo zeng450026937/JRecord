@@ -1,39 +1,34 @@
 #include "task_request.h"
-#include <QDebug>
 #include "task_reply.h"
 #include "task_request_p.h"
 
 TaskRequest::TaskRequest(QObject *parent)
-    : TextMessage(new TaskRequestPrivate(this), parent) {}
+    : QObject(parent), d_ptr(new TaskRequestPrivate(this)) {}
+
 // static
 void TaskRequest::doDeleteLater(TaskRequest *request) {
   request->deleteLater();
 }
 
+TaskReply *TaskRequest::reply() const { return d_func()->reply; }
+
+MessagePacket *TaskRequest::message() const { return d_func()->message; }
+
 void TaskRequest::setReply(TaskReply *reply) {
   Q_D(TaskRequest);
   if (reply) {
-    if (d->reply) d->reply->deleteLater();
     d->reply = reply;
+    Q_EMIT replyChanged(d->reply);
   }
 }
 
-TaskReply *TaskRequest::reply() {
+void TaskRequest::setMessage(MessagePacket *msg) {
   Q_D(TaskRequest);
-  return d->reply;
-}
-
-bool TaskRequest::match(MessagePacket *pkt) {
-  if (!pkt) return false;
-
-  TextMessage *msg = dynamic_cast<TextMessage *>(pkt);
-
-  if (msg && msg->command() == this->command()) {
-    return true;
-  } else {
-    return false;
+  if (msg) {
+    d->message = msg;
+    Q_EMIT messageChanged(d->message);
   }
 }
 
 TaskRequest::TaskRequest(TaskRequestPrivate *d, QObject *parent)
-    : TextMessage(d, parent) {}
+    : QObject(parent), d_ptr(d) {}

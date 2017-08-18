@@ -16,9 +16,6 @@ class ProtoPerson : public ProtoBase {
   enum Actions { getPersonalList, unknown };
   Q_ENUM(Actions)
 
-  QSharedPointer<TaskRequest> makeRequest(int action,
-                                          const QJsonValue& data) override;
-
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;
 };

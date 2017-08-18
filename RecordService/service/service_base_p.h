@@ -8,7 +8,7 @@ class ProcessThread;
 class MessageQueue;
 class MessageSocket;
 class QThread;
-class TaskManager;
+class MessageManager;
 
 class ServiceBasePrivate {
   Q_DISABLE_COPY(ServiceBasePrivate)
@@ -34,7 +34,7 @@ class ServiceBasePrivate {
   Device *device;
   QString uuid;
 
-  TaskManager *taskManager;
+  MessageManager *messageManager;
   DeviceManager *deviceManager;
   ConferenceManager *conferenceManager;
 };

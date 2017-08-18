@@ -32,9 +32,6 @@ class ProtoConf : public ProtoBase {
   };
   Q_ENUM(Actions)
 
-  QSharedPointer<TaskRequest> makeRequest(int action,
-                                          const QJsonValue &data) override;
-
  protected:
   void process(QSharedPointer<MessagePacket> pkt) override;
 };

@@ -10,7 +10,6 @@ ItemDelegate {
 
     RowLayout {
         id: rowLayout
-        clip: true
         anchors.rightMargin: 10
         anchors.leftMargin: 10
         anchors.bottomMargin: 10
@@ -19,18 +18,15 @@ ItemDelegate {
 
         Rectangle {
             id: rectangle
-            clip: true
             color: "lightgray"
             width: 60
             height: width
         }
         ColumnLayout {
-            clip: true
             Layout.fillWidth: true
             Layout.fillHeight: true
 
             RowLayout {
-                clip: true
                 anchors.left: parent.left
                 anchors.right: parent.right
                 Layout.fillHeight: true
@@ -38,16 +34,13 @@ ItemDelegate {
                 Label {
                     id: createTimeLabel
                     text: conference.createTime.toLocaleString()
-                    clip: true
                 }
                 Label {
                     id: titleLabel
                     text: conference.title
-                    clip: true
                 }
             }
             RowLayout {
-                clip: true
                 anchors.left: parent.left
                 anchors.right: parent.right
                 Layout.fillHeight: true
@@ -56,16 +49,13 @@ ItemDelegate {
                 Label {
                     id: userNameLabel
                     text: conference.host.owner.userName
-                    clip: true
                 }
                 Label {
                     id: userIdLabel
                     text: qsTr("(" + conference.host.owner.userId + ")")
-                    clip: true
                 }
             }
             RowLayout {
-                clip: true
                 anchors.left: parent.left
                 anchors.right: parent.right
                 Layout.fillHeight: true
@@ -73,17 +63,14 @@ ItemDelegate {
                 Label {
                     id: countLabel
                     text: "0" + qsTr(" records")
-                    clip: true
                 }
                 Label {
                     id: tagLabel
                     text: conference.tag
-                    clip: true
                 }
                 Label {
                     id: gpsLabel
                     text: conference.gps
-                    clip: true
                 }
             }
         }

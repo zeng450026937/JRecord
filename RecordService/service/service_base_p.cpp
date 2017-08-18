@@ -11,7 +11,7 @@ ServiceBasePrivate::ServiceBasePrivate(ServiceBase *q)
     : q_ptr(q),
       active(false),
       device(Q_NULLPTR),
-      taskManager(Q_NULLPTR),
+      messageManager(Q_NULLPTR),
       conferenceManager(Q_NULLPTR),
       deviceManager(Q_NULLPTR),
       socket_thread(new QThread),

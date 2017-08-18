@@ -1,24 +1,23 @@
-#ifndef TASK_MANAGER_P_H
-#define TASK_MANAGER_P_H
+#ifndef MESSAGE_MANAGER_P_H
+#define MESSAGE_MANAGER_P_H
 
 #include <QList>
 #include <QObject>
 #include <QSharedPointer>
 
-class TaskManager;
-class TaskRequest;
+class MessageManager;
 class TransportThread;
 class ProcessThread;
 class MessagePacket;
 
-class TaskManagerPrivate {
-  Q_DISABLE_COPY(TaskManagerPrivate)
-  Q_DECLARE_PUBLIC(TaskManager)
+class MessageManagerPrivate {
+  Q_DISABLE_COPY(MessageManagerPrivate)
+  Q_DECLARE_PUBLIC(MessageManager)
  public:
-  TaskManagerPrivate(TaskManager *q);
+  MessageManagerPrivate(MessageManager *q);
 
-  TaskManager *q_ptr;
-  QList<QSharedPointer<TaskRequest>> requestQueue;
+  MessageManager *q_ptr;
+  QList<QSharedPointer<MessagePacket>> requestQueue;
 
   TransportThread *transportThread;
   ProcessThread *processThread;
@@ -30,4 +29,4 @@ class TaskManagerPrivate {
   void q_afterProcess(QSharedPointer<MessagePacket> pkt);
 };
 
-#endif  // TASK_MANAGER_P_H
+#endif  // MESSAGE_MANAGER_P_H

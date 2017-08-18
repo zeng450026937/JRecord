@@ -7,7 +7,6 @@
 
 class ProtoBasePrivate;
 class MessagePacket;
-class TaskRequest;
 
 class ProtoBase : public QObject {
   Q_OBJECT
@@ -25,8 +24,8 @@ class ProtoBase : public QObject {
 
   QString mode() const;
 
-  virtual QSharedPointer<TaskRequest> makeRequest(int action,
-                                                  const QJsonValue &data);
+  virtual QSharedPointer<MessagePacket> makeMessage(int action,
+                                                    const QJsonValue &data);
 
  Q_SIGNALS:
   // notification from server.

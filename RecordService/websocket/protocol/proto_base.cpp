@@ -1,5 +1,6 @@
 #include "proto_base.h"
 #include "proto_base_p.h"
+#include "websocket/textmessage.h"
 
 const QString ProtoBase::INFO_MODE = QStringLiteral("info");
 const QString ProtoBase::CONFERENCE_MODE = QStringLiteral("conference");
@@ -12,11 +13,16 @@ ProtoBase::ProtoBase(QObject *parent)
 
 QString ProtoBase::mode() const { return d_func()->mode; }
 
-QSharedPointer<TaskRequest> ProtoBase::makeRequest(int action,
-                                                   const QJsonValue &data) {
-  Q_UNUSED(action);
-  Q_UNUSED(data);
-  return Q_NULLPTR;
+QSharedPointer<MessagePacket> ProtoBase::makeMessage(int action,
+                                                     const QJsonValue &data) {
+  Q_D(ProtoBase);
+  QSharedPointer<TextMessage> message(new TextMessage);
+
+  message->setMode(d->mode);
+  message->setAction(d->metaEnum.valueToKey(action));
+  message->setData(data);
+
+  return message;
 }
 
 void ProtoBase::process(QSharedPointer<MessagePacket> pkt) { Q_UNUSED(pkt); }
